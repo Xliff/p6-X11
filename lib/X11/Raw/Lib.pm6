@@ -13,7 +13,11 @@ sub XActivateScreenSaver (Display $var0)
   is export
 { * }
 
-sub XAddConnectionWatch (Display $var0, XConnectionWatchProc $var1, XPointer $var2)
+sub XAddConnectionWatch (
+  Display              $var0,
+  XConnectionWatchProc $var1,
+  XPointer             $var2
+)
   returns Status
   is native(x11)
   is export
@@ -61,19 +65,45 @@ sub XAllocColor (Display $var0, Colormap $var1, XColor $var2)
   is export
 { * }
 
-sub XAllocColorCells (Display $var0, Colormap $var1, Bool $var2, long $var3, gint $var4, long $var5, gint $var6)
+sub XAllocColorCells (
+  Display $var0,
+  Colormap $var1,
+  Bool $var2,
+  long $var3,
+  gint $var4,
+  long $var5,
+  gint $var6
+)
   returns Status
   is native(x11)
   is export
 { * }
 
-sub XAllocColorPlanes (Display $var0, Colormap $var1, Bool $var2, long $var3, gint $var4, gint $var5, gint $var6, gint $var7, long $var8, long $var9, long $var10)
+sub XAllocColorPlanes (
+  Display  $var0,
+  Colormap $var1,
+  Bool     $var2,
+  long     $var3,
+  gint     $var4,
+  gint     $var5,
+  gint     $var6,
+  gint     $var7,
+  long     $var8,
+  long     $var9,
+  long     $var10
+)
   returns Status
   is native(x11)
   is export
 { * }
 
-sub XAllocNamedColor (Display $var0, Colormap $var1, Str $var2, XColor $var3, XColor $var4)
+sub XAllocNamedColor (
+  Display  $var0,
+  Colormap $var1,
+  Str      $var2,
+  XColor   $var3,
+  XColor   $var4
+)
   returns Status
   is native(x11)
   is export
@@ -145,7 +175,12 @@ sub XCellsOfScreen (Screen $var0)
   is export
 { * }
 
-sub XChangeActivePointerGrab (Display $var0, gint $var1, Cursor $var2, Time $var3)
+sub XChangeActivePointerGrab (
+  Display $var0,
+  gint    $var1,
+  Cursor  $var2,
+  Time    $var3
+)
   returns gint
   is native(x11)
   is export
@@ -163,19 +198,41 @@ sub XChangeKeyboardControl (Display $var0, long $var1, XKeyboardControl $var2)
   is export
 { * }
 
-sub XChangeKeyboardMapping (Display $var0, gint $var1, gint $var2, KeySym $var3, gint $var4)
+sub XChangeKeyboardMapping (
+  Display $var0,
+  gint    $var1,
+  gint    $var2,
+  KeySym  $var3,
+  gint    $var4
+)
   returns gint
   is native(x11)
   is export
 { * }
 
-sub XChangePointerControl (Display $var0, Bool $var1, Bool $var2, gint $var3, gint $var4, gint $var5)
+sub XChangePointerControl (
+  Display $var0,
+  Bool    $var1,
+  Bool    $var2,
+  gint    $var3,
+  gint    $var4,
+  gint    $var5
+)
   returns gint
   is native(x11)
   is export
 { * }
 
-sub XChangeProperty (Display $var0, Window $var1, Atom $var2, Atom $var3, gint $var4, gint $var5, Str $var6, gint $var7)
+sub XChangeProperty (
+  Display $var0,
+  Window  $var1,
+  Atom    $var2,
+  Atom    $var3,
+  gint    $var4,
+  gint    $var5,
+  Str     $var6,
+  gint    $var7
+)
   returns gint
   is native(x11)
   is export
@@ -187,17 +244,22 @@ sub XChangeSaveSet (Display $var0, Window $var1, gint $var2)
   is export
 { * }
 
-sub XChangeWindowAttributes (Display $var0, Window $var1, long $var2, XSetWindowAttributes $var3)
+sub XChangeWindowAttributes (
+  Display              $var0,
+  Window               $var1,
+  long                 $var2,
+  XSetWindowAttributes $var3
+)
   returns gint
   is native(x11)
   is export
 { * }
 
-sub XCheckIfEvent (Display $(*) (              Display*                 ,                XEvent*                        ,                XPointer                                 ))
-  returns Bool
-  is native(x11)
-  is export
-{ * }
+# sub XCheckIfEvent (Display $(*) (              Display*                 ,                XEvent*                        ,                XPointer                                 ))
+#   returns Bool
+#   is native(x11)
+#   is export
+# { * }
 
 sub XCheckMaskEvent (Display $var0, long $var1, XEvent $var2)
   returns Bool
@@ -211,7 +273,12 @@ sub XCheckTypedEvent (Display $var0, gint $var1, XEvent $var2)
   is export
 { * }
 
-sub XCheckTypedWindowEvent (Display $var0, Window $var1, gint $var2, XEvent $var3)
+sub XCheckTypedWindowEvent (
+  Display $var0,
+  Window  $var1,
+  gint    $var2,
+  XEvent  $var3
+)
   returns Bool
   is native(x11)
   is export
@@ -241,7 +308,15 @@ sub XCirculateSubwindowsUp (Display $var0, Window $var1)
   is export
 { * }
 
-sub XClearArea (Display $var0, Window $var1, gint $var2, gint $var3, gint $var4, gint $var5, Bool $var6)
+sub XClearArea (
+  Display $var0,
+  Window  $var1,
+  gint    $var2,
+  gint    $var3,
+  gint    $var4,
+  gint    $var5,
+  Bool    $var6
+)
   returns gint
   is native(x11)
   is export
@@ -271,7 +346,12 @@ sub XCloseOM (XOM $var0)
   is export
 { * }
 
-sub XConfigureWindow (Display $var0, Window $var1, gint $var2, XWindowChanges $var3)
+sub XConfigureWindow (
+  Display        $var0,
+  Window         $var1,
+  gint           $var2,
+  XWindowChanges $var3
+)
   returns gint
   is native(x11)
   is export
@@ -295,13 +375,31 @@ sub XContextualDrawing (XFontSet $var0)
   is export
 { * }
 
-sub XConvertSelection (Display $var0, Atom $var1, Atom $var2, Atom $var3, Window $var4, Time $var5)
+sub XConvertSelection (
+  Display $var0,
+  Atom    $var1,
+  Atom    $var2,
+  Atom    $var3,
+  Window  $var4,
+  Time    $var5
+)
   returns gint
   is native(x11)
   is export
 { * }
 
-sub XCopyArea (Display $var0, Drawable $var1, Drawable $var2, GC $var3, gint $var4, gint $var5, gint $var6, gint $var7, gint $var8, gint $var9)
+sub XCopyArea (
+  Display  $var0,
+  Drawable $var1,
+  Drawable $var2,
+  GC       $var3,
+  gint     $var4,
+  gint     $var5,
+  gint     $var6,
+  gint     $var7,
+  gint     $var8,
+  gint     $var9
+)
   returns gint
   is native(x11)
   is export
@@ -319,13 +417,31 @@ sub XCopyGC (Display $var0, GC $var1, long $var2, GC $var3)
   is export
 { * }
 
-sub XCopyPlane (Display $var0, Drawable $var1, Drawable $var2, GC $var3, gint $var4, gint $var5, gint $var6, gint $var7, gint $var8, gint $var9, long $var10)
+sub XCopyPlane (
+  Display  $var0,
+  Drawable $var1,
+  Drawable $var2,
+  GC       $var3,
+  gint     $var4,
+  gint     $var5,
+  gint     $var6,
+  gint     $var7,
+  gint     $var8,
+  gint     $var9,
+  long     $var10
+)
   returns gint
   is native(x11)
   is export
 { * }
 
-sub XCreateBitmapFromData (Display $var0, Drawable $var1, Str $var2, gint $var3, gint $var4)
+sub XCreateBitmapFromData (D
+  Display   $var0,
+  Drawable $var1,
+  Str      $var2,
+  gint     $var3,
+  gint     $var4
+)
   returns Pixmap
   is native(x11)
   is export
@@ -343,7 +459,13 @@ sub XCreateFontCursor (Display $var0, gint $var1)
   is export
 { * }
 
-sub XCreateFontSet (Display $var0, Str $var1, Str $var2, gint $var3 is rw, Str $var4)
+sub XCreateFontSet (
+  Display $var0,
+  Str     $var1,
+  Str     $var2,
+  gint    $var3 is rw,
+  Str     $var4
+)
   returns XFontSet
   is native(x11)
   is export
@@ -355,17 +477,25 @@ sub XCreateGC (Display $var0, Drawable $var1, long $var2, XGCValues $var3)
   is export
 { * }
 
-sub XCreateGlyphCursor (Display $var0, Font $var1, Font $var2, gint $var3, gint $var4, XColor $var5, XColor $var6)
+sub XCreateGlyphCursor (
+  Display $var0,
+  Font    $var1,
+  Font    $var2,
+  gint    $var3,
+  gint    $var4,
+  XColor  $var5,
+  XColor  $var6
+)
   returns Cursor
   is native(x11)
   is export
 { * }
 
-sub XCreateIC (XIM $var0,  $var1, ...)
-  returns XIC
-  is native(x11)
-  is export
-{ * }
+# sub XCreateIC (XIM $var0,  $var1, ...)
+#   returns XIC
+#   is native(x11)
+#   is export
+# { * }
 
 sub XCreateImage (Display $var0, Visual $var1, gint $var2, gint $var3, gint $var4, Str $var5, gint $var6, gint $var7, gint $var8, gint $var9)
   returns XImage
