@@ -2,6 +2,20 @@ use v6.c;
 
 unit package XLib::Raw::Definitions;
 
+our $DEBUG is export;
+
+constant CARD8                        is export :=  uint8;
+constant CARD16                       is export := uint16;
+constant CARD32                       is export := uint32;
+constant CARD64                       is export := uint64;
+
+constant BITS16                       is export := CARD16;
+constant BITS32                       is export := CARD32;
+
+constant BOOL                         is export :=  CARD8;
+constant BYTE                         is export :=  CARD8;
+
+
 constant x11                          is export = 'x11',v6;
 
 constant X_PROTOCOL                   is export = 11;
@@ -711,3 +725,7 @@ constant X_GetPointerMapping              is export = 117;
 constant X_SetModifierMapping             is export = 118;
 constant X_GetModifierMapping             is export = 119;
 constant X_NoOperation                    is export = 127;
+
+INIT {
+  $DEBUG = True if %*ENV<P6_X11_DEBUG>;
+}
