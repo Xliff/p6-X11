@@ -7,7 +7,76 @@ use X11::Raw::Enums;
 
 unit package X11::Raw::Structs;
 
-class ATranslationData is repr<CStruct> is export { ... }
+class TranslationData       is repr<CStruct> is export { ... } # L2306
+class ATranslationData      is repr<CStruct> is export { ... } # L13
+class TMComplexBindProcsRec is repr<CStruct> is export { ... } # L2039
+class XtAppContext          is repr<CStruct> is export { ... } # L?
+class XtActionHookProc      is repr<CStruct> is export { ... } # L?
+class XtPointer             is repr<CStruct> is export { ... } # L?
+
+class TMTypeMatchRec        is repr<CStruct> is export { ... } # L48
+class TMModifierMatchRec    is repr<CStruct> is export { ... } # L42
+
+constant TMTypeMatch     is export := TMTypeMatchRec;
+constant TMModifierMatch is export := TMModifierMatchRec;
+
+#| TMTypeMatch, TMModifierMatch, TMEventPtr --> Nil
+constant MatchProc         is export  := Pointer;
+
+#| Widgert, XEvent, String*, Cardinal* --> Nil
+constant XtActionProc      is export  := Pointer;
+constant XtBoundActions    is export  := CArray[XtActionProc];
+
+#| & (Pointer --> Nil)
+constant XtBlockHookProc   is export  := Pointer;
+
+#| Display*, XtKeyCode, Modifiers, Modifiers*, KeySym*
+constant XtKeyProc         is export  := Pointer;
+
+#| Display*, KeySym, KeySym*, KeySym*
+constant XtCaseProc        is export  := Pointer;
+
+#| ?
+constant XtGeometryHandler is export := Pointer;
+
+#| ?
+constant XtWidgetProc      is export := Pointer;
+
+class TMLongCard            is repr<CStruct> is export { ... } # L?
+class LateBindingsPtr       is repr<CStruct> is export { ... } # L?
+
+class EventRec is repr<CStruct> is export {
+	has TMLongCard      $!modifiers    ;
+	has TMLongCard      $!modifierMask ;
+	has LateBindingsPtr $!lateModifiers;
+	has TMLongCard      $!eventType    ;
+	has TMLongCard      $!eventCode    ;
+	has TMLongCard      $!eventCodeMask;
+	has MatchProc       $!matchEvent   ;
+	has Boolean         $!standard     ;
+}
+constant Event is export := EventRec;
+
+class XEvent is repr<CStruct> is export { ... }
+
+class TMEventRec is repr<CStruct> is export {
+  has XEvent $!xev;
+  HAS Event  $!event;
+}
+
+class TMModifierMatchRec {
+	has TMLongCard      $!modifiers    ;
+	has TMLongCard      $!modifierMask ;
+	has LateBindingsPtr $!lateModifiers;
+	has Boolean         $!standard     ;
+}
+
+class TMTypeMatchRec {
+	has TMLongCard $!eventType    ;
+	has TMLongCard $!eventCode    ;
+	has TMLongCard $!eventCodeMask;
+	has MatchProc  $!matchEvent   ;
+}
 
 class ATranslationData {
 	has Str                   $!hasBindings;
@@ -18,165 +87,176 @@ class ATranslationData {
 }
 
 class ActionHookRec is repr<CStruct> is export {
-	has _ActionHookRec   $!next   ;
+	has ActionHookRec    $!next   ;
 	has XtAppContext     $!app    ;
 	has XtActionHookProc $!proc   ;
 	has XtPointer        $!closure;
 }
 
 class ActionsRec is repr<CStruct> is export {
-	has int       $!idx       ;
-	has String    $!params    ;
-	has Cardinal  $!num_params;
-	has ActionPtr $!next      ;
+	has int        $!idx       ;
+	has String     $!params    ;
+	has Cardinal   $!num_params;
+	has ActionsRec $!next      ;
 }
+constant Action is export := ActionsRec;
 
 class AppleWMAttachTransient is repr<CStruct> is export {
-	has CARD8  $!reqType  ;
-	has CARD8  $!wmReqType;
-	has CARD16 $!length   ;
-	has CARD32 $!child    ;
-	has CARD32 $!parent   ;
+	has CARD8  $.reqType      is rw;
+	has CARD8  $.wmReqType    is rw;
+	has CARD16 $.length       is rw;
+	has CARD32 $.child        is rw;
+	has CARD32 $.parent       is rw;
 }
 
 class AppleWMDisableUpdate is repr<CStruct> is export {
-	has CARD8  $!reqType  ;
-	has CARD8  $!wmReqType;
-	has CARD16 $!length   ;
-	has CARD32 $!screen   ;
+	has CARD8  $.reqType      is rw;
+	has CARD8  $.wmReqType    is rw;
+	has CARD16 $.length       is rw;
+	has CARD32 $.screen       is rw;
 }
 
 class AppleWMFrameDraw is repr<CStruct> is export {
-	has CARD8  $!reqType     ;
-	has CARD8  $!wmReqType   ;
-	has CARD16 $!length      ;
-	has CARD32 $!screen      ;
-	has CARD32 $!window      ;
-	has CARD16 $!frame_class ;
-	has CARD16 $!frame_attr  ;
-	has CARD16 $!ix          ;
-	has CARD16 $!iy          ;
-	has CARD16 $!iw          ;
-	has CARD16 $!ih          ;
-	has CARD16 $!ox          ;
-	has CARD16 $!oy          ;
-	has CARD16 $!ow          ;
-	has CARD16 $!oh          ;
-	has CARD32 $!title_length;
+	has CARD8  $.reqType      is rw;
+	has CARD8  $.wmReqType    is rw;
+	has CARD16 $.length       is rw;
+	has CARD32 $.screen       is rw;
+	has CARD32 $.window       is rw;
+	has CARD16 $.frame_class  is rw;
+	has CARD16 $.frame_attr   is rw;
+	has CARD16 $.ix           is rw;
+	has CARD16 $.iy           is rw;
+	has CARD16 $.iw           is rw;
+	has CARD16 $.ih           is rw;
+	has CARD16 $.ox           is rw;
+	has CARD16 $.oy           is rw;
+	has CARD16 $.ow           is rw;
+	has CARD16 $.oh           is rw;
+	has CARD32 $.title_length is rw;
 }
 
 class AppleWMFrameGetRect is repr<CStruct> is export {
-	has CARD8  $!reqType    ;
-	has CARD8  $!wmReqType  ;
-	has CARD16 $!length     ;
-	has CARD16 $!frame_class;
-	has CARD16 $!frame_rect ;
-	has CARD16 $!ix         ;
-	has CARD16 $!iy         ;
-	has CARD16 $!iw         ;
-	has CARD16 $!ih         ;
-	has CARD16 $!ox         ;
-	has CARD16 $!oy         ;
-	has CARD16 $!ow         ;
-	has CARD16 $!oh         ;
+	has CARD8  $.reqType     is rw;
+	has CARD8  $.wmReqType   is rw;
+	has CARD16 $.length      is rw;
+	has CARD16 $.frame_class is rw;
+	has CARD16 $.frame_rect  is rw;
+	has CARD16 $.ix          is rw;
+	has CARD16 $.iy          is rw;
+	has CARD16 $.iw          is rw;
+	has CARD16 $.ih          is rw;
+	has CARD16 $.ox          is rw;
+	has CARD16 $.oy          is rw;
+	has CARD16 $.ow          is rw;
+	has CARD16 $.oh          is rw;
 }
 
 class AppleWMFrameHitTest is repr<CStruct> is export {
-	has CARD8  $!reqType    ;
-	has CARD8  $!wmReqType  ;
-	has CARD16 $!length     ;
-	has CARD16 $!frame_class;
-	has CARD16 $!pad1       ;
-	has CARD16 $!px         ;
-	has CARD16 $!py         ;
-	has CARD16 $!ix         ;
-	has CARD16 $!iy         ;
-	has CARD16 $!iw         ;
-	has CARD16 $!ih         ;
-	has CARD16 $!ox         ;
-	has CARD16 $!oy         ;
-	has CARD16 $!ow         ;
-	has CARD16 $!oh         ;
+	has CARD8  $.reqType     is rw;
+	has CARD8  $.wmReqType   is rw;
+	has CARD16 $.length      is rw;
+	has CARD16 $.frame_class is rw;
+	has CARD16 $.pad1        is rw;
+	has CARD16 $.px          is rw;
+	has CARD16 $.py          is rw;
+	has CARD16 $.ix          is rw;
+	has CARD16 $.iy          is rw;
+	has CARD16 $.iw          is rw;
+	has CARD16 $.ih          is rw;
+	has CARD16 $.ox          is rw;
+	has CARD16 $.oy          is rw;
+	has CARD16 $.ow          is rw;
+	has CARD16 $.oh          is rw;
 }
 
+class Time is repr<CStruct> is export { ... }
+
 class AppleWMNotify is repr<CStruct> is export {
-	has BYTE   $!type          ;
-	has BYTE   $!kind          ;
-	has CARD16 $!sequenceNumber;
+	has BYTE   $.type           is rw;
+	has BYTE   $.kind           is rw;
+	has CARD16 $.sequenceNumber is rw;
 	has Time   $!time          ;
-	has CARD16 $!pad1          ;
-	has CARD32 $!arg           ;
-	has CARD32 $!pad3          ;
-	has CARD32 $!pad4          ;
-	has CARD32 $!pad5          ;
-	has CARD32 $!pad6          ;
+	has CARD16 $.pad1           is rw;
+	has CARD32 $.arg            is rw;
+	has CARD32 $.pad3           is rw;
+	has CARD32 $.pad4           is rw;
+	has CARD32 $.pad5           is rw;
+	has CARD32 $.pad6           is rw;
 }
 
 class AppleWMQueryVersion is repr<CStruct> is export {
-	has CARD8  $!reqType  ;
-	has CARD8  $!wmReqType;
-	has CARD16 $!length   ;
+	has CARD8  $.reqType   is rw;
+	has CARD8  $.wmReqType is rw;
+	has CARD16 $.length    is rw;
 }
 
 class AppleWMReenableUpdate is repr<CStruct> is export {
-	has CARD8  $!reqType  ;
-	has CARD8  $!wmReqType;
-	has CARD16 $!length   ;
-	has CARD32 $!screen   ;
+	has CARD8  $.reqType   is rw;
+	has CARD8  $.wmReqType is rw;
+	has CARD16 $.length    is rw;
+	has CARD32 $.screen    is rw;
 }
 
 class AppleWMSelectInput is repr<CStruct> is export {
-	has CARD8  $!reqType  ;
-	has CARD8  $!wmReqType;
-	has CARD16 $!length   ;
-	has CARD32 $!mask     ;
+	has CARD8  $.reqType  ;
+	has CARD8  $.wmReqType;
+	has CARD16 $.length   ;
+	has CARD32 $.mask     ;
 }
 
 class AppleWMSendPSN is repr<CStruct> is export {
-	has CARD8  $!reqType  ;
-	has CARD8  $!wmReqType;
-	has CARD16 $!length   ;
-	has CARD32 $!psn_hi   ;
-	has CARD32 $!psn_lo   ;
+	has CARD8  $.reqType   is rw;
+	has CARD8  $.wmReqType is rw;
+	has CARD16 $.length    is rw;
+	has CARD32 $.psn_hi    is rw;
+	has CARD32 $.psn_lo    is rw;
 }
 
 class AppleWMSetCanQuit is repr<CStruct> is export {
-	has CARD8  $!reqType  ;
-	has CARD8  $!wmReqType;
-	has CARD16 $!length   ;
-	has CARD32 $!state    ;
+	has CARD8  $.reqType   is rw;
+	has CARD8  $.wmReqType is rw;
+	has CARD16 $.length    is rw;
+	has CARD32 $.state     is rw;
 }
 
 class AppleWMSetFrontProcess is repr<CStruct> is export {
-	has CARD8  $!reqType  ;
-	has CARD8  $!wmReqType;
-	has CARD16 $!length   ;
+	has CARD8  $.reqType   is rw;
+	has CARD8  $.wmReqType is rw;
+	has CARD16 $.length    is rw;
 }
 
 class AppleWMSetWindowLevel is repr<CStruct> is export {
-	has CARD8  $!reqType  ;
-	has CARD8  $!wmReqType;
-	has CARD16 $!length   ;
-	has CARD32 $!window   ;
-	has CARD32 $!level    ;
+	has CARD8  $.reqType   is rw;
+	has CARD8  $.wmReqType is rw;
+	has CARD16 $.length    is rw;
+	has CARD32 $.window    is rw;
+	has CARD32 $.level     is rw;
 }
 
 class AppleWMSetWindowMenu is repr<CStruct> is export {
-	has CARD8  $!reqType  ;
-	has CARD8  $!wmReqType;
-	has CARD16 $!length   ;
-	has CARD16 $!nitems   ;
-	has CARD16 $!pad1     ;
+	has CARD8  $.reqType   is rw;
+	has CARD8  $.wmReqType is rw;
+	has CARD16 $.length    is rw;
+	has CARD16 $.nitems    is rw;
+	has CARD16 $.pad1      is rw;
 }
 
 class AppleWMSetWindowMenuCheck is repr<CStruct> is export {
-	has CARD8  $!reqType  ;
-	has CARD8  $!wmReqType;
-	has CARD16 $!length   ;
-	has CARD32 $!index    ;
+	has CARD8  $.reqType   is rw;
+	has CARD8  $.wmReqType is rw;
+	has CARD16 $.length    is rw;
+	has CARD32 $.index     is rw;
 }
 
-class ApplicationShellClassRec is repr<CStruct> is export {
+class CoreClassPart             is repr<CStruct> is export { ... } # L534
+class CompositeClassPart        is repr<CStruct> is export { ... } # L459
+class ShellClassPart            is repr<CStruct> is export { ... }
+class WMShellClassPart          is repr<CStruct> is export { ... }
+class VendorShellClassPart      is repr<CStruct> is export { ... }
+class TopLevelShellClassPart    is repr<CStruct> is export { ... }
+class ApplicationShellClassPart is repr<CStruct> is export { ... }
+
+class ApplicationShellClassRec  is repr<CStruct> is export {
 	has CoreClassPart             $!core_class             ;
 	has CompositeClassPart        $!composite_class        ;
 	has ShellClassPart            $!shell_class            ;
@@ -186,6 +266,11 @@ class ApplicationShellClassRec is repr<CStruct> is export {
 	has ApplicationShellClassPart $!application_shell_class;
 }
 
+class SimpleClassPart    is repr<CStruct> is export { ... }
+class TextClassPart      is repr<CStruct> is export { ... }
+class AsciiClassPart     is repr<CStruct> is export { ... }
+class AsciiDiskClassPart is repr<CStruct> is export { ... }
+
 class AsciiDiskClassRec is repr<CStruct> is export {
 	has CoreClassPart      $!core_class  ;
 	has SimpleClassPart    $!simple_class;
@@ -193,6 +278,12 @@ class AsciiDiskClassRec is repr<CStruct> is export {
 	has AsciiClassPart     $!ascii_class ;
 	has AsciiDiskClassPart $!disk_class  ;
 }
+
+class CorePart      is repr<CStruct> is export { ... } # L571
+class SimplePart    is repr<CStruct> is export { ... }
+class TextPart      is repr<CStruct> is export { ... }
+class AsciiPart     is repr<CStruct> is export { ... }
+class AsciiDiskPart is repr<CStruct> is export { ... }
 
 class AsciiDiskRec is repr<CStruct> is export {
 	has CorePart      $!core      ;
@@ -213,11 +304,18 @@ class AsciiSinkClassPart is repr<CStruct> is export {
 	has XtPointer $!extension;
 }
 
+class ObjectClassPart    is repr<CStruct> is export { ... }
+class TextSinkClassPart  is repr<CStruct> is export { ... }
+
 class AsciiSinkClassRec is repr<CStruct> is export {
 	has ObjectClassPart    $!object_class    ;
 	has TextSinkClassPart  $!text_sink_class ;
 	has AsciiSinkClassPart $!ascii_sink_class;
 }
+
+class ObjectPart    is repr<CStruct> is export { ... }
+class TextSinkPart  is repr<CStruct> is export { ... }
+class AsciiSinkPart is repr<CStruct> is export { ... }
 
 class AsciiSinkRec is repr<CStruct> is export {
 	has ObjectPart    $!object    ;
@@ -229,11 +327,19 @@ class AsciiSrcClassPart is repr<CStruct> is export {
 	has XtPointer $!extension;
 }
 
+class TextSrcClassPart  is repr<CStruct> is export { ... }
+
 class AsciiSrcClassRec is repr<CStruct> is export {
 	has ObjectClassPart   $!object_class   ;
 	has TextSrcClassPart  $!text_src_class ;
 	has AsciiSrcClassPart $!ascii_src_class;
 }
+
+class XawAsciiType     is repr<CStruct> is export { ... }
+class XawAsciiPosition is repr<CStruct> is export { ... }
+class XawTextPosition  is repr<CStruct> is export { ... }
+class XtCallbackList   is repr<CStruct> is export { ... }
+class Piece            is repr<CStruct> is export { ... }
 
 class AsciiSrcPart is repr<CStruct> is export {
 	has Str             $!string             ;
@@ -252,11 +358,15 @@ class AsciiSrcPart is repr<CStruct> is export {
 	has XtPointer       $!pad                ;
 }
 
+class TextSrcPart is repr<CStruct> is export { ... }
+
 class AsciiSrcRec is repr<CStruct> is export {
 	has ObjectPart   $!object   ;
 	has TextSrcPart  $!text_src ;
 	has AsciiSrcPart $!ascii_src;
 }
+
+class AsciiStringClassPart is repr<CStruct> is export { ... }
 
 class AsciiStringClassRec is repr<CStruct> is export {
 	has CoreClassPart        $!core_class  ;
@@ -265,6 +375,8 @@ class AsciiStringClassRec is repr<CStruct> is export {
 	has AsciiClassPart       $!ascii_class ;
 	has AsciiStringClassPart $!string_class;
 }
+
+class AsciiStringPart is repr<CStruct> is export { ... }
 
 class AsciiStringRec is repr<CStruct> is export {
 	has CorePart        $!core     ;
@@ -282,17 +394,22 @@ class AsciiTextClassRec is repr<CStruct> is export {
 }
 
 class BlockHookRec is repr<CStruct> is export {
-	has _BlockHookRec   $!next   ;
+	has BlockHookRec    $!next   ;
 	has XtAppContext    $!app    ;
 	has XtBlockHookProc $!proc   ;
 	has XtPointer       $!closure;
 }
+
+class BoxClassPart is repr<CStruct> is export { ... }
 
 class BoxClassRec is repr<CStruct> is export {
 	has CoreClassPart      $!core_class     ;
 	has CompositeClassPart $!composite_class;
 	has BoxClassPart       $!box_class      ;
 }
+
+class BoxPart       is repr<CStruct> is export { ... }
+class CompositePart is repr<CStruct> is export { ... } # L478
 
 class BoxRec is repr<CStruct> is export {
 	has CorePart      $!core     ;
@@ -304,7 +421,17 @@ class CaseConverterRec is repr<CStruct> is export {
 	has KeySym           $!start;
 	has KeySym           $!stop ;
 	has XtCaseProc       $!proc ;
-	has CaseConverterPtr $!next ;
+	has CaseConverterRec $!next ;
+}
+constant CaseConverterPtr is export := CaseConverterRec;
+
+class xCharInfo is repr<CStruct> is export {
+  has INT16  $.leftSideBearing  is rw;
+  has INT16  $.rightSideBearing is rw;
+  has INT16  $.characterWidth   is rw;
+  has INT16  $.ascent           is rw;
+  has INT16  $.descent          is rw;
+  has CARD16 $.attributes       is rw;
 }
 
 class CharInfo is repr<CStruct> is export {
@@ -316,12 +443,18 @@ class CommandClass is repr<CStruct> is export {
 	has XtPointer $!extension;
 }
 
+class LabelClassPart   is repr<CStruct> is export { ... }
+class CommandClassPart is repr<CStruct> is export { ... }
+
 class CommandClassRec is repr<CStruct> is export {
 	has CoreClassPart    $!core_class   ;
 	has SimpleClassPart  $!simple_class ;
 	has LabelClassPart   $!label_class  ;
 	has CommandClassPart $!command_class;
 }
+
+class LabelPart   is repr<CStruct> is export { ... }
+class CommandPart is repr<CStruct> is export { ... }
 
 class CommandRec is repr<CStruct> is export {
 	has CorePart    $!core   ;
@@ -330,7 +463,7 @@ class CommandRec is repr<CStruct> is export {
 	has CommandPart $!command;
 }
 
-class CompositeClassPart is repr<CStruct> is export {
+class CompositeClassPart {
 	has XtGeometryHandler $!geometry_manager;
 	has XtWidgetProc      $!change_managed  ;
 	has XtWidgetProc      $!insert_child    ;
@@ -343,8 +476,17 @@ class CompositeClassRec is repr<CStruct> is export {
 	has CompositeClassPart $!composite_class;
 }
 
-class CompositePart is repr<CStruct> is export {
-	has WidgetList  $!children       ;
+class WidgetRec is repr<CStruct> is export {
+	has CorePart $!core;
+}
+constant Widget     is export := WidgetRec;
+constant WidgetList is export := Pointer;   #= Widget *
+
+# Widget --> Cardinal
+constant XtOrderProc is export := Pointer;
+
+class CompositePart {
+	has Pointer     $!children       ; # Widget*
 	has Cardinal    $!num_children   ;
 	has Cardinal    $!num_slots      ;
 	has XtOrderProc $!insert_position;
@@ -355,14 +497,24 @@ class CompositeRec is repr<CStruct> is export {
 	has CompositePart $!composite;
 }
 
+class XtResource is repr<CStruct> is export {
+	has String    $!resource_name  ;
+	has String    $!resource_class ;
+	has String    $!resource_type  ;
+	has Cardinal  $!resource_size  ;
+	has Cardinal  $!resource_offset;
+	has String    $!default_type   ;
+	has XtPointer $!default_addr   ;
+}
+
 class ConstraintClassPart is repr<CStruct> is export {
-	has XtResourceList  $!resources      ;
+	has Pointer         $!resources      ; #= XtResource *
 	has Cardinal        $!num_resources  ;
 	has Cardinal        $!constraint_size;
-	has XtInitProc      $!initialize     ;
-	has XtWidgetProc    $!destroy        ;
-	has XtSetValuesFunc $!set_values     ;
-	has XtPointer       $!extension      ;
+	has Pointer         $!initialize     ; #= XtInitProc
+	has Pointer         $!destroy        ; #= XtWidgetProc
+	has Pointer         $!set_values     ; #= XtSetValuesFunc
+	has Pointer         $!extension      ; #= XtPointer
 }
 
 class ConstraintClassRec is repr<CStruct> is export {
@@ -381,42 +533,150 @@ class ConstraintRec is repr<CStruct> is export {
 	has ConstraintPart $!constraint;
 }
 
-class CoreClassPart is repr<CStruct> is export {
+class WidgetClass is repr<CStruct> is export { ... }
+
+class CoreClassPart {
 	has WidgetClass       $!superclass           ;
 	has String            $!class_name           ;
 	has Cardinal          $!widget_size          ;
-	has XtProc            $!class_initialize     ;
-	has XtWidgetClassProc $!class_part_initialize;
+	has Pointer           $!class_initialize     ; #= XtProc
+	has Pointer           $!class_part_initialize; #= XtWidgetClassProc
 	has XtEnum            $!class_inited         ;
-	has XtInitProc        $!initialize           ;
-	has XtArgsProc        $!initialize_hook      ;
-	has XtRealizeProc     $!realize              ;
-	has XtActionList      $!actions              ;
+	has Pointer           $!initialize           ; #= XtInitProc
+	has Pointer           $!initialize_hook      ; #= XtArgsProc
+	has Pointer           $!realize              ; #= XtRealizeProc
+	has Pointer           $!actions              ; #= XtAction *
 	has Cardinal          $!num_actions          ;
-	has XtResourceList    $!resources            ;
+	has Pointer           $!resources            ; #= XtResource *
 	has Cardinal          $!num_resources        ;
 	has XrmClass          $!xrm_class            ;
 	has Boolean           $!compress_motion      ;
 	has XtEnum            $!compress_exposure    ;
 	has Boolean           $!compress_enterleave  ;
 	has Boolean           $!visible_interest     ;
-	has XtWidgetProc      $!destroy              ;
-	has XtWidgetProc      $!resize               ;
-	has XtExposeProc      $!expose               ;
-	has XtSetValuesFunc   $!set_values           ;
-	has XtArgsFunc        $!set_values_hook      ;
-	has XtAlmostProc      $!set_values_almost    ;
-	has XtArgsProc        $!get_values_hook      ;
-	has XtAcceptFocusProc $!accept_focus         ;
+	has Pointer           $!destroy              ; #= XtWidgetProc
+	has Pointer           $!resize               ; #= XtWidgetProc
+	has Pointer           $!expose               ; #= XtExposeProc
+	has Pointer           $!set_values           ; #= XtSetValuesFunc
+	has Pointer           $!set_values_hook      ; #= XtArgsFunc
+	has Pointer           $!set_values_almost    ; #= XtAlmostProc
+	has Pointer           $!get_values_hook      ; #= XtArgsProc
+	has Pointer           $!accept_focus         ; #= XtAcceptFocusProc
 	has XtVersionType     $!version              ;
 	has XtPointer         $!callback_private     ;
 	has String            $!tm_table             ;
-	has XtGeometryHandler $!query_geometry       ;
-	has XtStringProc      $!display_accelerator  ;
+	has Pointer           $!query_geometry       ; #= XtGeometryHandler
+	has Pointer           $!display_accelerator  ; #= XtStringProc
 	has XtPointer         $!extension            ;
 }
 
-class CorePart is repr<CStruct> is export {
+class XtEventRec is repr<CStruct> is export {
+  has XtEventRec     $!next;
+  has EventMask      $.mask               is rw; #  also select_data count for RecExt
+  has Pointer        $!proc;                     #= XtEventHandler
+  has XtPointer      $!closure;
+  has uint           $.select             is rw; #= b:1
+  has uint           $.has_type_specifier is rw; #= b:1
+  has uint           $.async              is rw; #= b:1 - Not used, here for Digital extension?
+}
+constant XtEvent      is export := XtEventRec;
+constant XtEventTable is export := Pointer;      #= XtEventRec *
+
+class XtStateRec is repr<CStruct> is export {
+  has uint64        $.isCycleStart is rw; #= b:1;
+  has uint64        $.isCycleEnd   is rw; #= b:1;
+  has TMShortCard   $.typeIndex;
+  has TMShortCard   $.modIndex;
+  has Action        $.actions;            #= rhs list of actions to perform
+  has XtStateRec    $.nextLevel;
+}
+constant State is export := XtStateRec;
+
+class TMBranchHeadRec is repr<CStruct> is export {
+  has uint        $.isSimple   is rw; #= b:1;
+  has uint        $.hasActions is rw; #= b:1;
+  has uint        $.hasCycles  is rw; #= b:1;
+  has uint        $.more       is rw; #= b:13;
+  has TMShortCard $.typeIndex  is rw;
+  has TMShortCard $.modIndex   is rw;
+}
+constant TMBranchHead is export := TMBranchHeadRec;
+
+class TMSimpleStateTreeRec is repr<CStruct> is export {
+  has uint             $.isSimple              is rw; # b:1;
+  has uint             $.isAccelerator         is rw; # b:1;
+  has uint             $.mappingNotifyInterest is rw; # b:1;
+  has uint             $.refCount              is rw; # b:13;
+  has TMShortCard      $.numBranchHeads        is rw;
+  has TMShortCard      $.numQuarks             is rw; # Nnumber of entries in quarkTbl
+  has TMShortCard      $.unused                is rw; # to ensure same alignment
+  has TMBranchHeadRec  $!branchHeadTbl;
+  has XrmQuark         $!quarkTbl;                    # table of quarkified rhs
+}
+constant TMSimpleStateTree is export := TMSimpleStateTreeRec;
+
+class TMComplexStateTreeRec is repr<CStruct> is export {
+  has uint             $.isSimple              is rw; #= b:1;
+  has uint             $.isAccelerator         is rw; #= b:1;
+  has uint             $.mappingNotifyInterest is rw; #= b:1;
+  has uint             $.refCount              is rw; #= b:13;
+  has TMShortCard      $.numBranchHeads        is rw;
+  has TMShortCard      $.numQuarks             is rw; #= Number of entries in quarkTbl
+  has TMShortCard      $.numComplexBranchHeads is rw;
+  has TMBranchHeadRec  $!branchHeadTbl;
+  has CArray[XrmQuark] $!quarkTbl;                    #= table of quarkified rhs
+  has State            $!complexBranchHeadTbl;
+}
+constant TMComplexStateTree is export := TMComplexStateTreeRec;
+
+class TMParseStateTreeRec is repr<CStruct> is export {
+  has uint             $.isSimple                  is rw; #= b:1;
+  has uint             $.isAccelerator             is rw; #= b:1;
+  has uint             $.mappingNotifyInterest     is rw; #= b:1;
+  has uint             $.isStackQuarks             is rw; #= b:1;
+  has uint             $.isStackBranchHeads        is rw; #= b:1;
+  has uint             $.isStackComplexBranchHeads is rw; #= b:1;
+  has uint             $.unused                    is rw; #= b:10; to ensure correct alignment
+  has TMShortCard      $.numBranchHeads            is rw;
+  has TMShortCard      $.numQuarks                 is rw; #= Number of entries in quarkTbl
+  has TMShortCard      $.numComplexBranchHeads     is rw;
+  has TMBranchHeadRec  $!branchHeadTbl;
+  has CArray[XrmQuark] $!quarkTbl;                                   #- table of quarkified rhs
+  has State            $!complexBranchHeadTbl;
+  has TMShortCard      $.branchHeadTblSize         is rw; #=
+  has TMShortCard      $.quarkTblSize              is rw; #=  total size of quarkTbl
+  has TMShortCard      $.complexBranchHeadTblSize  is rw; #=
+  has State            $!head;
+}
+
+class TMStateTreeRec is repr<CUnion> is export {
+  HAS TMSimpleStateTreeRec  $.simple;
+  HAS TMParseStateTreeRec   $.parse;
+  HAS TMComplexStateTreeRec $.complex;
+}
+constant TMStateTree     is export := TMStateTreeRec;
+constant TMStateTreeList is export := Pointer;        #= TmStateTree *
+
+class TranslationData {
+	has Str              $!hasBindings  ;
+	has Str              $!operation    ;
+	has TMShortCard      $!numStateTrees;
+	has TranslationData  $!composers    ;
+	has EventMask        $!eventMask    ;
+	has TMStateTree      $!stateTreeTbl ;
+}
+constant XtTranslations is export := Pointer;  #= TranslationData *
+
+class XtTMRec is repr<CStruct> is export {
+  has XtTranslations  $!translations;        #= private to Translation Manager
+  has XtBoundActions  $!proc_table;          #= procedure bindings for actions
+  has XtStateRec      $!current_state;       #= Translation Manager state ptr
+  has uint64          $.lastEventTime is rw;
+}
+
+class Screen is repr<CStruct> is export { ... }
+
+class CorePart {
 	has Widget         $!self               ;
 	has WidgetClass    $!widget_class       ;
 	has Widget         $!parent             ;
@@ -450,6 +710,14 @@ class CorePart is repr<CStruct> is export {
 	has Boolean        $!mapped_when_managed;
 }
 
+class FormClassPart is repr<CStruct> is export {
+  has Pointer $.layout;  #= & (FormWidget, uint, uint, Bool --> Boolean);
+}
+
+class DialogClassPart is repr<CStruct> is export {
+  has XtPointer $.extension;
+}
+
 class DialogClassRec is repr<CStruct> is export {
 	has CoreClassPart       $!core_class      ;
 	has CompositeClassPart  $!composite_class ;
@@ -458,10 +726,16 @@ class DialogClassRec is repr<CStruct> is export {
 	has DialogClassPart     $!dialog_class    ;
 }
 
+class FormConstraintsPart is repr<CStruct> is export { ... }
+
+constant DialogConstraintsPart is export := DialogClassPart;
+
 class DialogConstraintsRec is repr<CStruct> is export {
 	has FormConstraintsPart   $!form  ;
 	has DialogConstraintsPart $!dialog;
 }
+
+# cw: ... 7/13/2021
 
 class DialogPart is repr<CStruct> is export {
 	has String    $!label ;
@@ -473,6 +747,18 @@ class DialogPart is repr<CStruct> is export {
 	has XtPointer $!pad   ;
 }
 
+class FormPart is repr<CStruct> is export {
+  has  int        $.default_spacing  is rw; #= default distance between children
+  has  Dimension  $.old_width        is rw; #= reference value for *_virtual
+  has  Dimension  $.old_height       is rw;
+  has  int        $.no_refigure      is rw; #= no re-layout while > 0
+  has  Boolean    $.needs_relayout   is rw; #= next time no_refigure == 0
+  has  Boolean    $.resize_in_layout is rw; #= should layout() do geom request?
+  has  Dimension  $.preferred_width  is rw; #= cached from layout
+  has  Dimension  $.preferred_height is rw; #= cached from layout
+  has  Boolean    $.resize_is_no_op  is rw; #= Causes resize to take not action
+}
+
 class DialogRec is repr<CStruct> is export {
 	has CorePart       $!core      ;
 	has CompositePart  $!composite ;
@@ -481,58 +767,47 @@ class DialogRec is repr<CStruct> is export {
 	has DialogPart     $!dialog    ;
 }
 
-class EventRec is repr<CStruct> is export {
-	has TMLongCard      $!modifiers    ;
-	has TMLongCard      $!modifierMask ;
-	has LateBindingsPtr $!lateModifiers;
-	has TMLongCard      $!eventType    ;
-	has TMLongCard      $!eventCode    ;
-	has TMLongCard      $!eventCodeMask;
-	has MatchProc       $!matchEvent   ;
-	has Boolean         $!standard     ;
-}
-
-class EventSeqRec is repr<CStruct> is export {
-	has Event       $!event  ;
-	has StatePtr    $!state  ;
-	has EventSeqPtr $!next   ;
-	has ActionPtr   $!actions;
+class EventSeq is repr<CStruct> is export {
+	has Event    $!event  ;
+	has State    $!state  ;
+	has EventSeq $!next   ;
+	has Action   $!actions;
 }
 
 class ExtensionSelectorRec is repr<CStruct> is export {
-	has XtExtensionSelectProc $!proc       ;
-	has int                   $!min        ;
-	has int                   $!max        ;
-	has XtPointer             $!client_data;
+	has Pointer    $!proc       ; #= XtExtensionSelectProc
+	has int        $!min        ;
+	has int        $!max        ;
+	has XtPointer  $!client_data;
 }
 
 class ExtentInfo is repr<CStruct> is export {
-	has DrawDirection $!drawDirection ;
-	has int           $!fontAscent    ;
-	has int           $!fontDescent   ;
-	has int           $!overallAscent ;
-	has int           $!overallDescent;
-	has int           $!overallWidth  ;
-	has int           $!overallLeft   ;
-	has int           $!overallRight  ;
+	has DrawDirection $.drawDirection  is rw;
+	has int           $.fontAscent     is rw;
+	has int           $.fontDescent    is rw;
+	has int           $.overallAscent  is rw;
+	has int           $.overallDescent is rw;
+	has int           $.overallWidth   is rw;
+	has int           $.overallLeft    is rw;
+	has int           $.overallRight   is rw;
 }
 
 class FPEFunctions is repr<CStruct> is export {
-	has NameCheckFunc  $!name_check                  ;
-	has InitFpeFunc    $!init_fpe                    ;
-	has ResetFpeFunc   $!reset_fpe                   ;
-	has FreeFpeFunc    $!free_fpe                    ;
-	has OpenFontFunc   $!open_font                   ;
-	has CloseFontFunc  $!close_font                  ;
-	has ListFontsFunc  $!list_fonts                  ;
-	has StartLaFunc    $!start_list_fonts_and_aliases;
-	has NextLaFunc     $!list_next_font_or_alias     ;
-	has StartLfwiFunc  $!start_list_fonts_with_info  ;
-	has NextLfwiFunc   $!list_next_font_with_info    ;
-	has WakeupFpeFunc  $!wakeup_fpe                  ;
-	has ClientDiedFunc $!client_died                 ;
-	has LoadGlyphsFunc $!load_glyphs                 ;
-	has SetPathFunc    $!set_path_hook               ;
+	has Pointer  $!name_check                  ; #= NameCheckFunc
+	has Pointer  $!init_fpe                    ; #= InitFpeFunc
+	has Pointer  $!reset_fpe                   ; #= ResetFpeFunc
+	has Pointer  $!free_fpe                    ; #= FreeFpeFunc
+	has Pointer  $!open_font                   ; #= OpenFontFunc
+	has Pointer  $!close_font                  ; #= CloseFontFunc
+	has Pointer  $!list_fonts                  ; #= ListFontsFunc
+	has Pointer  $!start_list_fonts_and_aliases; #= StartLaFunc
+	has Pointer  $!list_next_font_or_alias     ; #= NextLaFunc
+	has Pointer  $!start_list_fonts_with_info  ; #= StartLfwiFunc
+	has Pointer  $!list_next_font_with_info    ; #= NextLfwiFunc
+	has Pointer  $!wakeup_fpe                  ; #= WakeupFpeFunc
+	has Pointer  $!client_died                 ; #= ClientDiedFunc
+	has Pointer  $!load_glyphs                 ; #= LoadGlyphsFunc
+	has Pointer  $!set_path_hook               ; #= SetPathFunc
 }
 
 class FSOffset is repr<CStruct> is export {
@@ -551,9 +826,96 @@ class FSPropOffset is repr<CStruct> is export {
 	has Str      $!type ;
 }
 
-class FSQEvent is repr<CStruct> is export {
-	has _FSQEvent $!next ;
-	has FSEvent   $!event;
+class AlternateServer is repr<CStruct> is export {
+  has Boolean $.subset is rw; #= Bool here will be interpreted as the Raku type!!
+  has Str     $.name        ;
+}
+
+
+# cw: ... 7/13/2021
+
+class FSQEvent       is repr<CStruct> is export { ... }
+class XtransConnInfo is repr<CStruct> is export { ... }
+
+class FSExtData is repr<CStruct> is export {
+  has  int       $.number        is rw; #= number returned by FSRegisterExtension
+  has  FSExtData $!next;                #= next item on list of data for structure
+  has  Pointer   $!free_private;        #= & (Str --> int); called to free private storage
+  has  Str       $!private_data;        #= data private to this extension.
+}
+
+class FSExtCodes is repr<CStruct> is export {
+  has  int         $.extension    is rw;   #= extension number
+  has  int         $.major_opcode is rw;   #= major op-code assigned by server
+  has  int         $.first_event  is rw;   #= first event number for the extension
+  has  int         $.first_error  is rw;   #= first error number for the extension
+}
+
+class FSExtent is repr<CStruct> is export {
+  has  FSExtent    $!next;         #= next in list
+  has  FSExtCodes  $!codes;        #= public information, all extension told
+  has  Pointer     $!close_server; #= (FSServer *, FSExtCodes *                            --> int) - routine to call when connection
+  has  Pointer     $!error       ; #= (FSServer *, fsError *,    FSExtCodes *, int *       --> int) - who to call when an error occurs
+  has  Pointer     $!error_string; #= (FSServer *, int,          FSExtCodes *, char *, int --> int) - outine to supply error string
+  has  Str         $!name;
+}
+constant FSExtension is export := FSExtent;
+
+class FSServer is repr<CStruct> is export {
+  has  FSServer        $!next;
+  has  int             $.fd                    is rw;
+  has  int             $.proto_version         is rw;
+  has  Str             $.vendor                is rw;
+  has  int             $.byte_order            is rw;
+  has  int             $.vnumber               is rw;
+  has  int             $.release               is rw;
+  has  int             $.resource_id           is rw;
+  has  FSQEvent        $!head,
+  has  FSQEvent        $!tail;
+  has  int             $.qlen;                 is rw;
+  has  uint64          $.last_request_read     is rw;
+  has  uint64          $.request               is rw;
+  has  Str             $!last_req;
+  has  Str             $!buffer;
+  has  Str             $!bufptr;
+  has  Str             $!bufmax;
+  has  uint            $.max_request_size      is rw;
+  has  Str             $!server_name;
+  has  Str             $!auth_data;
+  has  AlternateServer $!a1lternate_servers;
+  has  int             $.num_alternates;
+  has  FSExtData       $!ext_data;
+  has  FSExtension     $!ext_procs;
+  has  int             $.ext_number;
+  has  Pointer         @.event_vec[132]       is CArray; #=  (FSServer *, FSEvent *, fsEvent * --> Bool);
+  has  Pointer         @.wire_vec[132]        is CArray; #=  (FSServer *, FSEvent *, fsEvent * --> Status);
+  has  Pointer         $!unused_1;                       #= previously scratch_buffer
+  has  uint64          $!unused_2;                       #= previously scratch_length
+  has  Pointer         $!synchandler;                    #= FSSyncHandler;
+  has  uint64          $.flags                is rw;
+  has  XtransConnInfo  $!trans_conn;                     #= transport connection object
+}
+
+class FSAnyEvent is repr<CStruct> is export {
+  has int      $.type       is rw;
+  has uint64   $.serial     is rw;
+  has Boolean  $.send_event is rw; #= Bool will be interpreted as the Raku type!
+  has FSServer $!server;
+}
+
+class FSEvent is repr<CUnion> {
+  has int        $.type   is rw;
+  HAS FSAnyEvent $.fsany;
+}
+
+class FSQEvent {
+	has FSQEvent $!next ;
+	has FSEvent  $!event;
+}
+
+class FSChar2b is repr<CStruct> is export {
+  has uint8 $.high is rw;
+  has uint8 $.low  is rw;
 }
 
 class FSRange is repr<CStruct> is export {
@@ -581,15 +943,29 @@ class FillPolyReq is repr<CStruct> is export {
 	has CARD16   $!pad1     ;
 }
 
-class FontEnc is repr<CStruct> is export {
-	has Str        $!name     ;
-	has Str        $!aliases  ;
-	has int        $!size     ;
-	has int        $!row_size ;
-	has FontMapPtr $!mappings ;
-	has _FontEnc   $!next     ;
-	has int        $!first    ;
-	has int        $!first_col;
+class FontEnc is repr<CStruct> is export { ... }
+
+class FontMap is repr<CStruct> is export {
+  has int     $.type is rw;   #= the type of the mapping
+  has int     $.pid  is rw;
+  has int     $.eid  is rw;   #= the identification of the mapping
+  has Pointer $!recode;       #= (unsigned, void * --> unsigned) - mapping function
+  has Pointer $!name;         #= (unsigned, void * --> Str) - function returning glyph names
+  has Pointer $!client_data;  #= second parameter of the two above
+  has FontMap $!next;         #= link to next element in list
+  has FontEnc $!encoding;
+}
+
+# cw: ... 7/13/2021
+class FontEnc {
+	has Str      $!name     ;
+	has Str      $!aliases  ;
+	has int      $!size     ;
+	has int      $!row_size ;
+	has FontMap  $!mappings ;
+	has FontEnc  $!next     ;
+	has int      $!first    ;
+	has int      $!first_col;
 }
 
 class FontNames is repr<CStruct> is export {
@@ -600,11 +976,11 @@ class FontNames is repr<CStruct> is export {
 }
 
 class FontPathElement is repr<CStruct> is export {
-	has int  $!name_length;
-	has Str  $!name       ;
-	has int  $!type       ;
-	has int  $!refcount   ;
-	has void $!private    ;
+	has int     $!name_length;
+	has Str     $!name       ;
+	has int     $!type       ;
+	has int     $!refcount   ;
+	has Pointer $!private    ;
 }
 
 class FontResolution is repr<CStruct> is export {
@@ -620,7 +996,8 @@ class FormClassRec is repr<CStruct> is export {
 	has FormClassPart       $!form_class      ;
 }
 
-class FormConstraintsPart is repr<CStruct> is export {
+# cw: ... 7/13/2021
+class FormConstraintsPart {
 	has XtEdgeType  $!top            ;
 	has XtEdgeType  $!bottom         ;
 	has XtEdgeType  $!left           ;
@@ -643,20 +1020,6 @@ class FormConstraintsPart is repr<CStruct> is export {
 
 class FormConstraintsRec is repr<CStruct> is export {
 	has FormConstraintsPart $!form;
-}
-
-class FormPart is repr<CStruct> is export {
-	has int            $!default_spacing ;
-	has Dimension      $!old_width       ;
-	has Dimension      $!old_height      ;
-	has int            $!no_refigure     ;
-	has Boolean        $!needs_relayout  ;
-	has Boolean        $!resize_in_layout;
-	has Dimension      $!preferred_width ;
-	has Dimension      $!preferred_height;
-	has Boolean        $!resize_is_no_op ;
-	has XawDisplayList $!display_list    ;
-	has XtPointer      $!pad             ;
 }
 
 class FormRec is repr<CStruct> is export {
@@ -2045,7 +2408,7 @@ class TMConvertRec is repr<CStruct> is export {
 	has XtTranslations $!new;
 }
 
-class TMEventRec is repr<CStruct> is export {
+class TM4 is repr<CStruct> is export {
 	has XEvent $!xev  ;
 	has Event  $!event;
 }
@@ -2080,23 +2443,12 @@ class TMKeyContextRec is repr<CStruct> is export {
 	has TMKeyCache $!keycache ;
 }
 
-class TMModifierMatchRec is repr<CStruct> is export {
-	has TMLongCard      $!modifiers    ;
-	has TMLongCard      $!modifierMask ;
-	has LateBindingsPtr $!lateModifiers;
-	has Boolean         $!standard     ;
-}
 
 class TMSimpleBindProcsRec is repr<CStruct> is export {
 	has XtActionProc $!procs;
 }
 
-class TMTypeMatchRec is repr<CStruct> is export {
-	has TMLongCard $!eventType    ;
-	has TMLongCard $!eventCode    ;
-	has TMLongCard $!eventCodeMask;
-	has MatchProc  $!matchEvent   ;
-}
+
 
 class TemplateClassRec is repr<CStruct> is export {
 	has CoreClassPart     $!core_class    ;
@@ -2302,16 +2654,6 @@ class TransientShellClassRec is repr<CStruct> is export {
 	has TransientShellClassPart $!transient_shell_class;
 }
 
-class TranslationData is repr<CStruct> is export { ... }
-class TranslationData is repr<CStruct> is export {
-	has Str              $!hasBindings  ;
-	has Str              $!operation    ;
-	has TMShortCard      $!numStateTrees;
-	has TranslationData  $!composers    ;
-	has EventMask        $!eventMask    ;
-	has TMStateTree      $!stateTreeTbl ;
-}
-
 class TreeClassPart is repr<CStruct> is export {
 	has XtPointer $!extension;
 }
@@ -2412,10 +2754,6 @@ class WidgetInfo is repr<CStruct> is export {
 	has short  $!num_widgets;
 	has long   $!ids        ;
 	has Widget $!real_widget;
-}
-
-class WidgetRec is repr<CStruct> is export {
-	has CorePart $!core;
 }
 
 class WorkProcRec is repr<CStruct> is export {
@@ -4377,30 +4715,13 @@ class XtPerDisplayInputRec is repr<CStruct> is export {
 	has Widget      $!focusWidget  ;
 }
 
-class XtResource is repr<CStruct> is export {
-	has String    $!resource_name  ;
-	has String    $!resource_class ;
-	has String    $!resource_type  ;
-	has Cardinal  $!resource_size  ;
-	has Cardinal  $!resource_offset;
-	has String    $!default_type   ;
-	has XtPointer $!default_addr   ;
-}
-
-class XtTMRec is repr<CStruct> is export {
-	has XtTranslations $!translations ;
-	has XtBoundActions $!proc_table   ;
-	has _XtStateRec    $!current_state;
-	has long           $!lastEventTime;
-}
-
 class XtransConnFd is repr<CStruct> is export {
 	has _XtransConnFd $!next    ;
 	has int           $!fd      ;
 	has int           $!do_close;
 }
 
-class XtransConnInfo is repr<CStruct> is export {
+class XtransConnInfo {
 	has _Xtransport   $!transptr   ;
 	has int           $!index      ;
 	has Str           $!priv       ;
@@ -6079,3 +6400,23 @@ class xwd_file_header is repr<CStruct> is export {
 	has CARD32 $!window_y        ;
 	has CARD32 $!window_bdrwidth ;
 }
+
+# struct {
+#   XExtData *ext_data;     /* hook for extension to hang data */
+#   struct _XDisplay *display;/* back pointer to display structure */
+#   Window root;            /* Root window id. */
+#   int width, height;      /* width and height of screen */
+#   int mwidth, mheight;    /* width and height of  in millimeters */
+#   int ndepths;            /* number of depths possible */
+#   Depth *depths;          /* list of allowable depths on the screen */
+#   int root_depth;         /* bits per pixel */
+#   Visual *root_visual;    /* root visual */
+#   GC default_gc;          /* GC for the root root visual */
+#   Colormap cmap;          /* default color map */
+#   unsigned long white_pixel;
+#   unsigned long black_pixel;      /* White and Black pixel values */
+#   int max_maps, min_maps; /* max and min color maps */
+#   int backing_store;      /* Never, WhenMapped, Always */
+#   Bool save_unders;
+#   long root_input_mask;   /* initial root input mask */
+# } Screen;
