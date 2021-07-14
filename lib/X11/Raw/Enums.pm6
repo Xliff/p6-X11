@@ -212,6 +212,7 @@ our enum XawAsciiTypeEnum is export <
 >;
 
 constant XawEdgeType is export := CARD32;
+constant XtEdgeType  is export := XawEdgeType;
 our enum XawEdgeTypeEnum is export <
   XawChainTop
   XawChainBottom
