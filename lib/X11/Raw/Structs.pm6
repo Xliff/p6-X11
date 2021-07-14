@@ -534,7 +534,8 @@ class ConstraintRec is repr<CStruct> is export {
 	has ConstraintPart $!constraint;
 }
 
-class WidgetClass is repr<CStruct> is export { ... }
+class WidgetClassRec is repr<CStruct> is export { ... }
+constant WidgetClass is export := WidgetClassRec;
 
 class CoreClassPart {
 	has WidgetClass       $!superclass           ;
@@ -742,6 +743,11 @@ class ListClassPart is repr<CStruct> is export {
   has XtPointer $.extension;
 }
 
+class MenuButtonClassPart is repr<CStruct> is export {
+  has XtPointer $.extension;
+}
+constant MenuButtonClass is export := MenuButtonClassPart;
+
 class DialogClassRec is repr<CStruct> is export {
 	has CoreClassPart       $!core_class      ;
 	has CompositeClassPart  $!composite_class ;
@@ -780,6 +786,16 @@ class FormPart is repr<CStruct> is export {
   has  Dimension  $.preferred_height is rw; #= cached from layout
   has  Boolean    $.resize_is_no_op  is rw; #= Causes resize to take not action
 }
+
+class MenuButtonPart is repr<CStruct> is export {
+  has String    $.menu_name;
+  #has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer $!pad1;
+  has XtPointer $!pad2;
+  has XtPointer $!pad3;
+  has XtPointer $!pad4;
+}
+
 
 class DialogRec is repr<CStruct> is export {
 	has CorePart       $!core      ;
@@ -991,14 +1007,6 @@ class FontNames is repr<CStruct> is export {
 	has int  $!size  ;
 	has int  $!length;
 	has Str  $!names ;
-}
-
-class FontPathElement is repr<CStruct> is export {
-	has int     $!name_length;
-	has Str     $!name       ;
-	has int     $!type       ;
-	has int     $!refcount   ;
-	has Pointer $!private    ;
 }
 
 class FontResolution is repr<CStruct> is export {
@@ -1487,60 +1495,193 @@ class ListClassRec is repr<CStruct> is export {
 	has ListClassPart   $!list_class  ;
 }
 
-# cw: ... 7/13/2021
-class struct ListPart is repr<CStruct> is export{
-    Pixel foreground;
-    Dimension internal_width;           /* if not 3d, user sets directly */
-    Dimension internal_height;
-    Dimension column_space;             /* half of *_space is add on
-                                           top/bot/left of */
-    Dimension row_space;                /* each item's text bounding box
-                                           half added to longest for right */
-    int default_cols;
-    Boolean force_cols;
-    Boolean paste;
-    Boolean vertical_cols;
-    int longest;                        /* in pixels */
-    int nitems;
-    XFontStruct *font;
-    XFontSet fontset;                   /* Sheeran, Omron KK, 93/03/05 */
-    String *list;                       /* for i18n, always in multibyte
-                                           format */
-    XtCallbackList callback;
+class XFontProp is repr<CStruct> is export {
+  has Atom   $!name;
+  has uint64 $.card32 is rw;
+}
 
-    /* private */
-    int is_highlighted;                 /* set to the item currently
-                                           highlighted */
-    int highlight;                      /* set to the item that should be
-                                           highlighted */
-    int col_width;                      /* width of each column */
-    int row_height;                     /* height of each row */
-    int nrows;                          /* number of rows in the list */
-    int ncols;                          /* number of columns in the list */
-    GC normgc;
-    GC revgc;
-    GC graygc;
-    int freedoms;                       /* flags for resizing height
-                                           and width */
-    int selected;
-    Boolean show_current;
-    has uint8 @.pad1[
-      ( nativesizeof(XtPointer) - nativesizeof(Boolean) ) +
-      ( nativesizeof(XtPointer) - nativesizeof(int)     )
-    ] is CArray;
-    #XtPointer pad2[2];  /* for future use and keep binary compatability */
-    XtPointer  $!pad2_1;
-    XtPointer  $!pad2_2;
+class FontPropRec is repr<CStruct>is export  {
+  has int64 $.name is rw;
+  has int64 $.value is rw; #= assumes ATOM is not larger than INT32
+}
+constant FontProp is export := FontPropRec;
+
+class XExtData is repr<CStruct> is export {
+  has int      $.number;       #= number returned by XRegisterExtension */
+  has XExtData $!next;         #= next item on list of data for structure */
+  has Pointer  $!free_private; #= fp:(XExtData --> int)
+  has XPointer $!private_data; #= data private to this extension.
+}
+
+class FontInfoRec is repr<CStruct> is export {
+  has uint16      $.firstCol        is rw;
+  has uint16      $.lastCol         is rw;
+  has uint16      $.firstRow        is rw;
+  has uint16      $.lastRow         is rw;
+  has uint16      $.defaultCh       is rw;
+  has uint        $.noOverlap       is rw; #= b:1;
+  has uint        $.terminalFont    is rw; #= b:1;
+  has uint        $.constantMetrics is rw; #= b:1;
+  has uint        $.constantWidth   is rw; #= b:1;
+  has uint        $.inkInside       is rw; #= b:1;
+  has uint        $.inkMetrics      is rw; #= b:1;
+  has uint        $.allExist        is rw; #= b:1;
+  has uint        $.drawDirection   is rw; #= b:2;
+  has uint        $.cachable        is rw; #= b:1;
+  has uint        $.anamorphic      is rw; #= b:1;
+  has short       $.maxOverlap      is rw;
+  has short       $.pad             is rw;
+  has xCharInfo   $!maxbounds;
+  has xCharInfo   $!minbounds;
+  has xCharInfo   $!ink_maxbounds;
+  has xCharInfo   $!ink_minbounds;
+  has short       $.fontAscent      is rw;
+  has short       $.fontDescent     is rw;
+  has int         $.nprops          is rw;
+  has FontProp    $!props;
+  has Str         $!isStringProp;
+}
+constant FontInfo is export := FontInfoRec;
+
+class FontPathElementRec is repr<CStruct> is export {
+  has int     $.name_length is rw;
+  has Str     $!name;
+  has int     $.type        is rw;
+  has int     $.refcount    is rw;
+  has Pointer $!private;
+}
+constant FontPathElement is export := FontPathElementRec;
+
+class FontRec is repr<CStruct> is export {
+    has int             $.refcnt         is rw;
+    HAS FontInfoRec     $!info;
+    has uint8           $.bit            is rw;
+    has uint8           $.byte           is rw;
+    has uint8           $.glyph          is rw;
+    has uint8           $.scan           is rw;
+    has fsBitmapFormat  $.format         is rw;
+    has Pointer         $!get_glyphs;           #= int  (FontPtr         /* font */, unsigned long   /* count */, unsigned char * /* chars */, FontEncoding    /* encoding */, unsigned long * /* count */, CharInfoPtr *   /* glyphs */);
+    has Pointer         $!get_metrics;          #= int  (FontPtr         /* font */, unsigned long   /* count */, unsigned char * /* chars */, FontEncoding    /* encoding */, unsigned long * /* count */, xCharInfo **    /* glyphs */);
+    has Pointer         $!unload_font;          #= void (FontPtr         /* font */);
+    has Pointer         $!unload_glyphs;        #= void (FontPtr         /* font */);
+    has FontPathElement $!fpe;
+    has Pointer         $!svrPrivate;
+    has Pointer         $!fontPrivate;
+    has Pointer         $!fpePrivate;
+    has int             $.maxPrivate     is rw;
+    has CArray[Pointer] $!devPrivates;
+}
+constant Font is export := FontRec;
+
+class XCharStruct is repr<CStruct> is export {
+  has short  $.lbearing   is rw; #= origin to left edge of raster
+  has short  $.rbearing   is rw; #= origin to right edge of raster
+  has short  $.width      is rw; #= advance to next char's origin
+  has short  $.ascent     is rw; #= baseline to top edge of raster
+  has short  $.descent    is rw; #= baseline to bottom edge of raster
+  has ushort $.attributes is rw; #= per char flags (not predefined)
+}
+
+class XFontStruct is repr<CStruct> is export {
+  has XExtData    $!ext_data               ; #= hook for extension to hang data
+  HAS Font        $!fid                    ; #= Font id for this font
+  has uint        $.direction         is rw; #= hint about direction the font is painted
+  has uint        $.min_char_or_byte2 is rw; #= first character
+  has uint        $.max_char_or_byte2 is rw; #= last character
+  has uint        $.min_byte1         is rw; #= first row that exists
+  has uint        $.max_byte1         is rw; #= last row that exists
+  has Boolean     $.all_chars_exist   is rw; #= Was Bool - flag if all characters have non-zero size
+  has uint        $.default_char      is rw; #= char to print for undefined character
+  has int         $.n_properties      is rw; #= how many properties there are
+  has XFontProp   $!properties             ; #= pointer to array of additional properties
+  HAS XCharStruct $!min_bounds             ; #= minimum bounds over all existing char
+  HAS XCharStruct $!max_bounds             ; #= maximum bounds over all existing char
+  HAS XCharStruct $!per_char               ; #= first_char to last_char information
+  has int         $.ascent            is rw; #= log. extent above baseline for spacing
+  has int         $.descent           is rw; #= log. descent below baseline for spacing
+}
+
+class XGCValues is repr<CStruct> is export {
+  has int       $.function           is rw;  #= logical operation
+  has ulong     $.plane_mask         is rw;  #= plane mask
+  has ulong     $.foreground         is rw;  #= foreground pixel
+  has ulong     $.background         is rw;  #= background pixel
+  has int       $.line_width         is rw;  #= line width
+  has int       $.line_style         is rw;  #= LineSolid, LineOnOffDash, LineDoubleDash
+  has int       $.cap_style          is rw;  #= CapNotLast, CapButt,CapRound, CapProjecting
+  has int       $.join_style         is rw;  #= JoinMiter, JoinRound, JoinBevel
+  has int       $.fill_style         is rw;  #= FillSolid, FillTiled, FillStippled, FillOpaeueStippled
+  has int       $.fill_rule          is rw;  #= EvenOddRule, WindingRule
+  has int       $.arc_mode           is rw;  #= ArcChord, ArcPieSlice
+  has Pixmap    $.tile               is rw;  #= tile pixmap for tiling operations
+  has Pixmap    $.stipple            is rw;  #= stipple 1 plane pixmap for stipping
+  has int       $.ts_x_origin        is rw;  #= offset for tile or stipple operations
+  has int       $.ts_y_origin        is rw;
+  has Font      $!font;                      #= default text font for text operations
+  has int       $.subwindow_mode     is rw;  #= ClipByChildren, IncludeInferiors
+  has Boolean   $.graphics_exposures is rw;  #= ot:Bool - boolean, should exposures be generated
+  has int       $.clip_x_origin      is rw;  #= origin for clipping
+  has int       $.clip_y_origin      is rw;
+  has Pixmap    $.clip_mask;                 #= bitmap clipping; other calls for rects
+  has int       $.dash_offset;               #= patterned/dashed line information
+  has uint8     $.dashes;                    #= ot:char
+}
+
+class XGC is repr<CStruct> is export {
+  has XExtData  $.ext_data;        #= hook for extension to hang data
+  has GContext  $.gid       is rw; #= protocol ID for graphics context
+  has Boolean   $!rects ;          #= boolean: TRUE if clipmask is list of rectangles
+  has Boolean   $!dashes;          #= boolean: TRUE if dash-list is really a list
+  has ulong     $!dirty ;          #= cache dirty bits
+  has XGCValues $!values;          #= shadow structure of values
+}
+constant GC is export := XGC;
+
+class ListPart is repr<CStruct> is export {
+  has Pixel          $.foreground        is rw;
+  has Dimension      $.internal_width    is rw; #= if not 3d, user sets directly */
+  has Dimension      $.internal_height   is rw;
+  has Dimension      $.column_space      is rw; #= half of *_space is add on top/bot/left of */
+  has Dimension      $.row_space         is rw; #= each item's text bounding box half added to longest for right */
+  has int            $.default_cols      is rw;
+  has Boolean        $.force_cols        is rw;
+  has Boolean        $.paste             is rw;
+  has Boolean        $.vertical_cols     is rw;
+  has int            $.longest           is rw; #= in pixels */
+  has int            $.nitems            is rw;
+  has XFontStruct    $!font;
+  has XFontSet       $!fontset;                 #= Sheeran, Omron KK, 93/03/05 */
+  has String         $!list;                    #= for i18n, always in multibyte format */
+  has XtCallbackList $!callback;
+
+  # Private
+  has int            $.is_highlighted    is rw; #= set to the item currently highlighted */
+  has int            $.highlight         is rw; #= set to the item that should be highlighted */
+  has int            $.col_width         is rw; #= width of each column */
+  has int            $.row_height        is rw; #= height of each row */
+  has int            $.nrows             is rw; #= number of rows in the list */
+  has int            $.ncols             is rw; #= number of columns in the list */
+  has GC             $!normgc;
+  has GC             $!revgc;
+  has GC             $!graygc;
+  has int            $.freedoms          is rw; #= flags for resizing height and width */
+  has int            $.selected          is rw;
+  has Boolean        $.show_current      is rw;
+
+  has uint8 @.pad1[
+    ( nativesizeof(XtPointer) - nativesizeof(Boolean) ) +
+    ( nativesizeof(XtPointer) - nativesizeof(int)     )
+  ] is CArray;
+
+  #has XtPointer pad2[2];  /* for future use and keep binary compatability */
+  has XtPointer  $!pad2_1;
+  has XtPointer  $!pad2_2;
 }
 
 class ListRec is repr<CStruct> is export {
 	has CorePart   $!core  ;
 	has SimplePart $!simple;
 	has ListPart   $!list  ;
-}
-
-class MenuButtonClass is repr<CStruct> is export {
-	has XtPointer $!extension;
 }
 
 class MenuButtonClassRec is repr<CStruct> is export {
@@ -1558,405 +1699,440 @@ class MenuButtonRec is repr<CStruct> is export {
 	has CommandPart    $!command    ;
 	has MenuButtonPart $!menu_button;
 }
-#
-# class ModToKeysymTable is repr<CStruct> is export {
-# 	has Modifiers $!mask ;
-# 	has int       $!count;
-# 	has int       $!idx  ;
-# }
-#
-# class MultiSinkClassPart is repr<CStruct> is export {
-# 	has XtPointer $!extension;
-# }
-#
-# class MultiSinkClassRec is repr<CStruct> is export {
-# 	has ObjectClassPart    $!object_class    ;
-# 	has TextSinkClassPart  $!text_sink_class ;
-# 	has MultiSinkClassPart $!multi_sink_class;
-# }
-#
-# class MultiSinkRec is repr<CStruct> is export {
-# 	has ObjectPart    $!object    ;
-# 	has TextSinkPart  $!text_sink ;
-# 	has MultiSinkPart $!multi_sink;
-# }
-#
-# class MultiSrcClassPart is repr<CStruct> is export {
-# 	has XtPointer $!extension;
-# }
-#
-# class MultiSrcClassRec is repr<CStruct> is export {
-# 	has ObjectClassPart   $!object_class   ;
-# 	has TextSrcClassPart  $!text_src_class ;
-# 	has MultiSrcClassPart $!multi_src_class;
-# }
-#
-# class MultiSrcPart is repr<CStruct> is export {
-# 	has XIC             $!ic                 ;
-# 	has XtPointer       $!string             ;
-# 	has XawAsciiType    $!type               ;
-# 	has XawTextPosition $!piece_size         ;
-# 	has Boolean         $!data_compression   ;
-# 	has XtCallbackList  $!callback           ;
-# 	has Boolean         $!use_string_in_place;
-# 	has int             $!multi_length       ;
-# 	has Boolean         $!is_tempfile        ;
-# 	has Boolean         $!changes            ;
-# 	has Boolean         $!allocated_string   ;
-# 	has XawTextPosition $!length             ;
-# 	has MultiPiece      $!first_piece        ;
-# 	has XtPointer       $!pad                ;
-# }
-#
-# class MultiSrcRec is repr<CStruct> is export {
-# 	has ObjectPart   $!object   ;
-# 	has TextSrcPart  $!text_src ;
-# 	has MultiSrcPart $!multi_src;
-# }
-#
-# class ObjectClassPart is repr<CStruct> is export {
-# 	has WidgetClass       $!superclass           ;
-# 	has String            $!class_name           ;
-# 	has Cardinal          $!widget_size          ;
-# 	has XtProc            $!class_initialize     ;
-# 	has XtWidgetClassProc $!class_part_initialize;
-# 	has XtEnum            $!class_inited         ;
-# 	has XtInitProc        $!initialize           ;
-# 	has XtArgsProc        $!initialize_hook      ;
-# 	has XtProc            $!obj1                 ;
-# 	has XtPointer         $!obj2                 ;
-# 	has Cardinal          $!obj3                 ;
-# 	has XtResourceList    $!resources            ;
-# 	has Cardinal          $!num_resources        ;
-# 	has XrmClass          $!xrm_class            ;
-# 	has Boolean           $!obj4                 ;
-# 	has XtEnum            $!obj5                 ;
-# 	has Boolean           $!obj6                 ;
-# 	has Boolean           $!obj7                 ;
-# 	has XtWidgetProc      $!destroy              ;
-# 	has XtProc            $!obj8                 ;
-# 	has XtProc            $!obj9                 ;
-# 	has XtSetValuesFunc   $!set_values           ;
-# 	has XtArgsFunc        $!set_values_hook      ;
-# 	has XtProc            $!obj10                ;
-# 	has XtArgsProc        $!get_values_hook      ;
-# 	has XtProc            $!obj11                ;
-# 	has XtVersionType     $!version              ;
-# 	has XtPointer         $!callback_private     ;
-# 	has String            $!obj12                ;
-# 	has XtProc            $!obj13                ;
-# 	has XtProc            $!obj14                ;
-# 	has XtPointer         $!extension            ;
-# }
-#
-# class ObjectClassRec is repr<CStruct> is export {
-# 	has ObjectClassPart $!object_class;
-# }
-#
-# class ObjectPart is repr<CStruct> is export {
-# 	has Widget         $!self             ;
-# 	has WidgetClass    $!widget_class     ;
-# 	has Widget         $!parent           ;
-# 	has XrmName        $!xrm_name         ;
-# 	has Boolean        $!being_destroyed  ;
-# 	has XtCallbackList $!destroy_callbacks;
-# 	has XtPointer      $!constraints      ;
-# }
-#
-# class ObjectRec is repr<CStruct> is export {
-# 	has ObjectPart $!object;
-# }
-#
-# class OverrideShellClassRec is repr<CStruct> is export {
-# 	has CoreClassPart          $!core_class          ;
-# 	has CompositeClassPart     $!composite_class     ;
-# 	has ShellClassPart         $!shell_class         ;
-# 	has OverrideShellClassPart $!override_shell_class;
-# }
-#
-# class PaneStack is repr<CStruct> is export {
-# 	has _PaneStack $!next      ;
-# 	has Pane       $!pane      ;
-# 	has int        $!start_size;
-# }
-#
-# class PanedClassPart is repr<CStruct> is export {
-# 	has XtPointer $!extension;
-# }
-#
-# class PanedClassRec is repr<CStruct> is export {
-# 	has CoreClassPart       $!core_class      ;
-# 	has CompositeClassPart  $!composite_class ;
-# 	has ConstraintClassPart $!constraint_class;
-# 	has PanedClassPart      $!paned_class     ;
-# }
-#
-# class PanedConstraintsPart is repr<CStruct> is export {
-# 	has Dimension $!min              ;
-# 	has Dimension $!max              ;
-# 	has Boolean   $!allow_resize     ;
-# 	has Boolean   $!show_grip        ;
-# 	has Boolean   $!skip_adjust      ;
-# 	has int       $!position         ;
-# 	has Dimension $!preferred_size   ;
-# 	has Boolean   $!resize_to_pref   ;
-# 	has Position  $!delta            ;
-# 	has Position  $!olddelta         ;
-# 	has Boolean   $!paned_adjusted_me;
-# 	has Dimension $!wp_size          ;
-# 	has int       $!size             ;
-# 	has Widget    $!grip             ;
-# }
-#
-# class PanedConstraintsRec is repr<CStruct> is export {
-# 	has PanedConstraintsPart $!paned;
-# }
-#
-# class PanedRec is repr<CStruct> is export {
-# 	has CorePart       $!core      ;
-# 	has CompositePart  $!composite ;
-# 	has ConstraintPart $!constraint;
-# 	has PanedPart      $!paned     ;
-# }
-#
-# class PannerClassRec is repr<CStruct> is export {
-# 	has CoreClassPart   $!core_class  ;
-# 	has SimpleClassPart $!simple_class;
-# 	has PannerClassPart $!panner_class;
-# }
-#
-# class PannerRec is repr<CStruct> is export {
-# 	has CorePart   $!core  ;
-# 	has SimplePart $!simple;
-# 	has PannerPart $!panner;
-# }
-#
-# class PanoramiXGetScreenCount is repr<CStruct> is export {
-# 	has CARD8  $!reqType         ;
-# 	has CARD8  $!panoramiXReqType;
-# 	has CARD16 $!length          ;
-# 	has CARD32 $!window          ;
-# }
-#
-# class PanoramiXGetScreenSize is repr<CStruct> is export {
-# 	has CARD8  $!reqType         ;
-# 	has CARD8  $!panoramiXReqType;
-# 	has CARD16 $!length          ;
-# 	has CARD32 $!window          ;
-# 	has CARD32 $!screen          ;
-# }
-#
-# class PanoramiXGetState is repr<CStruct> is export {
-# 	has CARD8  $!reqType         ;
-# 	has CARD8  $!panoramiXReqType;
-# 	has CARD16 $!length          ;
-# 	has CARD32 $!window          ;
-# }
-#
-# class PanoramiXQueryVersion is repr<CStruct> is export {
-# 	has CARD8  $!reqType         ;
-# 	has CARD8  $!panoramiXReqType;
-# 	has CARD16 $!length          ;
-# 	has CARD8  $!clientMajor     ;
-# 	has CARD8  $!clientMinor     ;
-# 	has CARD16 $!unused          ;
-# }
-#
-# class ParamInfoRec is repr<CStruct> is export {
-# 	has int   $!count    ;
-# 	has Param $!paramlist;
-# }
-#
-# class ParamRec is repr<CStruct> is export {
-# 	has Atom $!selection;
-# 	has Atom $!param    ;
-# }
-#
-# class PerDisplayTable is repr<CStruct> is export {
-# 	has Display            $!dpy   ;
-# 	has XtPerDisplayStruct $!perDpy;
-# 	has _PerDisplayTable   $!next  ;
-# }
-#
-# class PortholeClassRec is repr<CStruct> is export {
-# 	has CoreClassPart      $!core_class     ;
-# 	has CompositeClassPart $!composite_class;
-# 	has PortholeClassPart  $!porthole_class ;
-# }
-#
-# class PortholeRec is repr<CStruct> is export {
-# 	has CorePart      $!core     ;
-# 	has CompositePart $!composite;
-# 	has PortholePart  $!porthole ;
-# }
-#
-# class ProcessContextRec is repr<CStruct> is export {
-# 	has XtAppContext   $!defaultAppContext   ;
-# 	has XtAppContext   $!appContextList      ;
-# 	has ConverterTable $!globalConverterTable;
-# 	has LangProcRec    $!globalLangProcRec   ;
-# }
-#
-# class PutImageReq is repr<CStruct> is export {
-# 	has CARD8    $!reqType ;
-# 	has CARD8    $!format  ;
-# 	has CARD16   $!length  ;
-# 	has Drawable $!drawable;
-# 	has GContext $!gc      ;
-# 	has CARD16   $!width   ;
-# 	has CARD16   $!height  ;
-# 	has INT16    $!dstX    ;
-# 	has INT16    $!dstY    ;
-# 	has CARD8    $!leftPad ;
-# 	has CARD8    $!depth   ;
-# 	has CARD16   $!pad     ;
-# }
-#
-# class QueryAdaptorsReply is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has CARD8  $!padb1         ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has CARD16 $!num_adaptors  ;
-# 	has CARD16 $!pads3         ;
-# 	has CARD32 $!padl4         ;
-# 	has CARD32 $!padl5         ;
-# 	has CARD32 $!padl6         ;
-# 	has CARD32 $!padl7         ;
-# 	has CARD32 $!padl8         ;
-# }
-#
-# class QueryEncodingsReply is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has CARD8  $!padb1         ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has CARD16 $!num_encodings ;
-# 	has CARD16 $!padl3         ;
-# 	has CARD32 $!padl4         ;
-# 	has CARD32 $!padl5         ;
-# 	has CARD32 $!padl6         ;
-# 	has CARD32 $!padl7         ;
-# 	has CARD32 $!padl8         ;
-# }
-#
-# class QueryExtensionReply is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has CARD8  $!padb1         ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has CARD16 $!version       ;
-# 	has CARD16 $!revision      ;
-# 	has CARD32 $!padl4         ;
-# 	has CARD32 $!padl5         ;
-# 	has CARD32 $!padl6         ;
-# 	has CARD32 $!padl7         ;
-# 	has CARD32 $!padl8         ;
-# }
-#
-# class QueuedRequestInfoRec is repr<CStruct> is export {
-# 	has int           $!count     ;
-# 	has Atom          $!selections;
-# 	has QueuedRequest $!requests  ;
-# }
-#
-# class QueuedRequestRec is repr<CStruct> is export {
-# 	has Atom                    $!selection  ;
-# 	has Atom                    $!target     ;
-# 	has Atom                    $!param      ;
-# 	has XtSelectionCallbackProc $!callback   ;
-# 	has XtPointer               $!closure    ;
-# 	has Time                    $!time       ;
-# 	has Boolean                 $!incremental;
-# }
-#
-# class RectObjClassPart is repr<CStruct> is export {
-# 	has WidgetClass       $!superclass           ;
-# 	has String            $!class_name           ;
-# 	has Cardinal          $!widget_size          ;
-# 	has XtProc            $!class_initialize     ;
-# 	has XtWidgetClassProc $!class_part_initialize;
-# 	has XtEnum            $!class_inited         ;
-# 	has XtInitProc        $!initialize           ;
-# 	has XtArgsProc        $!initialize_hook      ;
-# 	has XtProc            $!rect1                ;
-# 	has XtPointer         $!rect2                ;
-# 	has Cardinal          $!rect3                ;
-# 	has XtResourceList    $!resources            ;
-# 	has Cardinal          $!num_resources        ;
-# 	has XrmClass          $!xrm_class            ;
-# 	has Boolean           $!rect4                ;
-# 	has XtEnum            $!rect5                ;
-# 	has Boolean           $!rect6                ;
-# 	has Boolean           $!rect7                ;
-# 	has XtWidgetProc      $!destroy              ;
-# 	has XtWidgetProc      $!resize               ;
-# 	has XtExposeProc      $!expose               ;
-# 	has XtSetValuesFunc   $!set_values           ;
-# 	has XtArgsFunc        $!set_values_hook      ;
-# 	has XtAlmostProc      $!set_values_almost    ;
-# 	has XtArgsProc        $!get_values_hook      ;
-# 	has XtProc            $!rect9                ;
-# 	has XtVersionType     $!version              ;
-# 	has XtPointer         $!callback_private     ;
-# 	has String            $!rect10               ;
-# 	has XtGeometryHandler $!query_geometry       ;
-# 	has XtProc            $!rect11               ;
-# 	has XtPointer         $!extension            ;
-# }
-#
-# class RectObjClassRec is repr<CStruct> is export {
-# 	has RectObjClassPart $!rect_class;
-# }
-#
-# class RectObjPart is repr<CStruct> is export {
-# 	has Position  $!x                 ;
-# 	has Position  $!y                 ;
-# 	has Dimension $!width             ;
-# 	has Dimension $!height            ;
-# 	has Dimension $!border_width      ;
-# 	has Boolean   $!managed           ;
-# 	has Boolean   $!sensitive         ;
-# 	has Boolean   $!ancestor_sensitive;
-# }
-#
-# class RectObjRec is repr<CStruct> is export {
-# 	has ObjectPart  $!object   ;
-# 	has RectObjPart $!rectangle;
-# }
-#
-# class RepeaterClassRec is repr<CStruct> is export {
-# 	has CoreClassPart     $!core_class    ;
-# 	has SimpleClassPart   $!simple_class  ;
-# 	has LabelClassPart    $!label_class   ;
-# 	has CommandClassPart  $!command_class ;
-# 	has RepeaterClassPart $!repeater_class;
-# }
-#
-# class RepeaterRec is repr<CStruct> is export {
-# 	has CorePart     $!core    ;
-# 	has SimplePart   $!simple  ;
-# 	has LabelPart    $!label   ;
-# 	has CommandPart  $!command ;
-# 	has RepeaterPart $!repeater;
-# }
-#
-# class RequestRec is repr<CStruct> is export {
-# 	has Select                 $!ctx       ;
-# 	has Widget                 $!widget    ;
-# 	has Window                 $!requestor ;
-# 	has Atom                   $!property  ;
-# 	has Atom                   $!target    ;
-# 	has Atom                   $!type      ;
-# 	has int                    $!format    ;
-# 	has XtPointer              $!value     ;
-# 	has long                   $!bytelength;
-# 	has long                   $!offset    ;
-# 	has XtIntervalId           $!timeout   ;
-# 	has XSelectionRequestEvent $!event     ;
-# 	has Boolean                $!allSent   ;
-# }
-#
+
+class ModToKeysymTable is repr<CStruct> is export {
+	has Modifiers $!mask ;
+	has int       $.count is rw;
+	has int       $.idx   is rw;
+}
+
+class MultiSinkClassPart is repr<CStruct> is export {
+	has XtPointer $!extension;
+}
+
+class MultiSinkClassRec is repr<CStruct> is export {
+	has ObjectClassPart    $!object_class    ;
+	has TextSinkClassPart  $!text_sink_class ;
+	has MultiSinkClassPart $!multi_sink_class;
+}
+
+class MultiSinkPart is repr<CStruct> is export {
+  has Boolean            $.echo                is rw;
+  has Boolean            $.display_nonprinting is rw;
+
+  # Private
+  has GC                 $!normgc;
+  has GC                 $!invgc;
+  has GC                 $!xorgc;
+  has XawTextPosition    $!cursor_position;
+  has XawTextInsertState $!laststate;
+
+  # Cursor location
+  has short              $!cursor_x,
+  has short              $!cursor_y;
+  has XFontSet           $!fontset;         #= font set to draw
+
+  # has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer          $!pad1;
+  has XtPointer          $!pad2;
+  has XtPointer          $!pad3;
+  has XtPointer          $!pad4;
+}
+
+class MultiSinkRec is repr<CStruct> is export {
+	has ObjectPart    $!object    ;
+	has TextSinkPart  $!text_sink ;
+	has MultiSinkPart $!multi_sink;
+}
+
+class MultiSrcClassPart is repr<CStruct> is export {
+	has XtPointer $!extension;
+}
+
+class MultiSrcClassRec is repr<CStruct> is export {
+	has ObjectClassPart   $!object_class   ;
+	has TextSrcClassPart  $!text_src_class ;
+	has MultiSrcClassPart $!multi_src_class;
+}
+
+class MultiPiece is repr<CStruct> is export {
+  has Str             $!text; #= The text in this buffer
+  has XawTextPosition $.used; #= The number of characters of this buffer that have been used
+  has MultiPiece      $.prev;
+  has MultiPiece      $.next; #= linked list pointers
+}
+
+class MultiSrcPart is repr<CStruct> is export {
+	has XIC             $!ic                 ;
+	has XtPointer       $!string             ;
+	has XawAsciiType    $!type               ;
+	has XawTextPosition $!piece_size         ;
+	has Boolean         $!data_compression   ;
+	has XtCallbackList  $!callback           ;
+	has Boolean         $!use_string_in_place;
+	has int             $!multi_length       ;
+	has Boolean         $!is_tempfile        ;
+	has Boolean         $!changes            ;
+	has Boolean         $!allocated_string   ;
+	has XawTextPosition $!length             ;
+	has MultiPiece      $!first_piece        ;
+	has XtPointer       $!pad                ;
+}
+
+class MultiSrcRec is repr<CStruct> is export {
+	has ObjectPart      $!object   ;
+	has TextSrcPart     $!text_src ;
+	has MultiSrcPart    $!multi_src;
+}
+
+class WidgetClassRec {
+	has CoreClassPart $!core_class;
+}
+
+class ObjectClassPart {
+	HAS WidgetClass      $!superclass           ;
+	has String           $!class_name           ;
+	has Cardinal         $!widget_size          ;
+	has Pointer          $!class_initialize     ; #= XtProc
+	has Pointer          $!class_part_initialize; #= XtWidgetClassProc
+	has XtEnum           $!class_inited         ;
+	has Pointer          $!initialize           ; #= XtInitProc
+	has Pointer          $!initialize_hook      ; #= XtArgsProc
+	has Pointer          $!obj1                 ; #= XtProc
+	has XtPointer        $!obj2                 ;
+	has Cardinal         $!obj3                 ;
+	has Pointer          $!resources            ; #= tb:XtResource
+	has Cardinal         $!num_resources        ;
+	has XrmClass         $!xrm_class            ;
+	has Boolean          $!obj4                 ;
+	has XtEnum           $!obj5                 ;
+	has Boolean          $!obj6                 ;
+	has Boolean          $!obj7                 ;
+	has Pointer          $!destroy              ; #= XtWidgetProc
+	has Pointer          $!obj8                 ; #= XtProc
+	has Pointer          $!obj9                 ; #= XtProc
+	has Pointer          $!set_values           ; #= XtSetValuesFunc
+	has Pointer          $!set_values_hook      ; #= XtArgsFunc
+	has Pointer          $!obj10                ; #= XtProc
+	has Pointer          $!get_values_hook      ; #= XtArgsProc
+	has Pointer          $!obj11                ; #= XtProc
+	has XtVersionType    $!version              ;
+	has XtPointer        $!callback_private     ;
+	has String           $!obj12                ;
+	has Pointer          $!obj13                ; #= XtProc
+	has Pointer          $!obj14                ; #= XtProc
+	has XtPointer        $!extension            ;
+}
+
+class ObjectClassRec is repr<CStruct> is export {
+	HAS ObjectClassPart $!object_class;
+}
+
+class ObjectPart {
+	has Widget         $!self             ;
+	has WidgetClass    $!widget_class     ;
+	has Widget         $!parent           ;
+	has XrmName        $!xrm_name         ;
+	has Boolean        $!being_destroyed  ;
+	has XtCallbackList $!destroy_callbacks;
+	has XtPointer      $!constraints      ;
+}
+
+class ObjectRec is repr<CStruct> is export {
+	HAS ObjectPart $!object;
+}
+
+# cw: ... 7/14/2021
+class OverrideShellClassRec is repr<CStruct> is export {
+	has CoreClassPart          $!core_class          ;
+	has CompositeClassPart     $!composite_class     ;
+	has ShellClassPart         $!shell_class         ;
+	has OverrideShellClassPart $!override_shell_class;
+}
+
+class PaneStack is repr<CStruct> is export {
+	has _PaneStack $!next      ;
+	has Pane       $!pane      ;
+	has int        $!start_size;
+}
+
+class PanedClassPart is repr<CStruct> is export {
+	has XtPointer $!extension;
+}
+
+class PanedClassRec is repr<CStruct> is export {
+	has CoreClassPart       $!core_class      ;
+	has CompositeClassPart  $!composite_class ;
+	has ConstraintClassPart $!constraint_class;
+	has PanedClassPart      $!paned_class     ;
+}
+
+class PanedConstraintsPart is repr<CStruct> is export {
+	has Dimension $!min              ;
+	has Dimension $!max              ;
+	has Boolean   $!allow_resize     ;
+	has Boolean   $!show_grip        ;
+	has Boolean   $!skip_adjust      ;
+	has int       $!position         ;
+	has Dimension $!preferred_size   ;
+	has Boolean   $!resize_to_pref   ;
+	has Position  $!delta            ;
+	has Position  $!olddelta         ;
+	has Boolean   $!paned_adjusted_me;
+	has Dimension $!wp_size          ;
+	has int       $!size             ;
+	has Widget    $!grip             ;
+}
+
+class PanedConstraintsRec is repr<CStruct> is export {
+	has PanedConstraintsPart $!paned;
+}
+
+class PanedRec is repr<CStruct> is export {
+	has CorePart       $!core      ;
+	has CompositePart  $!composite ;
+	has ConstraintPart $!constraint;
+	has PanedPart      $!paned     ;
+}
+
+class PannerClassRec is repr<CStruct> is export {
+	has CoreClassPart   $!core_class  ;
+	has SimpleClassPart $!simple_class;
+	has PannerClassPart $!panner_class;
+}
+
+class PannerRec is repr<CStruct> is export {
+	has CorePart   $!core  ;
+	has SimplePart $!simple;
+	has PannerPart $!panner;
+}
+
+class PanoramiXGetScreenCount is repr<CStruct> is export {
+	has CARD8  $!reqType         ;
+	has CARD8  $!panoramiXReqType;
+	has CARD16 $!length          ;
+	has CARD32 $!window          ;
+}
+
+class PanoramiXGetScreenSize is repr<CStruct> is export {
+	has CARD8  $!reqType         ;
+	has CARD8  $!panoramiXReqType;
+	has CARD16 $!length          ;
+	has CARD32 $!window          ;
+	has CARD32 $!screen          ;
+}
+
+class PanoramiXGetState is repr<CStruct> is export {
+	has CARD8  $!reqType         ;
+	has CARD8  $!panoramiXReqType;
+	has CARD16 $!length          ;
+	has CARD32 $!window          ;
+}
+
+class PanoramiXQueryVersion is repr<CStruct> is export {
+	has CARD8  $!reqType         ;
+	has CARD8  $!panoramiXReqType;
+	has CARD16 $!length          ;
+	has CARD8  $!clientMajor     ;
+	has CARD8  $!clientMinor     ;
+	has CARD16 $!unused          ;
+}
+
+class ParamInfoRec is repr<CStruct> is export {
+	has int   $!count    ;
+	has Param $!paramlist;
+}
+
+class ParamRec is repr<CStruct> is export {
+	has Atom $!selection;
+	has Atom $!param    ;
+}
+
+class PerDisplayTable is repr<CStruct> is export {
+	has Display            $!dpy   ;
+	has XtPerDisplayStruct $!perDpy;
+	has _PerDisplayTable   $!next  ;
+}
+
+class PortholeClassRec is repr<CStruct> is export {
+	has CoreClassPart      $!core_class     ;
+	has CompositeClassPart $!composite_class;
+	has PortholeClassPart  $!porthole_class ;
+}
+
+class PortholeRec is repr<CStruct> is export {
+	has CorePart      $!core     ;
+	has CompositePart $!composite;
+	has PortholePart  $!porthole ;
+}
+
+class ProcessContextRec is repr<CStruct> is export {
+	has XtAppContext   $!defaultAppContext   ;
+	has XtAppContext   $!appContextList      ;
+	has ConverterTable $!globalConverterTable;
+	has LangProcRec    $!globalLangProcRec   ;
+}
+
+class PutImageReq is repr<CStruct> is export {
+	has CARD8    $!reqType ;
+	has CARD8    $!format  ;
+	has CARD16   $!length  ;
+	has Drawable $!drawable;
+	has GContext $!gc      ;
+	has CARD16   $!width   ;
+	has CARD16   $!height  ;
+	has INT16    $!dstX    ;
+	has INT16    $!dstY    ;
+	has CARD8    $!leftPad ;
+	has CARD8    $!depth   ;
+	has CARD16   $!pad     ;
+}
+
+class QueryAdaptorsReply is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has CARD8  $!padb1         ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has CARD16 $!num_adaptors  ;
+	has CARD16 $!pads3         ;
+	has CARD32 $!padl4         ;
+	has CARD32 $!padl5         ;
+	has CARD32 $!padl6         ;
+	has CARD32 $!padl7         ;
+	has CARD32 $!padl8         ;
+}
+
+class QueryEncodingsReply is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has CARD8  $!padb1         ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has CARD16 $!num_encodings ;
+	has CARD16 $!padl3         ;
+	has CARD32 $!padl4         ;
+	has CARD32 $!padl5         ;
+	has CARD32 $!padl6         ;
+	has CARD32 $!padl7         ;
+	has CARD32 $!padl8         ;
+}
+
+class QueryExtensionReply is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has CARD8  $!padb1         ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has CARD16 $!version       ;
+	has CARD16 $!revision      ;
+	has CARD32 $!padl4         ;
+	has CARD32 $!padl5         ;
+	has CARD32 $!padl6         ;
+	has CARD32 $!padl7         ;
+	has CARD32 $!padl8         ;
+}
+
+class QueuedRequestInfoRec is repr<CStruct> is export {
+	has int           $!count     ;
+	has Atom          $!selections;
+	has QueuedRequest $!requests  ;
+}
+
+class QueuedRequestRec is repr<CStruct> is export {
+	has Atom                    $!selection  ;
+	has Atom                    $!target     ;
+	has Atom                    $!param      ;
+	has XtSelectionCallbackProc $!callback   ;
+	has XtPointer               $!closure    ;
+	has Time                    $!time       ;
+	has Boolean                 $!incremental;
+}
+
+class RectObjClassPart is repr<CStruct> is export {
+	has WidgetClass       $!superclass           ;
+	has String            $!class_name           ;
+	has Cardinal          $!widget_size          ;
+	has XtProc            $!class_initialize     ;
+	has XtWidgetClassProc $!class_part_initialize;
+	has XtEnum            $!class_inited         ;
+	has XtInitProc        $!initialize           ;
+	has XtArgsProc        $!initialize_hook      ;
+	has XtProc            $!rect1                ;
+	has XtPointer         $!rect2                ;
+	has Cardinal          $!rect3                ;
+	has XtResourceList    $!resources            ;
+	has Cardinal          $!num_resources        ;
+	has XrmClass          $!xrm_class            ;
+	has Boolean           $!rect4                ;
+	has XtEnum            $!rect5                ;
+	has Boolean           $!rect6                ;
+	has Boolean           $!rect7                ;
+	has XtWidgetProc      $!destroy              ;
+	has XtWidgetProc      $!resize               ;
+	has XtExposeProc      $!expose               ;
+	has XtSetValuesFunc   $!set_values           ;
+	has XtArgsFunc        $!set_values_hook      ;
+	has XtAlmostProc      $!set_values_almost    ;
+	has XtArgsProc        $!get_values_hook      ;
+	has XtProc            $!rect9                ;
+	has XtVersionType     $!version              ;
+	has XtPointer         $!callback_private     ;
+	has String            $!rect10               ;
+	has XtGeometryHandler $!query_geometry       ;
+	has XtProc            $!rect11               ;
+	has XtPointer         $!extension            ;
+}
+
+class RectObjClassRec is repr<CStruct> is export {
+	has RectObjClassPart $!rect_class;
+}
+
+class RectObjPart is repr<CStruct> is export {
+	has Position  $!x                 ;
+	has Position  $!y                 ;
+	has Dimension $!width             ;
+	has Dimension $!height            ;
+	has Dimension $!border_width      ;
+	has Boolean   $!managed           ;
+	has Boolean   $!sensitive         ;
+	has Boolean   $!ancestor_sensitive;
+}
+
+class RectObjRec is repr<CStruct> is export {
+	has ObjectPart  $!object   ;
+	has RectObjPart $!rectangle;
+}
+
+class RepeaterClassRec is repr<CStruct> is export {
+	has CoreClassPart     $!core_class    ;
+	has SimpleClassPart   $!simple_class  ;
+	has LabelClassPart    $!label_class   ;
+	has CommandClassPart  $!command_class ;
+	has RepeaterClassPart $!repeater_class;
+}
+
+class RepeaterRec is repr<CStruct> is export {
+	has CorePart     $!core    ;
+	has SimplePart   $!simple  ;
+	has LabelPart    $!label   ;
+	has CommandPart  $!command ;
+	has RepeaterPart $!repeater;
+}
+
+class RequestRec is repr<CStruct> is export {
+	has Select                 $!ctx       ;
+	has Widget                 $!widget    ;
+	has Window                 $!requestor ;
+	has Atom                   $!property  ;
+	has Atom                   $!target    ;
+	has Atom                   $!type      ;
+	has int                    $!format    ;
+	has XtPointer              $!value     ;
+	has long                   $!bytelength;
+	has long                   $!offset    ;
+	has XtIntervalId           $!timeout   ;
+	has XSelectionRequestEvent $!event     ;
+	has Boolean                $!allSent   ;
+}
+
 # class ScreenSaverNotify is repr<CStruct> is export {
 # 	has CARD8  $!type          ;
 # 	has BYTE   $!state         ;
@@ -2817,9 +2993,6 @@ class MenuButtonRec is repr<CStruct> is export {
 # 	has WMShellClassPart   $!wm_shell_class ;
 # }
 #
-# class WidgetClassRec is repr<CStruct> is export {
-# 	has CoreClassPart $!core_class;
-# }
 #
 # class WidgetInfo is repr<CStruct> is export {
 # 	has short  $!num_widgets;
