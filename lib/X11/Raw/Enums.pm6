@@ -1,30 +1,30 @@
 use v6.c;
 
-use XLib::Raw::Definitions;
+use X11::Raw::Definitions;
 
-unit package XLib::Raw::Enums;
+unit package X11::Raw::Enums;
 
-constant  is export := guint32;
-our enum Enum is export (
+constant XEventQueueOwner is export := CARD32;
+our enum XEventQueueOwnerEnum is export (
   XlibOwnsEventQueue => 0,
   'XCBOwnsEventQueue'
 );
 
-constant DMXInputEnum is export := guint32;
+constant DMXInputEnum is export := CARD32;
 our enum DMXInputEnumEnum is export <
   DMXLocalInputType
   DMXConsoleInputType
   DMXBackendInputType
 >;
 
-constant EditResError is export := guint32;
+constant EditResError is export := CARD32;
 our enum EditResErrorEnum is export (
   PartialSuccess   => 0,
   Failure          => 1,
   ProtocolMismatch => 2,
 );
 
-constant EditresCommand is export := guint32;
+constant EditresCommand is export := CARD32;
 our enum EditresCommandEnum is export (
   SendWidgetTree => 0,
   SetValues      => 1,
@@ -34,7 +34,7 @@ our enum EditresCommandEnum is export (
   GetValues      => 5,
 );
 
-constant FontEncoding is export := guint32;
+constant FontEncoding is export := CARD32;
 our enum FontEncodingEnum is export <
   Linear8Bit
   TwoD8Bit
@@ -42,14 +42,14 @@ our enum FontEncodingEnum is export <
   TwoD16Bit
 >;
 
-constant IceAcceptStatus is export := guint32;
+constant IceAcceptStatus is export := CARD32;
 our enum IceAcceptStatusEnum is export <
   IceAcceptSuccess
   IceAcceptFailure
   IceAcceptBadMalloc
 >;
 
-constant IceCloseStatus is export := guint32;
+constant IceCloseStatus is export := CARD32;
 our enum IceCloseStatusEnum is export <
   IceClosedNow
   IceClosedASAP
@@ -57,7 +57,7 @@ our enum IceCloseStatusEnum is export <
   IceStartedShutdownNegotiation
 >;
 
-constant IceConnectStatus is export := guint32;
+constant IceConnectStatus is export := CARD32;
 our enum IceConnectStatusEnum is export <
   IceConnectPending
   IceConnectAccepted
@@ -65,7 +65,7 @@ our enum IceConnectStatusEnum is export <
   IceConnectIOError
 >;
 
-constant IcePaAuthStatus is export := guint32;
+constant IcePaAuthStatus is export := CARD32;
 our enum IcePaAuthStatusEnum is export <
   IcePaAuthContinue
   IcePaAuthAccepted
@@ -73,7 +73,7 @@ our enum IcePaAuthStatusEnum is export <
   IcePaAuthFailed
 >;
 
-constant IcePoAuthStatus is export := guint32;
+constant IcePoAuthStatus is export := CARD32;
 our enum IcePoAuthStatusEnum is export <
   IcePoAuthHaveReply
   IcePoAuthRejected
@@ -81,14 +81,14 @@ our enum IcePoAuthStatusEnum is export <
   IcePoAuthDoneCleanup
 >;
 
-constant IceProcessMessagesStatus is export := guint32;
+constant IceProcessMessagesStatus is export := CARD32;
 our enum IceProcessMessagesStatusEnum is export <
   IceProcessMessagesSuccess
   IceProcessMessagesIOError
   IceProcessMessagesConnectionClosed
 >;
 
-constant IceProtocolSetupStatus is export := guint32;
+constant IceProtocolSetupStatus is export := CARD32;
 our enum IceProtocolSetupStatusEnum is export <
   IceProtocolSetupSuccess
   IceProtocolSetupFailure
@@ -96,27 +96,27 @@ our enum IceProtocolSetupStatusEnum is export <
   IceProtocolAlreadyActive
 >;
 
-constant LayoutState is export := guint32;
+constant LayoutState is export := CARD32;
 our enum LayoutStateEnum is export <
   LayoutPending
   LayoutInProgress
   LayoutDone
 >;
 
-constant ResourceType is export := guint32;
+constant ResourceType is export := CARD32;
 our enum ResourceTypeEnum is export (
   NormalResource     => 0,
   ConstraintResource => 1,
 );
 
-constant SmcCloseStatus is export := guint32;
+constant SmcCloseStatus is export := CARD32;
 our enum SmcCloseStatusEnum is export <
   SmcClosedNow
   SmcClosedASAP
   SmcConnectionInUse
 >;
 
-constant SyncCounterType is export := guint32;
+constant SyncCounterType is export := CARD32;
 our enum SyncCounterTypeEnum is export <
   XSyncCounterNeverChanges
   XSyncCounterNeverIncreases
@@ -124,7 +124,7 @@ our enum SyncCounterTypeEnum is export <
   XSyncCounterUnrestricted
 >;
 
-constant XICCEncodingStyle is export := guint32;
+constant XICCEncodingStyle is export := CARD32;
 our enum XICCEncodingStyleEnum is export <
   XStringStyle
   XCompoundTextStyle
@@ -133,7 +133,7 @@ our enum XICCEncodingStyleEnum is export <
   XUTF8StringStyle
 >;
 
-constant XIMCaretDirection is export := guint32;
+constant XIMCaretDirection is export := CARD32;
 our enum XIMCaretDirectionEnum is export <
   XIMForwardChar
   XIMBackwardChar
@@ -149,20 +149,20 @@ our enum XIMCaretDirectionEnum is export <
   XIMDontChange
 >;
 
-constant XIMCaretStyle is export := guint32;
+constant XIMCaretStyle is export := CARD32;
 our enum XIMCaretStyleEnum is export <
   XIMIsInvisible
   XIMIsPrimary
   XIMIsSecondary
 >;
 
-constant XIMStatusDataType is export := guint32;
+constant XIMStatusDataType is export := CARD32;
 our enum XIMStatusDataTypeEnum is export <
   XIMTextType
   XIMBitmapType
 >;
 
-constant XOrientation is export := guint32;
+constant XOrientation is export := CARD32;
 our enum XOrientationEnum is export <
   XOMOrientation_LTR_TTB
   XOMOrientation_RTL_TTB
@@ -171,27 +171,27 @@ our enum XOrientationEnum is export <
   XOMOrientation_Context
 >;
 
-constant XResClientIdMask is export := guint32;
-our enum XResClientIdMaskEnum is export (
-  XRES_CLIENT_ID_XID_MASK => 1 +< XRES_CLIENT_ID_XID,
-  XRES_CLIENT_ID_PID_MASK => 1 +< XRES_CLIENT_ID_PID,
-);
-
-constant XResClientIdType is export := guint32;
+constant XResClientIdType is export := CARD32;
 our enum XResClientIdTypeEnum is export <
   XRES_CLIENT_ID_XID
   XRES_CLIENT_ID_PID
   XRES_CLIENT_ID_NR
 >;
 
-constant XSyncAlarmState is export := guint32;
+constant XResClientIdMask is export := CARD32;
+our enum XResClientIdMaskEnum is export (
+  XRES_CLIENT_ID_XID_MASK => 1 +< XRES_CLIENT_ID_XID,
+  XRES_CLIENT_ID_PID_MASK => 1 +< XRES_CLIENT_ID_PID,
+);
+
+constant XSyncAlarmState is export := CARD32;
 our enum XSyncAlarmStateEnum is export <
   XSyncAlarmActive
   XSyncAlarmInactive
   XSyncAlarmDestroyed
 >;
 
-constant XSyncTestType is export := guint32;
+constant XSyncTestType is export := CARD32;
 our enum XSyncTestTypeEnum is export <
   XSyncPositiveTransition
   XSyncNegativeTransition
@@ -199,19 +199,19 @@ our enum XSyncTestTypeEnum is export <
   XSyncNegativeComparison
 >;
 
-constant XSyncValueType is export := guint32;
+constant XSyncValueType is export := CARD32;
 our enum XSyncValueTypeEnum is export <
   XSyncAbsolute
   XSyncRelative
 >;
 
-constant XawAsciiType is export := guint32;
+constant XawAsciiType is export := CARD32;
 our enum XawAsciiTypeEnum is export <
   XawAsciiFile
   XawAsciiString
 >;
 
-constant XawEdgeType is export := guint32;
+constant XawEdgeType is export := CARD32;
 our enum XawEdgeTypeEnum is export <
   XawChainTop
   XawChainBottom
@@ -220,20 +220,20 @@ our enum XawEdgeTypeEnum is export <
   XawRubber
 >;
 
-constant XawTextEditType is export := guint32;
+constant XawTextEditType is export := CARD32;
 our enum XawTextEditTypeEnum is export <
   XawtextRead
   XawtextAppend
   XawtextEdit
 >;
 
-constant XawTextInsertState is export := guint32;
+constant XawTextInsertState is export := CARD32;
 our enum XawTextInsertStateEnum is export <
   XawisOn
   XawisOff
 >;
 
-constant XawTextJustifyMode is export := guint32;
+constant XawTextJustifyMode is export := CARD32;
 our enum XawTextJustifyModeEnum is export <
   XawjustifyLeft
   XawjustifyRight
@@ -241,7 +241,7 @@ our enum XawTextJustifyModeEnum is export <
   XawjustifyFull
 >;
 
-constant XawTextResizeMode is export := guint32;
+constant XawTextResizeMode is export := CARD32;
 our enum XawTextResizeModeEnum is export <
   XawtextResizeNever
   XawtextResizeWidth
@@ -249,13 +249,13 @@ our enum XawTextResizeModeEnum is export <
   XawtextResizeBoth
 >;
 
-constant XawTextScanDirection is export := guint32;
+constant XawTextScanDirection is export := CARD32;
 our enum XawTextScanDirectionEnum is export <
   XawsdLeft
   XawsdRight
 >;
 
-constant XawTextScanType is export := guint32;
+constant XawTextScanType is export := CARD32;
 our enum XawTextScanTypeEnum is export <
   XawstPositions
   XawstWhiteSpace
@@ -265,14 +265,14 @@ our enum XawTextScanTypeEnum is export <
   XawstAlphaNumeric
 >;
 
-constant XawTextScrollMode is export := guint32;
+constant XawTextScrollMode is export := CARD32;
 our enum XawTextScrollModeEnum is export <
   XawtextScrollNever
   XawtextScrollWhenNeeded
   XawtextScrollAlways
 >;
 
-constant XawTextSelectType is export := guint32;
+constant XawTextSelectType is export := CARD32;
 our enum XawTextSelectTypeEnum is export <
   XawselectNull
   XawselectPosition
@@ -284,34 +284,34 @@ our enum XawTextSelectTypeEnum is export <
   XawselectAlphaNumeric
 >;
 
-constant XawTextSelectionAction is export := guint32;
+constant XawTextSelectionAction is export := CARD32;
 our enum XawTextSelectionActionEnum is export <
   XawactionStart
   XawactionAdjust
   XawactionEnd
 >;
 
-constant XawTextSelectionMode is export := guint32;
+constant XawTextSelectionMode is export := CARD32;
 our enum XawTextSelectionModeEnum is export <
   XawsmTextSelect
   XawsmTextExtend
 >;
 
-constant XawTextWrapMode is export := guint32;
+constant XawTextWrapMode is export := CARD32;
 our enum XawTextWrapModeEnum is export <
   XawtextWrapNever
   XawtextWrapLine
   XawtextWrapWord
 >;
 
-constant XctHDirection is export := guint32;
+constant XctHDirection is export := CARD32;
 our enum XctHDirectionEnum is export <
   XctUnspecified
   XctLeftToRight
   XctRightToLeft
 >;
 
-constant XctResult is export := guint32;
+constant XctResult is export := CARD32;
 our enum XctResultEnum is export <
   XctSegment
   XctC0Segment
@@ -325,13 +325,13 @@ our enum XctResultEnum is export <
   XctError
 >;
 
-constant XrmBinding is export := guint32;
+constant XrmBinding is export := CARD32;
 our enum XrmBindingEnum is export <
   XrmBindTightly
   XrmBindLoosely
 >;
 
-constant XrmOptionKind is export := guint32;
+constant XrmOptionKind is export := CARD32;
 our enum XrmOptionKindEnum is export <
   XrmoptionNoArg
   XrmoptionIsArg
@@ -343,7 +343,7 @@ our enum XrmOptionKindEnum is export <
   XrmoptionSkipNArgs
 >;
 
-constant XtAddressMode is export := guint32;
+constant XtAddressMode is export := CARD32;
 our enum XtAddressModeEnum is export <
   XtAddress
   XtBaseOffset
@@ -354,21 +354,21 @@ our enum XtAddressModeEnum is export <
   XtProcedureArg
 >;
 
-constant XtCallbackStatus is export := guint32;
+constant XtCallbackStatus is export := CARD32;
 our enum XtCallbackStatusEnum is export <
   XtCallbackNoList
   XtCallbackHasNone
   XtCallbackHasSome
 >;
 
-constant XtCommandHighlight is export := guint32;
+constant XtCommandHighlight is export := CARD32;
 our enum XtCommandHighlightEnum is export <
   HighlightNone
   HighlightWhenUnset
   HighlightAlways
 >;
 
-constant XtGeometryResult is export := guint32;
+constant XtGeometryResult is export := CARD32;
 our enum XtGeometryResultEnum is export <
   XtGeometryYes
   XtGeometryNo
@@ -376,33 +376,33 @@ our enum XtGeometryResultEnum is export <
   XtGeometryDone
 >;
 
-constant XtGrabKind is export := guint32;
+constant XtGrabKind is export := CARD32;
 our enum XtGrabKindEnum is export <
   XtGrabNone
   XtGrabNonexclusive
   XtGrabExclusive
 >;
 
-constant XtJustify is export := guint32;
+constant XtJustify is export := CARD32;
 our enum XtJustifyEnum is export <
   XtJustifyLeft
   XtJustifyCenter
   XtJustifyRight
 >;
 
-constant XtListPosition is export := guint32;
+constant XtListPosition is export := CARD32;
 our enum XtListPositionEnum is export <
   XtListHead
   XtListTail
 >;
 
-constant XtOrientation is export := guint32;
+constant XtOrientation is export := CARD32;
 our enum XtOrientationEnum is export <
   XtorientHorizontal
   XtorientVertical
 >;
 
-constant XtServerGrabType is export := guint32;
+constant XtServerGrabType is export := CARD32;
 our enum XtServerGrabTypeEnum is export <
   XtNoServerGrab
   XtPassiveServerGrab
@@ -411,13 +411,13 @@ our enum XtServerGrabTypeEnum is export <
   XtPseudoActiveServerGrab
 >;
 
-constant highlightType is export := guint32;
+constant highlightType is export := CARD32;
 our enum highlightTypeEnum is export <
   Normal
   Selected
 >;
 
-constant xdmOpCode is export := guint32;
+constant xdmOpCode is export := CARD32;
 our enum xdmOpCodeEnum is export (
   BROADCAST_QUERY => 1,
   'QUERY',
@@ -435,7 +435,7 @@ our enum xdmOpCodeEnum is export (
   'ALIVE'
 );
 
-constant xdmcp_states is export := guint32;
+constant xdmcp_states is export := CARD32;
 our enum xdmcp_statesEnum is export <
   XDM_QUERY
   XDM_BROADCAST
