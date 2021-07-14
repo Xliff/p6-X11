@@ -423,7 +423,7 @@ class CaseConverterRec is repr<CStruct> is export {
 	has XtCaseProc       $!proc ;
 	has CaseConverterRec $!next ;
 }
-constant CaseConverterPtr is export := CaseConverterRec;
+constant CaseConverter is export := CaseConverterRec;
 
 class xCharInfo is repr<CStruct> is export {
   has INT16  $.leftSideBearing  is rw;
@@ -507,6 +507,9 @@ class XtResource is repr<CStruct> is export {
 	has String    $!default_type   ;
 	has XtPointer $!default_addr   ;
 }
+
+# XtResourceList is a TypedBuffer of XtResource
+constant XtResourceList is export := Pointer;
 
 class ConstraintClassPart is repr<CStruct> is export {
 	has Pointer         $!resources      ; #= XtResource *
@@ -678,7 +681,6 @@ class XtTMRec is repr<CStruct> is export {
 
 class Screen is repr<CStruct> is export { ... }
 
-
 class CorePart {
 	has Widget         $!self               ;
 	has WidgetClass    $!widget_class       ;
@@ -747,6 +749,10 @@ class MenuButtonClassPart is repr<CStruct> is export {
   has XtPointer $.extension;
 }
 constant MenuButtonClass is export := MenuButtonClassPart;
+
+class PannerClassPart is repr<CStruct> is export {
+  has XtPointer $.extension;
+}
 
 class DialogClassRec is repr<CStruct> is export {
 	has CoreClassPart       $!core_class      ;
@@ -818,6 +824,7 @@ class ExtensionSelectorRec is repr<CStruct> is export {
 	has int        $!max        ;
 	has XtPointer  $!client_data;
 }
+constant ExtSelectRec is export := ExtensionSelectorRec;
 
 class ExtentInfo is repr<CStruct> is export {
 	has DrawDirection $.drawDirection  is rw;
@@ -1749,6 +1756,22 @@ class MultiSrcClassPart is repr<CStruct> is export {
 	has XtPointer $!extension;
 }
 
+class OverrideShellClassPart is repr<CStruct> is export {
+  has XtPointer $!extension;
+}
+
+class PanedClassPart is repr<CStruct> is export {
+	has XtPointer $!extension;
+}
+
+class PortholeClassPart is repr<CStruct> is export {
+	has XtPointer $!extension;
+}
+
+class RepeaterClassPart is repr<CStruct> is export {
+	has XtPointer $!extension;
+}
+
 class MultiSrcClassRec is repr<CStruct> is export {
 	has ObjectClassPart   $!object_class   ;
 	has TextSrcClassPart  $!text_src_class ;
@@ -1842,7 +1865,6 @@ class ObjectRec is repr<CStruct> is export {
 	HAS ObjectPart $!object;
 }
 
-# cw: ... 7/14/2021
 class OverrideShellClassRec is repr<CStruct> is export {
 	has CoreClassPart          $!core_class          ;
 	has CompositeClassPart     $!composite_class     ;
@@ -1850,14 +1872,13 @@ class OverrideShellClassRec is repr<CStruct> is export {
 	has OverrideShellClassPart $!override_shell_class;
 }
 
+class PanedConstraintsPart is repr<CStruct> is export { ... }
+constant Pane is export := PanedConstraintsPart;
+
 class PaneStack is repr<CStruct> is export {
-	has _PaneStack $!next      ;
+	has PaneStack $!next      ;
 	has Pane       $!pane      ;
 	has int        $!start_size;
-}
-
-class PanedClassPart is repr<CStruct> is export {
-	has XtPointer $!extension;
 }
 
 class PanedClassRec is repr<CStruct> is export {
@@ -1867,7 +1888,7 @@ class PanedClassRec is repr<CStruct> is export {
 	has PanedClassPart      $!paned_class     ;
 }
 
-class PanedConstraintsPart is repr<CStruct> is export {
+class PanedConstraintsPart {
 	has Dimension $!min              ;
 	has Dimension $!max              ;
 	has Boolean   $!allow_resize     ;
@@ -1888,11 +1909,111 @@ class PanedConstraintsRec is repr<CStruct> is export {
 	has PanedConstraintsPart $!paned;
 }
 
+class PanedPart is repr<CStruct> is export {
+  has  Position       $.grip_indent              is rw;  #= Location of grips (offset from right margin)
+  has  Boolean        $.refiguremode             is rw;  #= Whether to refigure changes right now
+  has  XtTranslations $!grip_translations;               #= grip translation table
+  has  Pixel          $.internal_bp              is rw;  #= color of internal borders
+  has  Dimension      $.internal_bw              is rw;  #= internal border width
+  has  XtOrientation  $.orientation              is rw;  #= Orientation of paned widget
+
+  has  Cursor         $.cursor                   is rw;  #= Cursor for paned window
+  has  Cursor         $.grip_cursor              is rw;  #= inactive grip cursor
+  has  Cursor         $.v_grip_cursor            is rw;  #= inactive vert grip cursor
+  has  Cursor         $.h_grip_cursor            is rw;  #= inactive horiz grip cursor
+  has  Cursor         $.adjust_this_cursor       is rw;  #= active grip cursor: T
+  has  Cursor         $.v_adjust_this_cursor     is rw;  #= active vert grip cursor: T
+  has  Cursor         $.h_adjust_this_cursor     is rw;  #= active horiz grip cursor: T
+  # vertical
+  has  Cursor         $.adjust_upper_cursor      is rw;  #= active grip cursor: U
+  has  Cursor         $.adjust_lower_cursor      is rw;  #= active grip cursor: D
+  # horizontal
+  has  Cursor         $.adjust_left_cursor       is rw;  #= active grip cursor: U
+  has  Cursor         $.adjust_right_cursor      is rw;  #= active grip cursor: D
+  # private
+  has  Boolean        $!recursively_called;              #= for ChangeManaged
+  has  Boolean        $!resize_children_to_pref;         #= override constrain resources and resize all children to preferred size
+  has  int            $!start_loc;                       #= mouse origin when adjusting
+  has  Widget         $!whichadd;                        #= Which pane to add changes to
+  has  Widget         $!whichsub;                        #= Which pane to sub changes from
+  has  GC             $!normgc;                          #= GC to use when drawing borders
+  has  GC             $!invgc;                           #= GC to use when erasing borders
+  has  GC             $!flipgc;                          #= GC to use when animating borders
+  has  int            $!num_panes;                       #= count of managed panes
+  has  PaneStack      $!stack;                           #= The pane stack for this widget
+
+  # has XtPointer pad[4];   /* for future use and keep binary compatability
+  has  XtPointer      $!pad1;
+  has  XtPointer      $!pad2;
+  has  XtPointer      $!pad3;
+  has  XtPointer      $!pad4;
+}
+
 class PanedRec is repr<CStruct> is export {
 	has CorePart       $!core      ;
 	has CompositePart  $!composite ;
 	has ConstraintPart $!constraint;
 	has PanedPart      $!paned     ;
+}
+
+class PannerTmpPart is repr<CStruct> is export {
+  has Boolean  $.doing   is rw; #= tmp graphics in progress
+  has Boolean  $.showing is rw; #= true if tmp graphics displayed
+  has Position $.startx  is rw; #= initial position of slider
+  has Position $.starty  is rw;
+  has Position $.dx      is rw; #= offset loc for tmp graphics
+  has Position $.dy      is rw;
+  has Position $.x       is rw; #= location for tmp graphics
+  has Position $.y       is rw;
+}
+
+class xRectangle is repr<CStruct> is export {
+	has INT16  $!x     ;
+	has INT16  $!y     ;
+	has CARD16 $!width ;
+	has CARD16 $!height;
+}
+constant XRectangle is export := xRectangle;
+
+class PannerPart is repr<CStruct> is export {
+  has XtCallbackList $!report_callbacks;             #= callback/Callback
+  has Boolean        $.allow_off         is rw;      #= allowOff/AllowOff
+  has Boolean        $.resize_to_pref    is rw;      #= resizeToPreferred/Boolean
+  has Pixel          $.foreground        is rw;      #= foreground/Foreground
+  has Pixel          $.shadow_color      is rw;      #= shadowColor/ShadowColor
+  has Dimension      $.shadow_thickness  is rw;      #= shadowThickness/ShadowThickness
+  has Dimension      $.default_scale     is rw;      #= defaultScale/DefaultScale
+  has Dimension      $.line_width        is rw;      #= lineWidth/LineWidth
+  has Dimension      $.canvas_width      is rw;      #= canvasWidth/CanvasWidth
+  has Dimension      $.canvas_height     is rw;      #= canvasHeight/CanvasHeight
+  has Position       $.slider_x          is rw;      #= sliderX/SliderX
+  has Position       $.slider_y          is rw;      #= sliderY/SliderY
+  has Dimension      $.slider_width      is rw;      #= sliderWidth/SliderWidth
+  has Dimension      $.slider_height     is rw;      #= sliderHeight/SliderHeight
+  has Dimension      $.internal_border   is rw;      #= internalBorderWidth/BorderWidth
+  has String         $.stipple_name      is rw;      #= backgroundStipple/BackgroundStip
+  # Private
+  has GC             $!slider_gc;                    #= background of slider
+  has GC             $!shadow_gc;                    #= edge of slider and shadow
+  has GC             $!xor_gc;                       #= for doing XOR tmp graphics
+  has double         $!haspect;                      #= aspect ratio of core to canvas
+  has double         $!vaspect;
+  has Boolean        $!rubber_band;                  #= true = rubber band, false = move
+  HAS PannerTmpPart  $!tmp;
+  has Position       $!knob_x;                       #= real upper left of knob in canvas
+  has Position       $!knob_y;
+  has Dimension      $!knob_width;                   #= real size of knob in canvas
+  has Dimension      $!knob_height;
+  has Boolean        $!shadow_valid;                 #= true if rects are valid
+  has XRectangle     @.shadow_rects[2]   is CArray;  #= location of shadows
+  has Position       $!last_x;                       #= previous location of knob
+  has Position       $!last_y;
+
+  #has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer      $!pad1;
+  has XtPointer      $!pad2;
+  has XtPointer      $!pad3;
+  has XtPointer      $!pad4;
 }
 
 class PannerClassRec is repr<CStruct> is export {
@@ -1938,20 +2059,155 @@ class PanoramiXQueryVersion is repr<CStruct> is export {
 	has CARD16 $!unused          ;
 }
 
+class ParamRec is repr<CStruct> is export {
+	has Atom $!selection;
+	has Atom $!param    ;
+}
+constant Param is export := ParamRec;
+
 class ParamInfoRec is repr<CStruct> is export {
 	has int   $!count    ;
 	has Param $!paramlist;
 }
 
-class ParamRec is repr<CStruct> is export {
-	has Atom $!selection;
-	has Atom $!param    ;
+class ScreenFormat is repr<CStruct> is export {
+  has XExtData $.ext_data;              #= hook for extension to hang data
+  has int      $.depth          is rw;  #= depth of this image format
+  has int      $.bits_per_pixel is rw;  #= bits/pixel at this depth
+  has int      $.scanline_pad   is rw;  #= scanline must padded to this multiple
+}
+
+class Display is repr<CStruct> is export {
+  has XExtData     $!ext_data;            #= hook for extension to hang data
+  has Pointer      $!private1;            #= os:_XPrivate
+  has int          $.fd;                  #= Network socket.
+  has int          $!private2;
+  has int          $.proto_major_version; #= major version of server's X protocol
+  has int          $.proto_minor_version; #= minor version of servers X protocol
+  has Str          $.vendor  ;            #= vendor of the server hardware
+  has XID          $!private3;
+  has XID          $!private4;
+  has XID          $!private5;
+  has int          $!private6;
+  has Pointer      $.resource_alloc;      #= fp:(Display* --> XID)
+  has int          $.byte_order;          #= screen byte order, LSBFirst, MSBFirst
+  has int          $.bitmap_unit;         #= padding and data requirements
+  has int          $.bitmap_pad;          #= padding requirements on bitmaps
+  has int          $.bitmap_bit_order;    #= LeastSignificant or MostSignificant
+  has int          $.nformats;            #= number of pixmap formats in list
+  has ScreenFormat $.pixmap_format;       #= pixmap format list
+  has int          $!private8;
+  has int          $.release;             #= release of the server
+  has Pointer      $!private9;            #= os:_XPrivate
+  has Pointer      $!private10;           #= os:_XPrivate
+  has int          $.qlen;                #= Length of input event queue
+  has ulong        $.last_request_read;   #= seq number of last event read
+  has ulong        $.request;             #= sequence number of last request.
+  has XPointer     $!private11;
+  has XPointer     $!private12;
+  has XPointer     $!private13;
+  has XPointer     $!private14;
+  has uint         $.max_request_size;    #= maximum number 32 bit words in request
+  has Pointer      $.db;                  #= os:XrmHashBucketRec/XrmDatabase
+  has Pointer      $!private15;           #= fp:(_XDisplay --> int);
+  has Str          $.display_name;        #= "host:display" string used on this connect
+  has int          $.default_screen;      #= default screen for operations
+  has int          $.nscreens;            #= number of screens on this server
+  has Screen       $.screens;             #= pointer to list of screens
+  has ulong        $.motion_buffer;       #= size of motion buffer
+  has ulong        $!private16;
+  has int          $.min_keycode;         #= minimum defined keycode
+  has int          $.max_keycode;         #= maximum defined keycode
+  has XPointer     $!private17;
+  has XPointer     $!private18;
+  has int          $!private19;
+  has Str          $.xdefaults;           #= contents of defaults from server
+
+  # There is more to this structure, but it is private to Xlib
+}
+
+class InternalCallbackRec is repr<CStruct> is export {
+  has ushort $.count      is rw;
+  has char   $.is_padded  is rw;  #= contains NULL padding for external form
+  has char   $.call_state is rw;  #= combination of _XtCB{FreeAfter}Calling
+  has uint   $.align_pad  is rw;  #= padding to align callback list
+}
+constant InternalCallbackList is export := InternalCallbackRec;
+
+class KeyCacheRec is repr<CStruct> is export {
+  has uchar   @.modifiers_return[256]     is CArray; #= constant per KeyCode, key proc
+  has KeyCode @.keycode[TMKEYCACHESIZE]   is CArray;
+  has uchar   @.modifiers[TMKEYCACHESIZE] is CArray;
+  has KeySym  @.keysym[TMKEYCACHESIZE]    is CArray;
+}
+constant TMKeyCache is export := KeyCacheRec;
+
+class TMKeyContextRec is repr<CStruct> is export {
+	has XEvent     $!event    ;
+	has long       $!serial   ;
+	has KeySym     $!keysym   ;
+	has Modifiers  $!modifiers;
+	has TMKeyCache $!keycache ;
+}
+
+class Heap is repr<CStruct> is export {
+  has Str $.start;
+  has Str $.current;
+  has int $.bytes_remaining;
+}
+
+class XtPerDisplayStruct is repr<CStruct> is export { ... }
+constant XtPerDisplay         is export := XtPerDisplayStruct;
+constant XtPerDisplayInputRec is export := XtPerDisplayStruct;
+constant XtPerDisplayInput    is export := XtPerDisplayStruct;
+
+class XtPerDisplayStruct {
+  has InternalCallbackList     $.destroy_callbacks;
+  has Region                   $.region;
+  has CaseConverter            $.case_cvt;                 #= user-registered case converters */
+  has Pointer                  $.defaultKeycodeTranslator; #= fp:XtKeyProc
+  has XtAppContext             $.appContext;
+  has ulong                    $.keysyms_serial;           #= for tracking MappingNotify events */
+  has KeySym                   $.keysyms;                  #= keycode to keysym table */
+  has int                      $.keysyms_per_keycode;      #= number of keysyms for each keycode*/
+  has int                      $.min_keycode;              #= range of keycodes */
+  has int                      $.max_keycode;
+  has KeySym                   $.modKeysyms;               #= keysym values for modToKeysysm */
+  has ModToKeysymTable         $.modsToKeysyms;            #= modifiers to Keysysms index table*/
+  HAS uint8                    @.isModifier[32] is CArray; #= key-is-modifier-p bit table */
+  has KeySym                   $.lock_meaning;             #= Lock modifier meaning */
+  has Modifiers                $.mode_switch;              #= keyboard group modifiers */
+  has Modifiers                $.num_lock;                 #= keyboard numlock modifiers */
+  has Boolean                  $.being_destroyed;
+  has Boolean                  $.rv;                       #= reverse_video resource */
+  has XrmName                  $.name;                     #= resolved app name */
+  has XrmClass                 $.class;                    #= application class */
+  has Heap                     $.heap;
+  has Pointer                  $!GClist;                   #= tb:[os:_GCrec] ;             /* support for XtGetGC */
+  has CArray[CArray[Drawable]] $.pixmap_tab;               #= ditto for XtGet
+  has String                   $.language;                 #= XPG language string
+  has XEvent                   $.last_event;               #= last event dispatched
+  has Time                     $.last_timestamp;           #= from last event dispatched
+  has int                      $.multi_click_time;         #= for XtSetMultiClickTime
+  has TMKeyContextRec          $.tm_context;               #= for XtGetActionKeysym
+  has InternalCallbackList     $.mapping_callbacks;        #= special case for TM
+  has XtPerDisplayInputRec     $.pdi;                      #= state for modal grabs & kbd focus
+  has Pointer                  $!WWtable;                  #= os:WWTable -  window to widget table
+  has CArray[Pointer]          $.per_screen_db;            #= os:XrmHashBucketRec/XrmDatabase - per screen resource databases
+  has Pointer                  $.cmd_db;                   #= os:XrmHashBucketRec/XrmDatabase - db from command line, if needed
+  has Pointer                  $.server_db;                #= os:XrmHashBucketRec/XrmDatabase - resource property else .Xdefaults
+  has Pointer                  $.dispatcher_list;          #= fp:XtEventDispatchProc
+  has ExtSelectRec             $!ext_select_list;
+  has int                      $!ext_select_count;
+  has Widget                   $!hook_object;
+  has Atom                     $!rcm_init;                 #= ResConfig - initialize
+  has Atom                     $!rcm_data;                 #= ResConfig - data atom
 }
 
 class PerDisplayTable is repr<CStruct> is export {
 	has Display            $!dpy   ;
 	has XtPerDisplayStruct $!perDpy;
-	has _PerDisplayTable   $!next  ;
+	has PerDisplayTable    $!next  ;
 }
 
 class PortholeClassRec is repr<CStruct> is export {
@@ -1960,11 +2216,23 @@ class PortholeClassRec is repr<CStruct> is export {
 	has PortholeClassPart  $!porthole_class ;
 }
 
+class PortholePart is repr<CStruct> is export {
+  has XtCallbackList $.report_callbacks;  #= callback/Callback
+
+  #has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XPointer $!pad1;
+  has XPointer $!pad2;
+  has XPointer $!pad3;
+  has XPointer $!pad4;
+}
+
 class PortholeRec is repr<CStruct> is export {
 	has CorePart      $!core     ;
 	has CompositePart $!composite;
 	has PortholePart  $!porthole ;
 }
+
+constant ConverterTable is export := CArray[Pointer];
 
 class ProcessContextRec is repr<CStruct> is export {
 	has XtAppContext   $!defaultAppContext   ;
@@ -2030,32 +2298,33 @@ class QueryExtensionReply is repr<CStruct> is export {
 	has CARD32 $!padl8         ;
 }
 
+class QueuedRequestRec is repr<CStruct> is export {
+	has Atom       $!selection  ;
+	has Atom       $!target     ;
+	has Atom       $!param      ;
+	has Pointer    $!callback   ; #= fp:XtSelectionCallbackProc
+	has XtPointer  $!closure    ;
+	has Time       $!time       ;
+	has Boolean    $!incremental;
+}
+constant QueuedRequest is export := QueuedRequestRec;
+
 class QueuedRequestInfoRec is repr<CStruct> is export {
 	has int           $!count     ;
 	has Atom          $!selections;
 	has QueuedRequest $!requests  ;
 }
 
-class QueuedRequestRec is repr<CStruct> is export {
-	has Atom                    $!selection  ;
-	has Atom                    $!target     ;
-	has Atom                    $!param      ;
-	has XtSelectionCallbackProc $!callback   ;
-	has XtPointer               $!closure    ;
-	has Time                    $!time       ;
-	has Boolean                 $!incremental;
-}
-
 class RectObjClassPart is repr<CStruct> is export {
 	has WidgetClass       $!superclass           ;
 	has String            $!class_name           ;
 	has Cardinal          $!widget_size          ;
-	has XtProc            $!class_initialize     ;
-	has XtWidgetClassProc $!class_part_initialize;
-	has XtEnum            $!class_inited         ;
-	has XtInitProc        $!initialize           ;
-	has XtArgsProc        $!initialize_hook      ;
-	has XtProc            $!rect1                ;
+	has Pointer           $!class_initialize     ; #= fp:XtProc
+	has Pointer           $!class_part_initialize; #= fp:XtWidgetClassProc
+	has Pointer           $!class_inited         ; #= fp:XtEnum
+	has Pointer           $!initialize           ; #= fp:XtInitProc
+	has Pointer           $!initialize_hook      ; #= fp:XtArgsProc
+	has Pointer           $!rect1                ; #= fp:XtProc
 	has XtPointer         $!rect2                ;
 	has Cardinal          $!rect3                ;
 	has XtResourceList    $!resources            ;
@@ -2065,19 +2334,19 @@ class RectObjClassPart is repr<CStruct> is export {
 	has XtEnum            $!rect5                ;
 	has Boolean           $!rect6                ;
 	has Boolean           $!rect7                ;
-	has XtWidgetProc      $!destroy              ;
-	has XtWidgetProc      $!resize               ;
-	has XtExposeProc      $!expose               ;
-	has XtSetValuesFunc   $!set_values           ;
-	has XtArgsFunc        $!set_values_hook      ;
-	has XtAlmostProc      $!set_values_almost    ;
-	has XtArgsProc        $!get_values_hook      ;
-	has XtProc            $!rect9                ;
+	has Pointer           $!destroy              ; #= fp:XtWidgetProc
+	has Pointer           $!resize               ; #= fp:XtWidgetProc
+	has Pointer           $!expose               ; #= fp:XtExposeProc
+	has Pointer           $!set_values           ; #= fp:XtSetValuesFunc
+	has Pointer           $!set_values_hook      ; #= fp:XtArgsFunc
+	has Pointer           $!set_values_almost    ; #= fp:XtAlmostProc
+	has Pointer           $!get_values_hook      ; #= fp:XtArgsProc
+	has Pointer           $!rect9                ; #= fp:XtProc
 	has XtVersionType     $!version              ;
 	has XtPointer         $!callback_private     ;
 	has String            $!rect10               ;
-	has XtGeometryHandler $!query_geometry       ;
-	has XtProc            $!rect11               ;
+	has Pointer           $!query_geometry       ; #= fp:XtGeometryHandler
+	has Pointer           $!rect11               ; #= fp:XtProc
 	has XtPointer         $!extension            ;
 }
 
@@ -2109,6 +2378,26 @@ class RepeaterClassRec is repr<CStruct> is export {
 	has RepeaterClassPart $!repeater_class;
 }
 
+class RepeaterPart is repr<CStruct> is export {
+  # Resources
+  has int            $.initial_delay     is rw; #= initialDelay/Delay
+  has int            $.repeat_delay      is rw; #= repeatDelay/Delay
+  has int            $.minimum_delay     is rw; #= minimumDelay/MinimumDelay
+  has int            $.decay             is rw; #= decay to minimum delay
+  has Boolean        $.flash             is rw; #= flash/Boolean
+  has XtCallbackList $.start_callbacks;         #= startCallback/StartCallback
+  has XtCallbackList $.stop_callbacks;          #= stopCallback/StopCallback
+  # private
+  has int            $.next_delay;              #= next amount for timer
+  has XtIntervalId   $.timer;                   #= timer that will fire
+
+  # has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer  $!pad1;
+  has XtPointer  $!pad2;
+  has XtPointer  $!pad3;
+  has XtPointer  $!pad4;
+}
+
 class RepeaterRec is repr<CStruct> is export {
 	has CorePart     $!core    ;
 	has SimplePart   $!simple  ;
@@ -2117,7 +2406,59 @@ class RepeaterRec is repr<CStruct> is export {
 	has RepeaterPart $!repeater;
 }
 
-class RequestRec is repr<CStruct> is export {
+class SelectionPropRec is repr<CStruct> is export {
+  has Atom    $.prop  is rw;
+  has Boolean $.avail is rw;
+}
+constant SelectionProp is export := SelectionPropRec;
+
+class PropListRec is repr<CStruct> is export {
+  has Display       $.dpy;
+  has Atom          $.incr_atom;
+  has Atom          $.indirect_atom;
+  has Atom          $.timestamp_atom;
+  has int           $.propCount       is rw ;
+  has SelectionProp $.list;
+}
+constant PropList is export := PropListRec;
+
+class RequestRec is repr<CStruct> is export { ... }
+constant Request is export := RequestRec;
+
+class SelectRec is repr<CStruct> is export {
+  has Atom       $.selection;            #= constant
+  has Display    $.dpy;                  #= constant
+  has Widget     $.widget;
+  has Time       $.time;
+  has ulong      $.serial;
+  has Pointer    $.convert;              #= fp:XtConvertSelectionProc
+  has Pointer    $.loses;                #= fp:XtLoseSelectionProc
+  has Pointer    $.notify;               #= fp:XtSelectionDoneProc
+  has Pointer    $.owner_cancel;         #= fp:XtCancelConvertSelectionProc
+  has XtPointer  $.owner_closure;
+  has PropList   $.prop_list;
+  has Request    $.req;                  #= state for local non-incr xfer
+  has int        $.ref_count      is rw; #= of active transfers
+  has uint       $.incremental    is rw; #= b:1;
+  has uint       $.free_when_done is rw; #= b:1;
+  has uint       $.was_disowned   is rw; #= b:1;
+}
+constant Select is export := SelectRec;
+
+class XSelectionRequestEvent is repr<CStruct> is export {
+  has int      $.type       is rw;
+  has ulong    $.serial     is rw; #= of last request processed by server
+  has Boolean  $.send_event is rw; #= ot:Bool - true if this came from a SendEvent request
+  has Display  $.display    is rw; #= Display the event was read from
+  has Window   $.owner;
+  has Window   $.requestor;
+  has Atom     $.selection  is rw;
+  has Atom     $.target     is rw;
+  has Atom     $.property   is rw;
+  has Time     $.time       is rw;
+}
+
+class RequestRec {
 	has Select                 $!ctx       ;
 	has Widget                 $!widget    ;
 	has Window                 $!requestor ;
@@ -2133,75 +2474,76 @@ class RequestRec is repr<CStruct> is export {
 	has Boolean                $!allSent   ;
 }
 
-# class ScreenSaverNotify is repr<CStruct> is export {
-# 	has CARD8  $!type          ;
-# 	has BYTE   $!state         ;
-# 	has CARD16 $!sequenceNumber;
-# 	has Time   $!timestamp     ;
-# 	has Window $!root          ;
-# 	has Window $!window        ;
-# 	has BYTE   $!kind          ;
-# 	has BYTE   $!forced        ;
-# 	has CARD16 $!pad0          ;
-# 	has CARD32 $!pad1          ;
-# 	has CARD32 $!pad2          ;
-# 	has CARD32 $!pad3          ;
-# }
-#
-# class ScreenSaverQueryInfo is repr<CStruct> is export {
-# 	has CARD8    $!reqType     ;
-# 	has CARD8    $!saverReqType;
-# 	has CARD16   $!length      ;
-# 	has Drawable $!drawable    ;
-# }
-#
-# class ScreenSaverQueryVersion is repr<CStruct> is export {
-# 	has CARD8  $!reqType     ;
-# 	has CARD8  $!saverReqType;
-# 	has CARD16 $!length      ;
-# 	has CARD8  $!clientMajor ;
-# 	has CARD8  $!clientMinor ;
-# 	has CARD16 $!unused      ;
-# }
-#
-# class ScreenSaverSelectInput is repr<CStruct> is export {
-# 	has CARD8    $!reqType     ;
-# 	has CARD8    $!saverReqType;
-# 	has CARD16   $!length      ;
-# 	has Drawable $!drawable    ;
-# 	has CARD32   $!eventMask   ;
-# }
-#
-# class ScreenSaverSetAttributes is repr<CStruct> is export {
-# 	has CARD8    $!reqType     ;
-# 	has CARD8    $!saverReqType;
-# 	has CARD16   $!length      ;
-# 	has Drawable $!drawable    ;
-# 	has INT16    $!x           ;
-# 	has INT16    $!y           ;
-# 	has CARD16   $!width       ;
-# 	has CARD16   $!height      ;
-# 	has CARD16   $!borderWidth ;
-# 	has BYTE     $!c_class     ;
-# 	has CARD8    $!depth       ;
-# 	has VisualID $!visualID    ;
-# 	has CARD32   $!mask        ;
-# }
-#
-# class ScreenSaverSuspend is repr<CStruct> is export {
-# 	has CARD8  $!reqType     ;
-# 	has CARD8  $!saverReqType;
-# 	has CARD16 $!length      ;
-# 	has CARD32 $!suspend     ;
-# }
-#
-# class ScreenSaverUnsetAttributes is repr<CStruct> is export {
-# 	has CARD8    $!reqType     ;
-# 	has CARD8    $!saverReqType;
-# 	has CARD16   $!length      ;
-# 	has Drawable $!drawable    ;
-# }
-#
+class ScreenSaverNotify is repr<CStruct> is export {
+	has CARD8  $!type          ;
+	has BYTE   $!state         ;
+	has CARD16 $!sequenceNumber;
+	has Time   $!timestamp     ;
+	has Window $!root          ;
+	has Window $!window        ;
+	has BYTE   $!kind          ;
+	has BYTE   $!forced        ;
+	has CARD16 $!pad0          ;
+	has CARD32 $!pad1          ;
+	has CARD32 $!pad2          ;
+	has CARD32 $!pad3          ;
+}
+
+class ScreenSaverQueryInfo is repr<CStruct> is export {
+	has CARD8    $!reqType     ;
+	has CARD8    $!saverReqType;
+	has CARD16   $!length      ;
+	has Drawable $!drawable    ;
+}
+
+class ScreenSaverQueryVersion is repr<CStruct> is export {
+	has CARD8  $!reqType     ;
+	has CARD8  $!saverReqType;
+	has CARD16 $!length      ;
+	has CARD8  $!clientMajor ;
+	has CARD8  $!clientMinor ;
+	has CARD16 $!unused      ;
+}
+
+class ScreenSaverSelectInput is repr<CStruct> is export {
+	has CARD8    $!reqType     ;
+	has CARD8    $!saverReqType;
+	has CARD16   $!length      ;
+	has Drawable $!drawable    ;
+	has CARD32   $!eventMask   ;
+}
+
+class ScreenSaverSetAttributes is repr<CStruct> is export {
+	has CARD8    $!reqType     ;
+	has CARD8    $!saverReqType;
+	has CARD16   $!length      ;
+	has Drawable $!drawable    ;
+	has INT16    $!x           ;
+	has INT16    $!y           ;
+	has CARD16   $!width       ;
+	has CARD16   $!height      ;
+	has CARD16   $!borderWidth ;
+	has BYTE     $!c_class     ;
+	has CARD8    $!depth       ;
+	has VisualID $!visualID    ;
+	has CARD32   $!mask        ;
+}
+
+class ScreenSaverSuspend is repr<CStruct> is export {
+	has CARD8  $!reqType     ;
+	has CARD8  $!saverReqType;
+	has CARD16 $!length      ;
+	has CARD32 $!suspend     ;
+}
+
+class ScreenSaverUnsetAttributes is repr<CStruct> is export {
+	has CARD8    $!reqType     ;
+	has CARD8    $!saverReqType;
+	has CARD16   $!length      ;
+	has Drawable $!drawable    ;
+}
+
+# cw: ... 7/14/2021
 # class ScrollbarClassRec is repr<CStruct> is export {
 # 	has CoreClassPart      $!core_class     ;
 # 	has SimpleClassPart    $!simple_class   ;
@@ -2682,13 +3024,6 @@ class RequestRec is repr<CStruct> is export {
 # 	has TMShortCard        $!numComplexActions      ;
 # }
 #
-# class TMKeyContextRec is repr<CStruct> is export {
-# 	has XEvent     $!event    ;
-# 	has long       $!serial   ;
-# 	has KeySym     $!keysym   ;
-# 	has Modifiers  $!modifiers;
-# 	has TMKeyCache $!keycache ;
-# }
 #
 #
 # class TMSimpleBindProcsRec is repr<CStruct> is export {
@@ -5125,13 +5460,6 @@ class RequestRec is repr<CStruct> is export {
 # 	has CARD16      $!vTotal    ;
 # 	has CARD16      $!nameLength;
 # 	has RRModeFlags $!modeFlags ;
-# }
-#
-# class xRectangle is repr<CStruct> is export {
-# 	has INT16  $!x     ;
-# 	has INT16  $!y     ;
-# 	has CARD16 $!width ;
-# 	has CARD16 $!height;
 # }
 #
 # class xReq is repr<CStruct> is export {
