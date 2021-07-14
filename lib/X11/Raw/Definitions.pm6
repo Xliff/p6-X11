@@ -4,17 +4,38 @@ unit package XLib::Raw::Definitions;
 
 our $DEBUG is export;
 
-constant CARD8                        is export :=  uint8;
+constant short                        is export := int16;
+
+constant Boolean                      is export := uint8;
+constant Cardinal                     is export := uint;
+constant Dimension                    is export := uint16;
+constant DrawDirection                is export := int;
+constant EventMask                    is export := uint64;
+constant Pixel                        is export := uint64;
+constant Position                     is export :=  int16;
+constant String                       is export := Str;
+constant XrmQuark                     is export :=  int;
+constant XrmClass                     is export := XrmQuark;
+constant XrmName                      is export := XrmQuark;
+constant XtEnum                       is export := uint8;
+constant XtVersionType                is export := uint64;
+
+constant CARD8                        is export := uint8;
 constant CARD16                       is export := uint16;
 constant CARD32                       is export := uint32;
 constant CARD64                       is export := uint64;
+
+constant TMShortCard                  is export := uint16;
+
+constant INT8                         is export := int8;
+constant INT16                        is export := int16;
+constant INT32                        is export := int32;
 
 constant BITS16                       is export := CARD16;
 constant BITS32                       is export := CARD32;
 
 constant BOOL                         is export :=  CARD8;
 constant BYTE                         is export :=  CARD8;
-
 
 constant x11                          is export = 'x11',v6;
 
