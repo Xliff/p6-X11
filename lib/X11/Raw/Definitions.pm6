@@ -6,9 +6,14 @@ unit package XLib::Raw::Definitions;
 
 our $DEBUG is export;
 
+constant uchar                        is export := uint8;
+constant char                         is export := int8;
+constant float                        is export := num32;
+constant double                       is export := num64;
 constant short                        is export := int16;
 constant ushort                       is export := uint16;
 constant wchar_t                      is export := uint16;
+constant unsigned                     is export := uint;
 
 constant Boolean                      is export := uint8;
 constant Cardinal                     is export := uint;
@@ -30,6 +35,7 @@ constant XrmName                      is export := XrmQuark;
 constant XtEnum                       is export := uint8;
 constant XtInputMask                  is export := uint64;
 constant XtVersionType                is export := uint64;
+constant XtIntervalId                 is export := ulong;
 
 constant GContext                     is export := XID;
 
@@ -53,7 +59,23 @@ constant BITS32                       is export := CARD32;
 constant BOOL                         is export :=  CARD8;
 constant BYTE                         is export :=  CARD8;
 
+constant Atom                         is export := CARD32;
+constant Colormap                     is export := CARD32;
+constant Cursor                       is export := CARD32;
+constant Drawable                     is export := CARD32;
+constant Font                         is export := CARD32;
+constant KeyCode                      is export := CARD8;
+constant KeySym                       is export := CARD32;
+constant Pixmap                       is export := CARD32;
+constant Region                       is export := CARD32;
+constant Time                         is export := CARD32;
+constant VisualID                     is export := CARD32;
+constant Window                       is export := CARD32;
+
 constant x11                          is export = 'x11',v6;
+
+constant TMKEYCACHELOG2               is export = 6;
+constant TMKEYCACHESIZE               is export = 1 +< TMKEYCACHELOG2;
 
 constant X_PROTOCOL                   is export = 11;
 constant X_PROTOCOL_REVISION          is export = 0;
@@ -618,18 +640,6 @@ constant sz_xGetKeyboardMappingReq        is export = 8;
 constant sz_xSetModifierMappingReq        is export = 4;
 constant sz_xPropIconSize                 is export = 24;
 constant sz_xChangeKeyboardMappingReq     is export = 8;
-
-constant Window                           is export = CARD32;
-constant Drawable                         is export = CARD32;
-constant Font                             is export = CARD32;
-constant Pixmap                           is export = CARD32;
-constant Cursor                           is export = CARD32;
-constant Colormap                         is export = CARD32;
-constant Atom                             is export = CARD32;
-constant VisualID                         is export = CARD32;
-constant Time                             is export = CARD32;
-constant KeyCode                          is export = CARD8;
-constant KeySym                           is export = CARD32;
 
 constant X_TCP_PORT                       is export = 6000;
 
