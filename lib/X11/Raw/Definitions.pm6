@@ -1,5 +1,7 @@
 use v6.c;
 
+use NativeCall;
+
 unit package XLib::Raw::Definitions;
 
 our $DEBUG is export;
@@ -14,10 +16,12 @@ constant EventMask                    is export := uint64;
 constant Pixel                        is export := uint64;
 constant Position                     is export :=  int16;
 constant String                       is export := Str;
+constant XID                          is export := uint64;
 constant XrmQuark                     is export :=  int;
 constant XrmClass                     is export := XrmQuark;
 constant XrmName                      is export := XrmQuark;
 constant XtEnum                       is export := uint8;
+constant XtInputMask                  is export := uint64;
 constant XtVersionType                is export := uint64;
 
 constant CARD8                        is export := uint8;
@@ -746,6 +750,8 @@ constant X_GetPointerMapping              is export = 117;
 constant X_SetModifierMapping             is export = 118;
 constant X_GetModifierMapping             is export = 119;
 constant X_NoOperation                    is export = 127;
+
+constant IcePointer                       is export := Pointer;
 
 INIT {
   $DEBUG = True if %*ENV<P6_X11_DEBUG>;
