@@ -7,6 +7,8 @@ unit package XLib::Raw::Definitions;
 our $DEBUG is export;
 
 constant short                        is export := int16;
+constant ushort                       is export := uint16;
+constant wchar_t                      is export := uint16;
 
 constant Boolean                      is export := uint8;
 constant Cardinal                     is export := uint;
@@ -15,8 +17,13 @@ constant DrawDirection                is export := int;
 constant EventMask                    is export := uint64;
 constant Pixel                        is export := uint64;
 constant Position                     is export :=  int16;
+constant Modifiers                    is export := uint;
 constant String                       is export := Str;
+constant XIC                          is export := Pointer;
 constant XID                          is export := uint64;
+constant XawTextPosition              is export := long;
+constant XFontSet                     is export := Pointer;  # os:XOC
+constant XPointer                     is export := Str;
 constant XrmQuark                     is export :=  int;
 constant XrmClass                     is export := XrmQuark;
 constant XrmName                      is export := XrmQuark;
@@ -24,10 +31,15 @@ constant XtEnum                       is export := uint8;
 constant XtInputMask                  is export := uint64;
 constant XtVersionType                is export := uint64;
 
+constant GContext                     is export := XID;
+
 constant CARD8                        is export := uint8;
 constant CARD16                       is export := uint16;
 constant CARD32                       is export := uint32;
 constant CARD64                       is export := uint64;
+
+constant fsBitmapFormat               is export := CARD32;
+constant fsBitmapFormatMask           is export := CARD32;
 
 constant TMShortCard                  is export := uint16;
 
@@ -613,7 +625,6 @@ constant Font                             is export = CARD32;
 constant Pixmap                           is export = CARD32;
 constant Cursor                           is export = CARD32;
 constant Colormap                         is export = CARD32;
-constant GContext                         is export = CARD32;
 constant Atom                             is export = CARD32;
 constant VisualID                         is export = CARD32;
 constant Time                             is export = CARD32;
