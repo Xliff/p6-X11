@@ -754,6 +754,26 @@ class PannerClassPart is repr<CStruct> is export {
   has XtPointer $.extension;
 }
 
+class ScrollbarClassPart is repr<CStruct> is export {
+  has XtPointer $.extension;
+}
+
+class SessionShellClassPart is repr<CStruct> is export {
+  has XtPointer $.extension;
+}
+
+class SimpleMenuClassPart is repr<CStruct> is export {
+  has XtPointer $.extension;
+}
+
+class SmeBSBClassPart is repr<CStruct> is export {
+  has XtPointer $.extension;
+}
+
+class StripChartClassPart is repr<CStruct> is export {
+  has XtPointer $.extension;
+}
+
 class DialogClassRec is repr<CStruct> is export {
 	has CoreClassPart       $!core_class      ;
 	has CompositeClassPart  $!composite_class ;
@@ -2543,418 +2563,564 @@ class ScreenSaverUnsetAttributes is repr<CStruct> is export {
 	has Drawable $!drawable    ;
 }
 
+class ScrollbarClassRec is repr<CStruct> is export {
+	has CoreClassPart      $!core_class     ;
+	has SimpleClassPart    $!simple_class   ;
+	has ScrollbarClassPart $!scrollbar_class;
+}
+
+class ScrollbarPart is repr<CStruct> is export {
+  # resources
+  has Pixel          $.foreground  is rw; #= thumb foreground color
+  has XtOrientation  $.orientation is rw; #= horizontal or vertical
+  has XtCallbackList $.scrollProc  is rw; #= proportional scroll
+  has XtCallbackList $.thumbProc   is rw; #= jump (to position) scroll
+  has XtCallbackList $.jumpProc    is rw; #= same as thumbProc but pass data by ref
+  has Pixmap         $.thumb       is rw; #= thumb pixmap
+  has Cursor         $.upCursor    is rw; #= scroll up cursor
+  has Cursor         $.downCursor  is rw; #= scroll down cursor
+  has Cursor         $.leftCursor  is rw; #= scroll left cursor
+  has Cursor         $.rightCursor is rw; #= scroll right cursor
+  has Cursor         $.verCursor   is rw; #= scroll vertical cursor
+  has Cursor         $.horCursor   is rw; #= scroll horizontal cursor
+  has float          $.top         is rw;
+  has float          $.shown       is rw;
+  has Dimension      $.length      is rw; #= either height or width
+  has Dimension      $.thickness   is rw; #= either width or height
+  has Dimension      $.min_thumb   is rw; #= minium size for the thumb
+
+  # private
+  has Cursor         $!inactiveCursor; #= The normal cursor for scrollbar
+  has char           $!direction;      #= a scroll has started; which direction
+  has GC             $!gc;             #= a (shared) gc
+  has Position       $!topLoc;         #= Pixel that corresponds to top
+  has Dimension      $!shownLength;    #= Num pixels corresponding to shown
+
+  #has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer $!pad1;
+  has XtPointer $!pad2;
+  has XtPointer $!pad3;
+  has XtPointer $!pad4;
+}
+
+class ScrollbarRec is repr<CStruct> is export {
+	has CorePart      $!core     ;
+	has SimplePart    $!simple   ;
+	has ScrollbarPart $!scrollbar;
+}
+
+class SearchAndReplace is repr<CStruct> is export {
+	has Boolean $!selection_changed;
+	has Widget  $!search_popup     ;
+	has Widget  $!label1           ;
+	has Widget  $!label2           ;
+	has Widget  $!left_toggle      ;
+	has Widget  $!right_toggle     ;
+	has Widget  $!rep_label        ;
+	has Widget  $!rep_text         ;
+	has Widget  $!search_text      ;
+	has Widget  $!rep_one          ;
+	has Widget  $!rep_all          ;
+	has Widget  $!case_sensitive   ;
+}
+
+class SessionShellClassRec is repr<CStruct> is export {
+	has CoreClassPart             $!core_class             ;
+	has CompositeClassPart        $!composite_class        ;
+	has ShellClassPart            $!shell_class            ;
+	has WMShellClassPart          $!wm_shell_class         ;
+	has VendorShellClassPart      $!vendor_shell_class     ;
+	has TopLevelShellClassPart    $!top_level_shell_class  ;
+	has ApplicationShellClassPart $!application_shell_class;
+	has SessionShellClassPart     $!session_shell_class    ;
+}
+
+class SetBugMode is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!mitReqType;
+	has CARD16 $!length    ;
+	has BOOL   $!onOff     ;
+	has BYTE   $!pad0      ;
+	has CARD16 $!pad1      ;
+}
+
+class ShapeCombine is repr<CStruct> is export {
+	has CARD8  $!reqType     ;
+	has CARD8  $!shapeReqType;
+	has CARD16 $!length      ;
+	has CARD8  $!op          ;
+	has CARD8  $!destKind    ;
+	has CARD8  $!srcKind     ;
+	has CARD8  $!junk        ;
+	has Window $!dest        ;
+	has INT16  $!xOff        ;
+	has INT16  $!yOff        ;
+	has Window $!src         ;
+}
+
+class ShapeGetRectangles is repr<CStruct> is export {
+	has CARD8  $!reqType     ;
+	has CARD8  $!shapeReqType;
+	has CARD16 $!length      ;
+	has Window $!window      ;
+	has CARD8  $!kind        ;
+	has CARD8  $!junk1       ;
+	has CARD16 $!junk2       ;
+}
+
+class ShapeInputSelected is repr<CStruct> is export {
+	has CARD8  $!reqType     ;
+	has CARD8  $!shapeReqType;
+	has CARD16 $!length      ;
+	has Window $!window      ;
+}
+
+class ShapeMask is repr<CStruct> is export {
+	has CARD8  $!reqType     ;
+	has CARD8  $!shapeReqType;
+	has CARD16 $!length      ;
+	has CARD8  $!op          ;
+	has CARD8  $!destKind    ;
+	has CARD16 $!junk        ;
+	has Window $!dest        ;
+	has INT16  $!xOff        ;
+	has INT16  $!yOff        ;
+	has CARD32 $!src         ;
+}
+
+class ShapeNotify is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has BYTE   $!kind          ;
+	has CARD16 $!sequenceNumber;
+	has Window $!window        ;
+	has INT16  $!x             ;
+	has INT16  $!y             ;
+	has CARD16 $!width         ;
+	has CARD16 $!height        ;
+	has Time   $!time          ;
+	has BYTE   $!shaped        ;
+	has BYTE   $!pad0          ;
+	has CARD16 $!pad1          ;
+	has CARD32 $!pad2          ;
+	has CARD32 $!pad3          ;
+}
+
+class ShapeOffset is repr<CStruct> is export {
+	has CARD8  $!reqType     ;
+	has CARD8  $!shapeReqType;
+	has CARD16 $!length      ;
+	has CARD8  $!destKind    ;
+	has CARD8  $!junk1       ;
+	has CARD16 $!junk2       ;
+	has Window $!dest        ;
+	has INT16  $!xOff        ;
+	has INT16  $!yOff        ;
+}
+
+class ShapeQueryExtents is repr<CStruct> is export {
+	has CARD8  $!reqType     ;
+	has CARD8  $!shapeReqType;
+	has CARD16 $!length      ;
+	has Window $!window      ;
+}
+
+class ShapeQueryVersion is repr<CStruct> is export {
+	has CARD8  $!reqType     ;
+	has CARD8  $!shapeReqType;
+	has CARD16 $!length      ;
+}
+
+class ShapeRectangles is repr<CStruct> is export {
+	has CARD8  $!reqType     ;
+	has CARD8  $!shapeReqType;
+	has CARD16 $!length      ;
+	has CARD8  $!op          ;
+	has CARD8  $!destKind    ;
+	has CARD8  $!ordering    ;
+	has CARD8  $!pad0        ;
+	has Window $!dest        ;
+	has INT16  $!xOff        ;
+	has INT16  $!yOff        ;
+}
+
+class ShapeSelectInput is repr<CStruct> is export {
+	has CARD8  $!reqType     ;
+	has CARD8  $!shapeReqType;
+	has CARD16 $!length      ;
+	has Window $!window      ;
+	has BYTE   $!enable      ;
+	has BYTE   $!pad1        ;
+	has CARD16 $!pad2        ;
+}
+
+class ShellClassRec is repr<CStruct> is export {
+	has CoreClassPart      $!core_class     ;
+	has CompositeClassPart $!composite_class;
+	has ShellClassPart     $!shell_class    ;
+}
+
+class ShmAttach is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!shmReqType;
+	has CARD16 $!length    ;
+	has ShmSeg $!shmseg    ;
+	has CARD32 $!shmid     ;
+	has BOOL   $!readOnly  ;
+	has BYTE   $!pad0      ;
+	has CARD16 $!pad1      ;
+}
+
+class ShmAttachFd is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!shmReqType;
+	has CARD16 $!length    ;
+	has ShmSeg $!shmseg    ;
+	has BOOL   $!readOnly  ;
+	has BYTE   $!pad0      ;
+	has CARD16 $!pad1      ;
+}
+
+class ShmCompletion is repr<CStruct> is export {
+	has BYTE     $!type          ;
+	has BYTE     $!bpad0         ;
+	has CARD16   $!sequenceNumber;
+	has Drawable $!drawable      ;
+	has CARD16   $!minorEvent    ;
+	has BYTE     $!majorEvent    ;
+	has BYTE     $!bpad1         ;
+	has ShmSeg   $!shmseg        ;
+	has CARD32   $!offset        ;
+	has CARD32   $!pad0          ;
+	has CARD32   $!pad1          ;
+	has CARD32   $!pad2          ;
+}
+
+class ShmCreatePixmap is repr<CStruct> is export {
+	has CARD8    $!reqType   ;
+	has CARD8    $!shmReqType;
+	has CARD16   $!length    ;
+	has Pixmap   $!pid       ;
+	has Drawable $!drawable  ;
+	has CARD16   $!width     ;
+	has CARD16   $!height    ;
+	has CARD8    $!depth     ;
+	has CARD8    $!pad0      ;
+	has CARD8    $!pad1      ;
+	has CARD8    $!pad2      ;
+	has ShmSeg   $!shmseg    ;
+	has CARD32   $!offset    ;
+}
+
+class ShmCreateSegment is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!shmReqType;
+	has CARD16 $!length    ;
+	has ShmSeg $!shmseg    ;
+	has CARD32 $!size      ;
+	has BOOL   $!readOnly  ;
+	has BYTE   $!pad0      ;
+	has CARD16 $!pad1      ;
+}
+
+class ShmDetach is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!shmReqType;
+	has CARD16 $!length    ;
+	has ShmSeg $!shmseg    ;
+}
+
+class ShmGetImage is repr<CStruct> is export {
+	has CARD8    $!reqType   ;
+	has CARD8    $!shmReqType;
+	has CARD16   $!length    ;
+	has Drawable $!drawable  ;
+	has INT16    $!x         ;
+	has INT16    $!y         ;
+	has CARD16   $!width     ;
+	has CARD16   $!height    ;
+	has CARD32   $!planeMask ;
+	has CARD8    $!format    ;
+	has CARD8    $!pad0      ;
+	has CARD8    $!pad1      ;
+	has CARD8    $!pad2      ;
+	has ShmSeg   $!shmseg    ;
+	has CARD32   $!offset    ;
+}
+
+class ShmGetImageReply is repr<CStruct> is export {
+	has BYTE     $!type          ;
+	has CARD8    $!depth         ;
+	has CARD16   $!sequenceNumber;
+	has CARD32   $!length        ;
+	has VisualID $!visual        ;
+	has CARD32   $!size          ;
+	has CARD32   $!pad0          ;
+	has CARD32   $!pad1          ;
+	has CARD32   $!pad2          ;
+	has CARD32   $!pad3          ;
+}
+
+class ShmPutImage is repr<CStruct> is export {
+	has CARD8    $!reqType    ;
+	has CARD8    $!shmReqType ;
+	has CARD16   $!length     ;
+	has Drawable $!drawable   ;
+	has GContext $!gc         ;
+	has CARD16   $!totalWidth ;
+	has CARD16   $!totalHeight;
+	has CARD16   $!srcX       ;
+	has CARD16   $!srcY       ;
+	has CARD16   $!srcWidth   ;
+	has CARD16   $!srcHeight  ;
+	has INT16    $!dstX       ;
+	has INT16    $!dstY       ;
+	has CARD8    $!depth      ;
+	has CARD8    $!format     ;
+	has CARD8    $!sendEvent  ;
+	has CARD8    $!bpad       ;
+	has ShmSeg   $!shmseg     ;
+	has CARD32   $!offset     ;
+}
+
+class ShmQueryVersion is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!shmReqType;
+	has CARD16 $!length    ;
+}
+
+class SignalEventRec is repr<CStruct> is export {
+	has Pointer         $!se_proc   ; #= fp:XtSignalCallbackProc
+	has XtPointer       $!se_closure;
+	has SignalEventRec  $!se_next   ;
+	has XtAppContext    $!app       ;
+	has Boolean         $!se_notice ;
+}
+
+class SimpleClassRec is repr<CStruct> is export {
+	has CoreClassPart   $!core_class  ;
+	has SimpleClassPart $!simple_class;
+}
+
+class SimpleMenuClassRec is repr<CStruct> is export {
+	has CoreClassPart          $!core_class          ;
+	has CompositeClassPart     $!composite_class     ;
+	has ShellClassPart         $!shell_class         ;
+	has OverrideShellClassPart $!override_shell_class;
+	has SimpleMenuClassPart    $!simpleMenu_class    ;
+}
+
+class SimpleMenuPart is repr<CStruct> is export {
+	has String         $!label_string        ;
+	has SmeObject      $!label               ;
+	has WidgetClass    $!label_class         ;
+	has Dimension      $!top_margin          ;
+	has Dimension      $!bottom_margin       ;
+	has Dimension      $!row_height          ;
+	has Cursor         $!cursor              ;
+	has SmeObject      $!popup_entry         ;
+	has Boolean        $!menu_on_screen      ;
+	has int            $!backing_store       ;
+	has Boolean        $!recursive_set_values;
+	has Boolean        $!menu_width          ;
+	has Boolean        $!menu_height         ;
+	has SmeObject      $!entry_set           ;
+	has Dimension      $!left_margin         ;
+	has Dimension      $!right_margin        ;
+	has XawDisplayList $!display_list        ;
+	has Widget         $!sub_menu            ;
+	has Str            $!state               ;
+	has XtPointer      $!pad                 ;
+}
+
+class Visual is repr<CStruct> is export { ... }
+
+class ShellPart is repr<CStruct> is export {
+  has char           $.geometry;
+  has Pointer        $.create_popup_child_proc; #= fp:XtCreatePopupChildProc
+  has XtGrabKind     $.grab_kind;
+  has Boolean        $.spring_loaded;
+  has Boolean        $.popped_up;
+  has Boolean        $.allow_shell_resize;
+  has Boolean        $.client_specified;  #= re-using old name
+  has Boolean        $.save_under;
+  has Boolean        $.override_redirect;
+  has XtCallbackList $.popup_callback;
+  has XtCallbackList $.popdown_callback;
+  has Visual         $.visual;
+}
+
+class OverrideShellPart is repr<CStruct> is export {
+  has int $.frabjous;
+}
+
+class SimpleMenuRec is repr<CStruct> is export {
+	has CorePart          $!core       ;
+	has CompositePart     $!composite  ;
+	has ShellPart         $!shell      ;
+	has OverrideShellPart $!override   ;
+	has SimpleMenuPart    $!simple_menu;
+}
+
+class SimpleRec is repr<CStruct> is export {
+	has CorePart   $!core  ;
+	has SimplePart $!simple;
+}
+
+class SmeClassPart is repr<CStruct> is export {
+  has Pointer   $.highlight;   #= fp:XtWidgetProc
+  has Pointer   $.unhighlight; #= fp:XtWidgetProc
+  has Pointer   $.notify;      #= fp:XtWidgetProc
+  has XtPointer $.extension;
+}
+
+class SmeBSBPart is repr<CStruct> is export {
+    # resources
+    has String      $.label;                         #= The entry label
+    has int         $.vert_space              is rw; #= extra vert space to leave, as a percentage of the font height of the label
+    has Pixmap      $.left_bitmap             is rw; #= bitmaps to show
+    has Pixmap      $.right_bitmap            is rw;
+    has Dimension   $.left_margin             is rw; #= left and right margins
+    has Dimension   $.right_margin            is rw;
+    has Pixel       $.foreground              is rw; #= foreground color
+    has XFontStruct $.font                    is rw; #= The font to show label in
+    has XFontSet    $.fontset                 is rw; #= or fontset
+    has XtJustify   $.justify                 is rw; #= Justification for the label.
+    # private
+    has Boolean     $.set_values_area_cleared is rw; #= do we need to unhighlight?
+    has GC          $.norm_gc                 is rw; #= noral color gc
+    has GC          $.rev_gc                  is rw; #= reverse color gc
+    has GC          $.norm_gray_gc            is rw; #= Normal color (grayed out) gc
+    has GC          $.invert_gc               is rw; #= gc for flipping colors
+    has Dimension   $.left_bitmap_width       is rw; #= size of each bitmap
+    has Dimension   $.left_bitmap_height      is rw;
+    has Dimension   $.right_bitmap_width      is rw;
+    has Dimension   $.right_bitmap_height     is rw;
+
+    # new resources
+    has String      $!menu_name;                     #= name of nested sub menu or NULL
+    #has XtPointer pad[4];   /* for future use and keep binary compatability */
+    has XtPointer   $!pad1;
+    has XtPointer   $!pad2;
+    has XtPointer   $!pad3;
+    has XtPointer   $!pad4;
+}
+
+class SmeBSBClassRec is repr<CStruct> is export {
+	has RectObjClassPart $!rect_class   ;
+	has SmeClassPart     $!sme_class    ;
+	has SmeBSBClassPart  $!sme_bsb_class;
+}
+
+class SmeClassRec is repr<CStruct> is export {
+	has RectObjClassPart $!rect_class;
+	has SmeClassPart     $!sme_class ;
+}
+
+class SmeLineClassPart is repr<CStruct> is export {
+	has XtPointer $!extension;
+}
+
+class SmeLineClassRec is repr<CStruct> is export {
+	has RectObjClassPart $!rect_class    ;
+	has SmeClassPart     $!sme_class     ;
+	has SmeLineClassPart $!sme_line_class;
+}
+
+class SmePart is repr<CStruct> {
+  # resources
+  has XtCallbackList $.callbacks;
+  has Boolean        $.international is rw;
+
+  #has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer $!pad1;
+  has XtPointer $!pad2;
+  has XtPointer $!pad3;
+  has XtPointer $!pad4;
+}
+
+class SmeLinePart is repr<CStruct> is export {
+  # resources
+  has Pixel $.foreground;      #= Foreground color
+  has Pixmap $.stipple;        #= Line Stipple
+  has Dimension $.line_width;  #= Width of the line
+  # Private
+  has GC $!gc;                 #= Graphics context for drawing line
+
+  #has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer $!pad1;
+  has XtPointer $!pad2;
+  has XtPointer $!pad3;
+  has XtPointer $!pad4;
+}
+
+class SmeLineRec is repr<CStruct> is export {
+	has ObjectPart  $!object   ;
+	has RectObjPart $!rectangle;
+	has SmePart     $!sme      ;
+	has SmeLinePart $!sme_line ;
+}
+
+class SmeBSBRec is repr<CStruct> is export {
+	has ObjectPart  $!object   ;
+	has RectObjPart $!rectangle;
+	has SmePart     $!sme      ;
+	has SmeBSBPart  $!sme_bsb  ;
+}
+
+class SmeRec is repr<CStruct> is export {
+	has ObjectPart  $!object   ;
+	has RectObjPart $!rectangle;
+	has SmePart     $!sme      ;
+}
+
+class StripChartClassRec is repr<CStruct> is export {
+	has CoreClassPart       $!core_class       ;
+	has SimpleClassPart     $!simple_class     ;
+	has StripChartClassPart $!strip_chart_class;
+}
+
+class XPoint is repr<CStruct> is export {
+  has short $.x is rw;
+  has short $.y is rw;
+}
+
+class xPoint is repr<CStruct> is export {
+	has INT16 $.x is rw;
+	has INT16 $.y is rw;
+}
+
+class StripChartPart is repr<CStruct> is export {
+    # resources
+    has Pixel $.hipixel                  is rw    ; #= color index for lines
+    has Pixel $.fgpixel                  is rw    ; #= color index for graph
+    has GC    $.fgGC                              ; #= graphics context for fgpixel
+    has GC    $.hiGC                              ; #= graphics context for hipixel
+    # private
+    has int            $!update                   ; #= update frequence
+    has int            $!scale                    ; #= scale factor
+    has int            $!min_scale                ; #= smallest scale factor
+    has int            $!interval                 ; #= data point interval
+    has XPoint         $!points                   ; #= Poly point for repairing graph lines
+    has double         $!max_value                ; #= Max Value in window
+    HAS double         @!valuedata[2048] is CArray; #= record of data points
+    has XtIntervalId   $!interval_id              ;
+    has XtCallbackList $!get_value                ; #= proc to call to fetch load pt
+    has int            $!jump_val                 ; #= Amount to jump on each scroll
+
+    #has XtPointer pad[4];   /* for future use and keep binary compatability */
+    has XtPointer $!pad1;
+    has XtPointer $!pad2;
+    has XtPointer $!pad3;
+    has XtPointer $!pad4;
+}
+
 # cw: ... 7/14/2021
-# class ScrollbarClassRec is repr<CStruct> is export {
-# 	has CoreClassPart      $!core_class     ;
-# 	has SimpleClassPart    $!simple_class   ;
-# 	has ScrollbarClassPart $!scrollbar_class;
-# }
-#
-# class ScrollbarRec is repr<CStruct> is export {
-# 	has CorePart      $!core     ;
-# 	has SimplePart    $!simple   ;
-# 	has ScrollbarPart $!scrollbar;
-# }
-#
-# class SearchAndReplace is repr<CStruct> is export {
-# 	has Boolean $!selection_changed;
-# 	has Widget  $!search_popup     ;
-# 	has Widget  $!label1           ;
-# 	has Widget  $!label2           ;
-# 	has Widget  $!left_toggle      ;
-# 	has Widget  $!right_toggle     ;
-# 	has Widget  $!rep_label        ;
-# 	has Widget  $!rep_text         ;
-# 	has Widget  $!search_text      ;
-# 	has Widget  $!rep_one          ;
-# 	has Widget  $!rep_all          ;
-# 	has Widget  $!case_sensitive   ;
-# }
-#
-# class SessionShellClassRec is repr<CStruct> is export {
-# 	has CoreClassPart             $!core_class             ;
-# 	has CompositeClassPart        $!composite_class        ;
-# 	has ShellClassPart            $!shell_class            ;
-# 	has WMShellClassPart          $!wm_shell_class         ;
-# 	has VendorShellClassPart      $!vendor_shell_class     ;
-# 	has TopLevelShellClassPart    $!top_level_shell_class  ;
-# 	has ApplicationShellClassPart $!application_shell_class;
-# 	has SessionShellClassPart     $!session_shell_class    ;
-# }
-#
-# class SetBugMode is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!mitReqType;
-# 	has CARD16 $!length    ;
-# 	has BOOL   $!onOff     ;
-# 	has BYTE   $!pad0      ;
-# 	has CARD16 $!pad1      ;
-# }
-#
-# class ShapeCombine is repr<CStruct> is export {
-# 	has CARD8  $!reqType     ;
-# 	has CARD8  $!shapeReqType;
-# 	has CARD16 $!length      ;
-# 	has CARD8  $!op          ;
-# 	has CARD8  $!destKind    ;
-# 	has CARD8  $!srcKind     ;
-# 	has CARD8  $!junk        ;
-# 	has Window $!dest        ;
-# 	has INT16  $!xOff        ;
-# 	has INT16  $!yOff        ;
-# 	has Window $!src         ;
-# }
-#
-# class ShapeGetRectangles is repr<CStruct> is export {
-# 	has CARD8  $!reqType     ;
-# 	has CARD8  $!shapeReqType;
-# 	has CARD16 $!length      ;
-# 	has Window $!window      ;
-# 	has CARD8  $!kind        ;
-# 	has CARD8  $!junk1       ;
-# 	has CARD16 $!junk2       ;
-# }
-#
-# class ShapeInputSelected is repr<CStruct> is export {
-# 	has CARD8  $!reqType     ;
-# 	has CARD8  $!shapeReqType;
-# 	has CARD16 $!length      ;
-# 	has Window $!window      ;
-# }
-#
-# class ShapeMask is repr<CStruct> is export {
-# 	has CARD8  $!reqType     ;
-# 	has CARD8  $!shapeReqType;
-# 	has CARD16 $!length      ;
-# 	has CARD8  $!op          ;
-# 	has CARD8  $!destKind    ;
-# 	has CARD16 $!junk        ;
-# 	has Window $!dest        ;
-# 	has INT16  $!xOff        ;
-# 	has INT16  $!yOff        ;
-# 	has CARD32 $!src         ;
-# }
-#
-# class ShapeNotify is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has BYTE   $!kind          ;
-# 	has CARD16 $!sequenceNumber;
-# 	has Window $!window        ;
-# 	has INT16  $!x             ;
-# 	has INT16  $!y             ;
-# 	has CARD16 $!width         ;
-# 	has CARD16 $!height        ;
-# 	has Time   $!time          ;
-# 	has BYTE   $!shaped        ;
-# 	has BYTE   $!pad0          ;
-# 	has CARD16 $!pad1          ;
-# 	has CARD32 $!pad2          ;
-# 	has CARD32 $!pad3          ;
-# }
-#
-# class ShapeOffset is repr<CStruct> is export {
-# 	has CARD8  $!reqType     ;
-# 	has CARD8  $!shapeReqType;
-# 	has CARD16 $!length      ;
-# 	has CARD8  $!destKind    ;
-# 	has CARD8  $!junk1       ;
-# 	has CARD16 $!junk2       ;
-# 	has Window $!dest        ;
-# 	has INT16  $!xOff        ;
-# 	has INT16  $!yOff        ;
-# }
-#
-# class ShapeQueryExtents is repr<CStruct> is export {
-# 	has CARD8  $!reqType     ;
-# 	has CARD8  $!shapeReqType;
-# 	has CARD16 $!length      ;
-# 	has Window $!window      ;
-# }
-#
-# class ShapeQueryVersion is repr<CStruct> is export {
-# 	has CARD8  $!reqType     ;
-# 	has CARD8  $!shapeReqType;
-# 	has CARD16 $!length      ;
-# }
-#
-# class ShapeRectangles is repr<CStruct> is export {
-# 	has CARD8  $!reqType     ;
-# 	has CARD8  $!shapeReqType;
-# 	has CARD16 $!length      ;
-# 	has CARD8  $!op          ;
-# 	has CARD8  $!destKind    ;
-# 	has CARD8  $!ordering    ;
-# 	has CARD8  $!pad0        ;
-# 	has Window $!dest        ;
-# 	has INT16  $!xOff        ;
-# 	has INT16  $!yOff        ;
-# }
-#
-# class ShapeSelectInput is repr<CStruct> is export {
-# 	has CARD8  $!reqType     ;
-# 	has CARD8  $!shapeReqType;
-# 	has CARD16 $!length      ;
-# 	has Window $!window      ;
-# 	has BYTE   $!enable      ;
-# 	has BYTE   $!pad1        ;
-# 	has CARD16 $!pad2        ;
-# }
-#
-# class ShellClassRec is repr<CStruct> is export {
-# 	has CoreClassPart      $!core_class     ;
-# 	has CompositeClassPart $!composite_class;
-# 	has ShellClassPart     $!shell_class    ;
-# }
-#
-# class ShmAttach is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!shmReqType;
-# 	has CARD16 $!length    ;
-# 	has ShmSeg $!shmseg    ;
-# 	has CARD32 $!shmid     ;
-# 	has BOOL   $!readOnly  ;
-# 	has BYTE   $!pad0      ;
-# 	has CARD16 $!pad1      ;
-# }
-#
-# class ShmAttachFd is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!shmReqType;
-# 	has CARD16 $!length    ;
-# 	has ShmSeg $!shmseg    ;
-# 	has BOOL   $!readOnly  ;
-# 	has BYTE   $!pad0      ;
-# 	has CARD16 $!pad1      ;
-# }
-#
-# class ShmCompletion is repr<CStruct> is export {
-# 	has BYTE     $!type          ;
-# 	has BYTE     $!bpad0         ;
-# 	has CARD16   $!sequenceNumber;
-# 	has Drawable $!drawable      ;
-# 	has CARD16   $!minorEvent    ;
-# 	has BYTE     $!majorEvent    ;
-# 	has BYTE     $!bpad1         ;
-# 	has ShmSeg   $!shmseg        ;
-# 	has CARD32   $!offset        ;
-# 	has CARD32   $!pad0          ;
-# 	has CARD32   $!pad1          ;
-# 	has CARD32   $!pad2          ;
-# }
-#
-# class ShmCreatePixmap is repr<CStruct> is export {
-# 	has CARD8    $!reqType   ;
-# 	has CARD8    $!shmReqType;
-# 	has CARD16   $!length    ;
-# 	has Pixmap   $!pid       ;
-# 	has Drawable $!drawable  ;
-# 	has CARD16   $!width     ;
-# 	has CARD16   $!height    ;
-# 	has CARD8    $!depth     ;
-# 	has CARD8    $!pad0      ;
-# 	has CARD8    $!pad1      ;
-# 	has CARD8    $!pad2      ;
-# 	has ShmSeg   $!shmseg    ;
-# 	has CARD32   $!offset    ;
-# }
-#
-# class ShmCreateSegment is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!shmReqType;
-# 	has CARD16 $!length    ;
-# 	has ShmSeg $!shmseg    ;
-# 	has CARD32 $!size      ;
-# 	has BOOL   $!readOnly  ;
-# 	has BYTE   $!pad0      ;
-# 	has CARD16 $!pad1      ;
-# }
-#
-# class ShmDetach is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!shmReqType;
-# 	has CARD16 $!length    ;
-# 	has ShmSeg $!shmseg    ;
-# }
-#
-# class ShmGetImage is repr<CStruct> is export {
-# 	has CARD8    $!reqType   ;
-# 	has CARD8    $!shmReqType;
-# 	has CARD16   $!length    ;
-# 	has Drawable $!drawable  ;
-# 	has INT16    $!x         ;
-# 	has INT16    $!y         ;
-# 	has CARD16   $!width     ;
-# 	has CARD16   $!height    ;
-# 	has CARD32   $!planeMask ;
-# 	has CARD8    $!format    ;
-# 	has CARD8    $!pad0      ;
-# 	has CARD8    $!pad1      ;
-# 	has CARD8    $!pad2      ;
-# 	has ShmSeg   $!shmseg    ;
-# 	has CARD32   $!offset    ;
-# }
-#
-# class ShmGetImageReply is repr<CStruct> is export {
-# 	has BYTE     $!type          ;
-# 	has CARD8    $!depth         ;
-# 	has CARD16   $!sequenceNumber;
-# 	has CARD32   $!length        ;
-# 	has VisualID $!visual        ;
-# 	has CARD32   $!size          ;
-# 	has CARD32   $!pad0          ;
-# 	has CARD32   $!pad1          ;
-# 	has CARD32   $!pad2          ;
-# 	has CARD32   $!pad3          ;
-# }
-#
-# class ShmPutImage is repr<CStruct> is export {
-# 	has CARD8    $!reqType    ;
-# 	has CARD8    $!shmReqType ;
-# 	has CARD16   $!length     ;
-# 	has Drawable $!drawable   ;
-# 	has GContext $!gc         ;
-# 	has CARD16   $!totalWidth ;
-# 	has CARD16   $!totalHeight;
-# 	has CARD16   $!srcX       ;
-# 	has CARD16   $!srcY       ;
-# 	has CARD16   $!srcWidth   ;
-# 	has CARD16   $!srcHeight  ;
-# 	has INT16    $!dstX       ;
-# 	has INT16    $!dstY       ;
-# 	has CARD8    $!depth      ;
-# 	has CARD8    $!format     ;
-# 	has CARD8    $!sendEvent  ;
-# 	has CARD8    $!bpad       ;
-# 	has ShmSeg   $!shmseg     ;
-# 	has CARD32   $!offset     ;
-# }
-#
-# class ShmQueryVersion is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!shmReqType;
-# 	has CARD16 $!length    ;
-# }
-#
-# class SignalEventRec is repr<CStruct> is export {
-# 	has XtSignalCallbackProc $!se_proc   ;
-# 	has XtPointer            $!se_closure;
-# 	has _SignalEventRec      $!se_next   ;
-# 	has XtAppContext         $!app       ;
-# 	has Boolean              $!se_notice ;
-# }
-#
-# class SimpleClassRec is repr<CStruct> is export {
-# 	has CoreClassPart   $!core_class  ;
-# 	has SimpleClassPart $!simple_class;
-# }
-#
-# class SimpleMenuClassRec is repr<CStruct> is export {
-# 	has CoreClassPart          $!core_class          ;
-# 	has CompositeClassPart     $!composite_class     ;
-# 	has ShellClassPart         $!shell_class         ;
-# 	has OverrideShellClassPart $!override_shell_class;
-# 	has SimpleMenuClassPart    $!simpleMenu_class    ;
-# }
-#
-# class SimpleMenuPart is repr<CStruct> is export {
-# 	has String         $!label_string        ;
-# 	has SmeObject      $!label               ;
-# 	has WidgetClass    $!label_class         ;
-# 	has Dimension      $!top_margin          ;
-# 	has Dimension      $!bottom_margin       ;
-# 	has Dimension      $!row_height          ;
-# 	has Cursor         $!cursor              ;
-# 	has SmeObject      $!popup_entry         ;
-# 	has Boolean        $!menu_on_screen      ;
-# 	has int            $!backing_store       ;
-# 	has Boolean        $!recursive_set_values;
-# 	has Boolean        $!menu_width          ;
-# 	has Boolean        $!menu_height         ;
-# 	has SmeObject      $!entry_set           ;
-# 	has Dimension      $!left_margin         ;
-# 	has Dimension      $!right_margin        ;
-# 	has XawDisplayList $!display_list        ;
-# 	has Widget         $!sub_menu            ;
-# 	has Str            $!state               ;
-# 	has XtPointer      $!pad                 ;
-# }
-#
-# class SimpleMenuRec is repr<CStruct> is export {
-# 	has CorePart          $!core       ;
-# 	has CompositePart     $!composite  ;
-# 	has ShellPart         $!shell      ;
-# 	has OverrideShellPart $!override   ;
-# 	has SimpleMenuPart    $!simple_menu;
-# }
-#
-# class SimpleRec is repr<CStruct> is export {
-# 	has CorePart   $!core  ;
-# 	has SimplePart $!simple;
-# }
-#
-# class SmeBSBClassPart is repr<CStruct> is export {
-# 	has XtPointer $!extension;
-# }
-#
-# class SmeBSBClassRec is repr<CStruct> is export {
-# 	has RectObjClassPart $!rect_class   ;
-# 	has SmeClassPart     $!sme_class    ;
-# 	has SmeBSBClassPart  $!sme_bsb_class;
-# }
-#
-# class SmeBSBRec is repr<CStruct> is export {
-# 	has ObjectPart  $!object   ;
-# 	has RectObjPart $!rectangle;
-# 	has SmePart     $!sme      ;
-# 	has SmeBSBPart  $!sme_bsb  ;
-# }
-#
-# class SmeClassPart is repr<CStruct> is export {
-# 	has XtWidgetProc $!highlight  ;
-# 	has XtWidgetProc $!unhighlight;
-# 	has XtWidgetProc $!notify     ;
-# 	has XtPointer    $!extension  ;
-# }
-#
-# class SmeClassRec is repr<CStruct> is export {
-# 	has RectObjClassPart $!rect_class;
-# 	has SmeClassPart     $!sme_class ;
-# }
-#
-# class SmeLineClassPart is repr<CStruct> is export {
-# 	has XtPointer $!extension;
-# }
-#
-# class SmeLineClassRec is repr<CStruct> is export {
-# 	has RectObjClassPart $!rect_class    ;
-# 	has SmeClassPart     $!sme_class     ;
-# 	has SmeLineClassPart $!sme_line_class;
-# }
-#
-# class SmeLineRec is repr<CStruct> is export {
-# 	has ObjectPart  $!object   ;
-# 	has RectObjPart $!rectangle;
-# 	has SmePart     $!sme      ;
-# 	has SmeLinePart $!sme_line ;
-# }
-#
-# class SmeRec is repr<CStruct> is export {
-# 	has ObjectPart  $!object   ;
-# 	has RectObjPart $!rectangle;
-# 	has SmePart     $!sme      ;
-# }
-#
-# class StripChartClassRec is repr<CStruct> is export {
-# 	has CoreClassPart       $!core_class       ;
-# 	has SimpleClassPart     $!simple_class     ;
-# 	has StripChartClassPart $!strip_chart_class;
-# }
-#
-# class StripChartRec is repr<CStruct> is export {
-# 	has CorePart       $!core       ;
-# 	has SimplePart     $!simple     ;
-# 	has StripChartPart $!strip_chart;
-# }
+class StripChartRec is repr<CStruct> is export {
+	has CorePart       $!core       ;
+	has SimplePart     $!simple     ;
+	has StripChartPart $!strip_chart;
+}
+
 #
 # class SyncAlarm is repr<CStruct> is export {
 # 	has SyncTrigger         $!trigger      ;
@@ -3515,6 +3681,10 @@ class ScreenSaverUnsetAttributes is repr<CStruct> is export {
 # 	has CARD16 $!minor     ;
 # }
 #
+
+# 7- 15/16 -2021
+
+
 # class XDGASetMode is repr<CStruct> is export {
 # 	has CARD8  $!reqType   ;
 # 	has CARD8  $!dgaReqType;
@@ -5419,10 +5589,6 @@ class ScreenSaverUnsetAttributes is repr<CStruct> is export {
 # 	has CARD8  $!unused    ;
 # }
 #
-# class xPoint is repr<CStruct> is export {
-# 	has INT16 $!x;
-# 	has INT16 $!y;
-# }
 #
 # class xQueryFontReply is repr<CStruct> is export {
 # 	has BYTE      $!type          ;
@@ -6992,3 +7158,104 @@ class ScreenSaverUnsetAttributes is repr<CStruct> is export {
 #   Bool save_unders;
 #   long root_input_mask;   /* initial root input mask */
 # } Screen;
+
+class XcmsInfo is repr<CStruct> {
+  has XPointer $.defaultCCCs;            #= pointer to an array of default XcmsCCC
+  has XPointer $.clientCmaps;            #= pointer to linked list of XcmsCmapRec
+  has XPointer $.perVisualIntensityMaps; #= linked list of XcmsIntensityMap
+}
+
+# struct XDisplay is repr<CStruct> is export {
+#   XExtData                 *ext_data;     /* hook for extension to hang data */
+#   struct _XFreeFuncs       *free_funcs; /* internal free functions */
+#   int                      fd;                 /* Network socket. */
+#   int                      conn_checker;         /* ugly thing used by _XEventsQueued */
+#   int                      proto_major_version;/* maj. version of server's X protocol */
+#   int                      proto_minor_version;/* minor version of server's X protocol */
+#   char                     *vendor;           /* vendor of the server hardware */
+#   XID                      resource_base;      /* resource ID base */
+#   XID                      resource_mask;      /* resource ID mask bits */
+#   XID                      resource_id;        /* allocator current ID */
+#   int                      resource_shift;     /* allocator shift to correct bits */
+#   Pointer                  (*resource_alloc)(XDisplay* --> XID);
+#   int                      byte_order;         /* screen byte order, LSBFirst, MSBFirst */
+#   int                      bitmap_unit;        /* padding and data requirements */
+#   int                      bitmap_pad;         /* padding requirements on bitmaps */
+#   int                      bitmap_bit_order;   /* LeastSignificant or MostSignificant */
+#   int                      nformats;           /* number of pixmap formats in list */
+#   ScreenFormat             *pixmap_format;    /* pixmap format list */
+#   int                      vnumber;            /* Xlib's X protocol version number. */
+#   int                      release;            /* release of the server */
+#   XSQEvent                 head,
+#   XSQEvent                 tail;  /* Input event queue. */
+#   int                      qlen;               /* Length of input event queue */
+#   ulong                    last_request_read; /* seq number of last event read */
+#   ulong                    request;  /* sequence number of last request. */
+#   char                     *last_req;         /* beginning of last request, or dummy */
+#   char                     *buffer;           /* Output buffer starting address. */
+#   char                     *bufptr;           /* Output buffer index pointer. */
+#   char                     *bufmax;           /* Output buffer maximum+1 address. */
+#   unsigned                 max_request_size; /* maximum number 32 bit words in request*/
+#   Pointer                  *db; #= ot:_XrmHashBucketRec
+#   int                      (*synchandler)(XDisplay *);
+#   char                     *display_name;     /* "host:display" string used on this connect*/
+#   int                      default_screen;     /* default screen for operations */
+#   int                      nscreens;           /* number of screens on this server*/
+#   Screen                   *screens;        /* pointer to list of screens */
+#   ulong                    motion_buffer;    /* size of motion buffer */
+#   ulong                    flags;      /* internal connection flags */
+#   int                      min_keycode;        /* minimum defined keycode */
+#   int                      max_keycode;        /* maximum defined keycode */
+#   KeySym                   *keysyms;        /* This server's keysyms */
+#   XModifierKeymap          *modifiermap;   /* This server's modifier keymap */
+#   int                      keysyms_per_keycode;/* number of rows */
+#   char                     *xdefaults;        /* contents of defaults from server */
+#   char                     *scratch_buffer;   /* place to hang scratch buffer */
+#   ulong                    scratch_length;   /* length of scratch buffer */
+#   int                      ext_number;         /* extension number on this display */
+#   struct _XExten           *ext_procs; /* extensions initialized on this display */
+#   Pointer                  (*event_vec[128])(Display *, XEvent *, xEvent * --> Boolean);
+#   Pointer                  (*wire_vec[128])(Display *, XEvent *, xEvent * --> Status)
+#   KeySym                   lock_meaning;       /* for XLookupString */
+#   struct _XLockInfo        *lock;   /* multi-thread state, display lock */
+#   struct _XInternalAsync   *async_handlers; /* for internal async */
+#   ulong                    bigreq_size; /* max size of big requests */
+#   struct _XLockPtrs        *lock_fns; /* pointers to threads functions */
+#   void                     (*idlist_alloc)(Display *, XID *, int);
+#
+#   struct _XKeytrans        *key_bindings; /* for XLookupString */
+#   Font                     cursor_font;          /* for XCreateFontCursor */
+#   struct _XDisplayAtoms    *atoms; /* for XInternAtom */
+#   uint                     mode_switch;  /* keyboard group modifiers */
+#   uint                     num_lock;  /* keyboard numlock modifiers */
+#   struct _XContextDB       *context_db; /* context database */
+#   Pointer                  (**error_vec)(Display *, XErrorEvent *, xError * --> Boolean);
+#
+#   # Xcms information
+#   XcmsInfo                 cms;
+#   struct _XIMFilter        *im_filters;
+#   struct _XSQEvent         *qfree; /* unallocated event queue elements */
+#   ulong                    next_event_serial_num; /* inserted into next queue elt */
+#   struct _XExten           *flushes; /* Flush hooks */
+#   struct _XConnectionInfo  *im_fd_info; /* _XRegisterInternalConnection */
+#   int                      im_fd_length;       /* number of im_fd_info */
+#   struct _XConnWatchInfo   *conn_watchers; /* XAddConnectionWatch */
+#   int                      watcher_count;      /* number of conn_watchers */
+#   XPointer                 filedes;       /* struct pollfd cache for _XWaitForReadable */
+#   Pointer                  (*savedsynchandler)(Display * --> int);
+#   XID                      resource_max;       /* allocator max ID */
+#   int                      xcmisc_opcode;      /* major opcode for XC-MISC */
+#   struct _XkbInfoRec       *xkb_info; /* XKB info */
+#   struct _XtransConnInfo   *trans_conn; /* transport connection object */
+#   struct _X11XCBPrivate    *xcb; /* XCB glue private data */
+#   # Generic event cookie handling
+#   uint                     next_cookie; /* next event cookie */
+#   # vector for wire to generic event, index is (extension - 128)
+#   Pointer                  (*generic_event_vec[128])(Display *, XGenericEventCookie *, xEvent * --> Bool);
+#   # vector for event copy, index is (extension - 128)
+#   Pointer                  (*generic_event_copy_vec[128])(Display *, XGenericEventCookie ,XGenericEventCookie * --> Bool);
+#   Pointer                  cookiejar;  /* cookie events returned but not claimed */
+#   struct _XErrorThreadInfo *error_threads;
+#   XIOErrorExitHandler      exit_handler;
+#   void                     *exit_handler_data;
+# }
