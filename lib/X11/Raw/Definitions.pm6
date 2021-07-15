@@ -68,6 +68,7 @@ constant KeyCode                      is export := CARD8;
 constant KeySym                       is export := CARD32;
 constant Pixmap                       is export := CARD32;
 constant Region                       is export := CARD32;
+constant ShmSeg                       is export := CARD32;
 constant Time                         is export := CARD32;
 constant VisualID                     is export := CARD32;
 constant Window                       is export := CARD32;
@@ -772,7 +773,14 @@ constant X_SetModifierMapping             is export = 118;
 constant X_GetModifierMapping             is export = 119;
 constant X_NoOperation                    is export = 127;
 
+constant _XtShellPositionValid            is export = 1 +< 0;
+constant _XtShellNotReparented            is export = 1 +< 1;
+constant _XtShellPPositionOK              is export = 1 +< 2;
+constant _XtShellGeometryParsed           is export = 1 +< 3;
+
 constant IcePointer                       is export := Pointer;
+constant SmeObject                        is export := Pointer;
+constant XawDisplayList                   is export := Pointer;
 
 INIT {
   $DEBUG = True if %*ENV<P6_X11_DEBUG>;
