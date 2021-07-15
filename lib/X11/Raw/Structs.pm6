@@ -289,8 +289,91 @@ class AsciiDiskClassRec is repr<CStruct> is export {
 class CorePart      is repr<CStruct> is export { ... } # L571
 class SimplePart    is repr<CStruct> is export { ... }
 class TextPart      is repr<CStruct> is export { ... } # L3246
-class AsciiPart     is repr<CStruct> is export { ... }
-class AsciiDiskPart is repr<CStruct> is export { ... }
+
+class AsciiPart is repr<CStruct> is export {
+  has int       $.resource is rw;
+
+  #has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer $!pad1;
+  has XtPointer $!pad2;
+  has XtPointer $!pad3;
+  has XtPointer $!pad4;
+}
+
+class AsciiDiskPart is repr<CStruct> is export {
+  has char      $.resource is rw;
+
+  #has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer $!pad1;
+  has XtPointer $!pad2;
+  has XtPointer $!pad3;
+  has XtPointer $!pad4;
+}
+
+class XFontStruct is repr<CStruct> is export { ... } # L1753
+
+class XGCValues is repr<CStruct> is export {
+  has int       $.function           is rw;  #= logical operation
+  has ulong     $.plane_mask         is rw;  #= plane mask
+  has ulong     $.foreground         is rw;  #= foreground pixel
+  has ulong     $.background         is rw;  #= background pixel
+  has int       $.line_width         is rw;  #= line width
+  has int       $.line_style         is rw;  #= LineSolid, LineOnOffDash, LineDoubleDash
+  has int       $.cap_style          is rw;  #= CapNotLast, CapButt,CapRound, CapProjecting
+  has int       $.join_style         is rw;  #= JoinMiter, JoinRound, JoinBevel
+  has int       $.fill_style         is rw;  #= FillSolid, FillTiled, FillStippled, FillOpaeueStippled
+  has int       $.fill_rule          is rw;  #= EvenOddRule, WindingRule
+  has int       $.arc_mode           is rw;  #= ArcChord, ArcPieSlice
+  has Pixmap    $.tile               is rw;  #= tile pixmap for tiling operations
+  has Pixmap    $.stipple            is rw;  #= stipple 1 plane pixmap for stipping
+  has int       $.ts_x_origin        is rw;  #= offset for tile or stipple operations
+  has int       $.ts_y_origin        is rw;
+  has Font      $!font;                      #= default text font for text operations
+  has int       $.subwindow_mode     is rw;  #= ClipByChildren, IncludeInferiors
+  has Boolean   $.graphics_exposures is rw;  #= ot:Bool - boolean, should exposures be generated
+  has int       $.clip_x_origin      is rw;  #= origin for clipping
+  has int       $.clip_y_origin      is rw;
+  has Pixmap    $.clip_mask;                 #= bitmap clipping; other calls for rects
+  has int       $.dash_offset;               #= patterned/dashed line information
+  has uint8     $.dashes;                    #= ot:char
+}
+
+class XExtData is repr<CStruct> is export {
+  has int      $.number;       #= number returned by XRegisterExtension */
+  has XExtData $!next;         #= next item on list of data for structure */
+  has Pointer  $!free_private; #= fp:(XExtData --> int)
+  has XPointer $!private_data; #= data private to this extension.
+}
+
+class XGC is repr<CStruct> is export {
+  has XExtData  $.ext_data;        #= hook for extension to hang data
+  has GContext  $.gid       is rw; #= protocol ID for graphics context
+  has Boolean   $!rects ;          #= boolean: TRUE if clipmask is list of rectangles
+  has Boolean   $!dashes;          #= boolean: TRUE if dash-list is really a list
+  has ulong     $!dirty ;          #= cache dirty bits
+  has XGCValues $!values;          #= shadow structure of values
+}
+constant GC is export := XGC;
+
+class AsciiSinkPart is repr<CStruct> is export {
+  has XFontStruct        $.font;                      #= Font to draw in.fg
+  has Boolean            $.echo                is rw;
+  has Boolean            $.display_nonprinting is rw;
+  # private
+  HAS GC                 $!normgc;
+  HAS GC                 $!invgc;
+  HAS GC                 $!xorgc;
+  has XawTextPosition    $!cursor_position;
+  has XawTextInsertState $!laststate;
+  has short              $!cursor_x;        #= Cursor Location.
+  has short              $!cursor_y;        #= Cursor Location.
+
+  #has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer          $!pad1;
+  has XtPointer          $!pad2;
+  has XtPointer          $!pad3;
+  has XtPointer          $!pad4;
+} ;
 
 class AsciiDiskRec is repr<CStruct> is export {
 	has CorePart      $!core      ;
@@ -322,7 +405,6 @@ class AsciiSinkClassRec is repr<CStruct> is export {
 
 class ObjectPart    is repr<CStruct> is export { ... }
 class TextSinkPart  is repr<CStruct> is export { ... }
-class AsciiSinkPart is repr<CStruct> is export { ... }
 
 class AsciiSinkRec is repr<CStruct> is export {
 	has ObjectPart    $!object    ;
@@ -342,7 +424,12 @@ class AsciiSrcClassRec is repr<CStruct> is export {
 	has AsciiSrcClassPart $!ascii_src_class;
 }
 
-class Piece            is repr<CStruct> is export { ... }
+class Piece is repr<CStruct> is export {
+  has Str             $!text       ; #= The text in this buffer
+  has XawTextPosition $.used  is rw; #= The number of characters of this buffer that have been used
+  has Piece           $.prev       ;
+  has Piece           $.next       ; #= linked list pointers
+}
 
 class AsciiSrcPart is repr<CStruct> is export {
 	has Str             $!string             ;
@@ -379,7 +466,35 @@ class AsciiStringClassRec is repr<CStruct> is export {
 	has AsciiStringClassPart $!string_class;
 }
 
-class AsciiStringPart is repr<CStruct> is export { ... }
+class AsciiStringPart is repr<CStruct> is export {
+  has int                $.resource is rw;
+
+  #has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer          $!pad1;
+  has XtPointer          $!pad2;
+  has XtPointer          $!pad3;
+  has XtPointer          $!pad4;
+}
+
+class XawDisplay     is repr<CStruct> is export  { ... }
+class XawDisplayList is repr<CPointer> is export { * }
+
+class SimplePart {
+  # resources
+  has Cursor         $.cursor             is rw;
+  has Pixmap         $.insensitive_border is rw;
+  has String         $!cursor_name             ; #= cursor specified by name
+  has Pixel          $.pointer_fg         is rw; #= Pointer colors
+  has Pixel          $.pointer_bg         is rw; #= Pointer colors
+  has Boolean        $.international      is rw;
+  # private
+  has XawDisplayList $!display_list;
+  has String         $!tip;
+  #has XtPointer pad[3];   /* for future use and keep binary compatability */
+  has XtPointer      $!pad1;
+  has XtPointer      $!pad2;
+  has XtPointer      $!pad3;
+} ;
 
 class AsciiStringRec is repr<CStruct> is export {
 	has CorePart        $!core     ;
@@ -411,7 +526,25 @@ class BoxClassRec is repr<CStruct> is export {
 	has BoxClassPart       $!box_class      ;
 }
 
-class BoxPart       is repr<CStruct> is export { ... }
+class BoxPart is repr<CStruct> is export {
+  has Dimension      $.h_space     is rw;
+  has Dimension      $.v_space     is rw;
+  has XtOrientation  $.orientation is rw;
+  # private state
+  has Dimension      $!preferred_width;
+  has Dimension      $!preferred_height;
+  has Dimension      $!last_query_width;
+  has Dimension      $!last_query_height;
+  has XtGeometryMask $!last_query_mode;
+  has XawDisplayList $!display_list;
+
+  #has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer      $!pad1;
+  has XtPointer      $!pad2;
+  has XtPointer      $!pad3;
+  has XtPointer      $!pad4;
+}
+
 class CompositePart is repr<CStruct> is export { ... } # L478
 
 class BoxRec is repr<CStruct> is export {
@@ -1612,13 +1745,6 @@ class FontPropRec is repr<CStruct>is export  {
 }
 constant FontProp is export := FontPropRec;
 
-class XExtData is repr<CStruct> is export {
-  has int      $.number;       #= number returned by XRegisterExtension */
-  has XExtData $!next;         #= next item on list of data for structure */
-  has Pointer  $!free_private; #= fp:(XExtData --> int)
-  has XPointer $!private_data; #= data private to this extension.
-}
-
 class FontInfoRec is repr<CStruct> is export {
   has uint16      $.firstCol        is rw;
   has uint16      $.lastCol         is rw;
@@ -1688,7 +1814,7 @@ class XCharStruct is repr<CStruct> is export {
   has ushort $.attributes is rw; #= per char flags (not predefined)
 }
 
-class XFontStruct is repr<CStruct> is export {
+class XFontStruct {
   has XExtData    $!ext_data               ; #= hook for extension to hang data
   HAS Font        $!fid                    ; #= Font id for this font
   has uint        $.direction         is rw; #= hint about direction the font is painted
@@ -1706,42 +1832,6 @@ class XFontStruct is repr<CStruct> is export {
   has int         $.ascent            is rw; #= log. extent above baseline for spacing
   has int         $.descent           is rw; #= log. descent below baseline for spacing
 }
-
-class XGCValues is repr<CStruct> is export {
-  has int       $.function           is rw;  #= logical operation
-  has ulong     $.plane_mask         is rw;  #= plane mask
-  has ulong     $.foreground         is rw;  #= foreground pixel
-  has ulong     $.background         is rw;  #= background pixel
-  has int       $.line_width         is rw;  #= line width
-  has int       $.line_style         is rw;  #= LineSolid, LineOnOffDash, LineDoubleDash
-  has int       $.cap_style          is rw;  #= CapNotLast, CapButt,CapRound, CapProjecting
-  has int       $.join_style         is rw;  #= JoinMiter, JoinRound, JoinBevel
-  has int       $.fill_style         is rw;  #= FillSolid, FillTiled, FillStippled, FillOpaeueStippled
-  has int       $.fill_rule          is rw;  #= EvenOddRule, WindingRule
-  has int       $.arc_mode           is rw;  #= ArcChord, ArcPieSlice
-  has Pixmap    $.tile               is rw;  #= tile pixmap for tiling operations
-  has Pixmap    $.stipple            is rw;  #= stipple 1 plane pixmap for stipping
-  has int       $.ts_x_origin        is rw;  #= offset for tile or stipple operations
-  has int       $.ts_y_origin        is rw;
-  has Font      $!font;                      #= default text font for text operations
-  has int       $.subwindow_mode     is rw;  #= ClipByChildren, IncludeInferiors
-  has Boolean   $.graphics_exposures is rw;  #= ot:Bool - boolean, should exposures be generated
-  has int       $.clip_x_origin      is rw;  #= origin for clipping
-  has int       $.clip_y_origin      is rw;
-  has Pixmap    $.clip_mask;                 #= bitmap clipping; other calls for rects
-  has int       $.dash_offset;               #= patterned/dashed line information
-  has uint8     $.dashes;                    #= ot:char
-}
-
-class XGC is repr<CStruct> is export {
-  has XExtData  $.ext_data;        #= hook for extension to hang data
-  has GContext  $.gid       is rw; #= protocol ID for graphics context
-  has Boolean   $!rects ;          #= boolean: TRUE if clipmask is list of rectangles
-  has Boolean   $!dashes;          #= boolean: TRUE if dash-list is really a list
-  has ulong     $!dirty ;          #= cache dirty bits
-  has XGCValues $!values;          #= shadow structure of values
-}
-constant GC is export := XGC;
 
 class ListPart is repr<CStruct> is export {
   has Pixel          $.foreground        is rw;
