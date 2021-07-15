@@ -72,6 +72,8 @@ constant ShmSeg                       is export := CARD32;
 constant Time                         is export := CARD32;
 constant VisualID                     is export := CARD32;
 constant Window                       is export := CARD32;
+constant XSyncAlarm                   is export := CARD32;
+constant XSyncCounter                 is export := CARD32;
 
 constant x11                          is export = 'x11',v6;
 
@@ -780,6 +782,7 @@ constant _XtShellGeometryParsed           is export = 1 +< 3;
 
 constant IcePointer                       is export := Pointer;
 constant SmeObject                        is export := Pointer;
+constant TMBindCacheRec                   is export := Pointer;
 constant XawDisplayList                   is export := Pointer;
 
 INIT {
