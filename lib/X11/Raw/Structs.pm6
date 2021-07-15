@@ -3847,6 +3847,7 @@ class XAxisInfo is repr<CStruct> is export {
 	has int $.min_value  is rw;
 	has int $.max_value  is rw;
 }
+constant xAxisInfo is export := XAxisInfo;
 
 class XButtonInfo is repr<CStruct> is export {
 	has XID   $.c_class     is rw;
@@ -4436,228 +4437,225 @@ class XResResourceSizeSpec is repr<CStruct> is export {
 	has CARD32              $!useCount;
 }
 
+class XSQEvent is repr<CStruct> is export {
+	has XSQEvent $!next       ;
+	has XEvent   $!event      ;
+	has long     $!qserial_num;
+}
+
+class XSpanFix is repr<CStruct> is export {
+	has XFixed $!left ;
+	has XFixed $!right;
+	has XFixed $!y    ;
+}
+
+class XSyncValue is repr<CStruct> is export {
+	has int $.hi is rw;
+	has int $.lo is rw;
+}
+
+class XSyncSystemCounter is repr<CStruct> is export {
+	has Str          $!name      ;
+	has XSyncCounter $!counter   ;
+	has XSyncValue   $!resolution;
+}
+
+class XTrap is repr<CStruct> is export {
+	has XSpanFix $!top   ;
+	has XSpanFix $!bottom;
+}
+
+class XValuatorInfo is repr<CStruct> is export {
+	has XID        $!c_class      ;
+	has XID        $!class        ;
+	has int        $!length       ;
+	has Str        $!num_axes     ;
+	has Str        $!mode         ;
+	has long       $!motion_buffer;
+	has XAxisInfo  $!axes         ;
+}
+
+class XagCreate is repr<CStruct> is export {
+	has CARD8     $!reqType    ;
+	has CARD8     $!xagReqType ;
+	has CARD16    $!length     ;
+	has XAppGroup $!app_group  ;
+	has CARD32    $!attrib_mask;
+}
+
+class XagCreateAssoc is repr<CStruct> is export {
+	has CARD8  $!reqType          ;
+	has CARD8  $!xagReqType       ;
+	has CARD16 $!length           ;
+	has Window $!window           ;
+	has CARD16 $!window_type      ;
+	has CARD16 $!system_window_len;
+}
+
+class XagDestroy is repr<CStruct> is export {
+	has CARD8     $!reqType   ;
+	has CARD8     $!xagReqType;
+	has CARD16    $!length    ;
+	has XAppGroup $!app_group ;
+}
+
+class XagDestroyAssoc is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xagReqType;
+	has CARD16 $!length    ;
+	has Window $!window    ;
+}
+
+class XagGetAttr is repr<CStruct> is export {
+	has CARD8     $!reqType   ;
+	has CARD8     $!xagReqType;
+	has CARD16    $!length    ;
+	has XAppGroup $!app_group ;
+}
+
+class XagQuery is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xagReqType;
+	has CARD16 $!length    ;
+	has CARD32 $!resource  ;
+}
+
+class XagQueryVersion is repr<CStruct> is export {
+	has CARD8  $!reqType             ;
+	has CARD8  $!xagReqType          ;
+	has CARD16 $!length              ;
+	has CARD16 $!client_major_version;
+	has CARD16 $!client_minor_version;
+}
+
+class XawGripCallData is repr<CStruct> is export {
+	has XEvent   $!event     ;
+	has String   $!params    ;
+	has Cardinal $!num_params;
+}
+
+class XawIcTablePart is repr<CStruct> is export {
+	has Widget          $!widget         ;
+	has XIC             $!xic            ;
+	has XIMStyle        $.input_style      is rw;
+	has long            $.flg              is rw;
+	has long            $.prev_flg         is rw;
+	has Boolean         $.ic_focused       is rw;
+	has XFontSet        $!font_set       ;
+	has Pixel           $.foreground       is rw;
+	has Pixel           $.background       is rw;
+	has Pixmap          $.bg_pixmap        is rw;
+	has XawTextPosition $.cursor_position  is rw;
+	has long            $.line_spacing     is rw;
+	has Boolean         $.openic_error     is rw;
+	has XawIcTablePart  $!next           ;
+}
+class XawIcTableList is repr<CPointer> is export { * }
+
+class XawIcPart is repr<CStruct> is export {
+	has XIMStyle       $.input_style       is rw;
+	has Boolean        $.shared_ic         is rw;
+	has XawIcTableList $!shared_ic_table ;
+	has XawIcTableList $!current_ic_table;
+	has XawIcTableList $!ic_table        ;
+}
+
+class XrmResource is repr<CStruct> is export {
+  has long        $.xrm_name          is rw; #= Resource name quark
+  has long        $.xrm_class         is rw; #= Resource class quark
+  has long        $.xrm_type          is rw; #= Resource representation type quark
+  has Cardinal    $.xrm_size          is rw; #= Size in bytes of representation
+  has int         $.xrm_offset        is rw; #= -offset-1
+  has long        $.xrm_default_type  is rw; #= Default representation type quark
+  has XtPointer   $!xrm_default_addr;        #= Default resource address
+}
+
+class XrmResourceList is repr<CPointer> is export { * }
+
+class XawImPart is repr<CStruct> is export {
+	has XIM             $!xim          ;
+	has XrmResourceList $!resources    ;
+	has Cardinal        $.num_resources  is rw;
+	has Boolean         $.open_im        is rw;
+	has Boolean         $.initialized    is rw;
+	has Dimension       $.area_height    is rw;
+	has String          $!input_method ;
+	has String          $!preedit_type ;
+}
+
+class XawListReturnStruct is repr<CStruct> is export {
+	has String $!string    ;
+	has int    $.list_index  is rw;
+}
+
+class XawTextEntity is repr<CStruct> is export {
+	has short           $.type      is rw;
+	has short           $.flags     is rw;
+	has XawTextEntity   $!next    ;
+	has XtPointer       $!data    ;
+	has XawTextPosition $.offset    is rw;
+	has Cardinal        $.length    is rw;
+	has XrmQuark        $!property;
+}
+
+class XawTextProperty is repr<CStruct> is export {
+  has  XrmQuark     $.identifier          is rw;
+  has  XrmQuark     $.code                is rw;
+  has  ulong        $.mask                is rw;
+  has  XFontStruct  $.font                is rw;
+  has  XFontSet     $.fontset             is rw;
+  has  Pixel        $.foreground          is rw;
+  has  Pixel        $.background          is rw;
+  has  Pixmap       $.foreground_pixmap   is rw;
+  has  Pixmap       $.background_pixmap   is rw;
+  has  XrmQuark     $.xlfd                is rw;
+  has  ulong        $.xlfd_mask           is rw;
+  has  XrmQuark     $.foundry             is rw;
+  has  XrmQuark     $.family              is rw;
+  has  XrmQuark     $.weight              is rw;
+  has  XrmQuark     $.slant               is rw;
+  has  XrmQuark     $.setwidth            is rw;
+  has  XrmQuark     $.addstyle            is rw;
+  has  XrmQuark     $.pixel_size          is rw;
+  has  XrmQuark     $.point_size          is rw;
+  has  XrmQuark     $.res_x               is rw;
+  has  XrmQuark     $.res_y               is rw;
+  has  XrmQuark     $.spacing             is rw;
+  has  XrmQuark     $.avgwidth            is rw;
+  has  XrmQuark     $.registry            is rw;
+  has  XrmQuark     $.encoding            is rw;
+  has  short        $.underline_position  is rw;
+  has  short        $.underline_thickness is rw;
+}
+
+class XmuArea is repr<CStruct> is export {
+  has XmuScanline $!scanline;
+}
+
+class XawTextPaintStruct is repr<CStruct> is export {
+	has XawTextPaintStruct $!next       ;
+	has int                $!x          ;
+	has int                $!y          ;
+	has int                $!width      ;
+	has Str                $!text       ;
+	has Cardinal           $!length     ;
+	has XawTextProperty    $!property   ;
+	has int                $!max_ascent ;
+	has int                $!max_descent;
+	has XmuArea            $!backtabs   ;
+	has Boolean            $!highlight  ;
+}
+
 # cw: ... 7/15/2021
-# class XSQEvent is repr<CStruct> is export {
-# 	has _XSQEvent $!next       ;
-# 	has XEvent    $!event      ;
-# 	has long      $!qserial_num;
-# }
-#
-# class XSpanFix is repr<CStruct> is export {
-# 	has XFixed $!left ;
-# 	has XFixed $!right;
-# 	has XFixed $!y    ;
-# }
-#
-# class XSyncSystemCounter is repr<CStruct> is export {
-# 	has Str          $!name      ;
-# 	has XSyncCounter $!counter   ;
-# 	has XSyncValue   $!resolution;
-# }
-#
-# class XSyncValue is repr<CStruct> is export {
-# 	has int $!hi;
-# 	has int $!lo;
-# }
-#
-# class XTrap is repr<CStruct> is export {
-# 	has XSpanFix $!top   ;
-# 	has XSpanFix $!bottom;
-# }
-#
-# class XTrapezoid is repr<CStruct> is export {
-# 	has XFixed     $!top   ;
-# 	has XFixed     $!bottom;
-# 	has XLineFixed $!left  ;
-# 	has XLineFixed $!right ;
-# }
-#
-# class XTriangle is repr<CStruct> is export {
-# 	has XPointFixed $!p1;
-# 	has XPointFixed $!p2;
-# 	has XPointFixed $!p3;
-# }
-#
-# class XValuatorInfo is repr<CStruct> is export {
-# 	has XID          $!c_class      ;
-# 	has XID          $!class        ;
-# 	has int          $!length       ;
-# 	has Str          $!num_axes     ;
-# 	has Str          $!mode         ;
-# 	has long         $!motion_buffer;
-# 	has XAxisInfoPtr $!axes         ;
-# }
-#
-# class XagCreate is repr<CStruct> is export {
-# 	has CARD8     $!reqType    ;
-# 	has CARD8     $!xagReqType ;
-# 	has CARD16    $!length     ;
-# 	has XAppGroup $!app_group  ;
-# 	has CARD32    $!attrib_mask;
-# }
-#
-# class XagCreateAssoc is repr<CStruct> is export {
-# 	has CARD8  $!reqType          ;
-# 	has CARD8  $!xagReqType       ;
-# 	has CARD16 $!length           ;
-# 	has Window $!window           ;
-# 	has CARD16 $!window_type      ;
-# 	has CARD16 $!system_window_len;
-# }
-#
-# class XagDestroy is repr<CStruct> is export {
-# 	has CARD8     $!reqType   ;
-# 	has CARD8     $!xagReqType;
-# 	has CARD16    $!length    ;
-# 	has XAppGroup $!app_group ;
-# }
-#
-# class XagDestroyAssoc is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xagReqType;
-# 	has CARD16 $!length    ;
-# 	has Window $!window    ;
-# }
-#
-# class XagGetAttr is repr<CStruct> is export {
-# 	has CARD8     $!reqType   ;
-# 	has CARD8     $!xagReqType;
-# 	has CARD16    $!length    ;
-# 	has XAppGroup $!app_group ;
-# }
-#
-# class XagQuery is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xagReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD32 $!resource  ;
-# }
-#
-# class XagQueryVersion is repr<CStruct> is export {
-# 	has CARD8  $!reqType             ;
-# 	has CARD8  $!xagReqType          ;
-# 	has CARD16 $!length              ;
-# 	has CARD16 $!client_major_version;
-# 	has CARD16 $!client_minor_version;
-# }
-#
-# class XawGripCallData is repr<CStruct> is export {
-# 	has XEvent   $!event     ;
-# 	has String   $!params    ;
-# 	has Cardinal $!num_params;
-# }
-#
-# class XawIcPart is repr<CStruct> is export {
-# 	has XIMStyle       $!input_style     ;
-# 	has Boolean        $!shared_ic       ;
-# 	has XawIcTableList $!shared_ic_table ;
-# 	has XawIcTableList $!current_ic_table;
-# 	has XawIcTableList $!ic_table        ;
-# }
-#
-# class XawIcTablePart is repr<CStruct> is export {
-# 	has Widget          $!widget         ;
-# 	has XIC             $!xic            ;
-# 	has XIMStyle        $!input_style    ;
-# 	has long            $!flg            ;
-# 	has long            $!prev_flg       ;
-# 	has Boolean         $!ic_focused     ;
-# 	has XFontSet        $!font_set       ;
-# 	has Pixel           $!foreground     ;
-# 	has Pixel           $!background     ;
-# 	has Pixmap          $!bg_pixmap      ;
-# 	has XawTextPosition $!cursor_position;
-# 	has long            $!line_spacing   ;
-# 	has Boolean         $!openic_error   ;
-# 	has _XawIcTablePart $!next           ;
-# }
-#
-# class XawImPart is repr<CStruct> is export {
-# 	has XIM             $!xim          ;
-# 	has XrmResourceList $!resources    ;
-# 	has Cardinal        $!num_resources;
-# 	has Boolean         $!open_im      ;
-# 	has Boolean         $!initialized  ;
-# 	has Dimension       $!area_height  ;
-# 	has String          $!input_method ;
-# 	has String          $!preedit_type ;
-# }
-#
-# class XawListReturnStruct is repr<CStruct> is export {
-# 	has String $!string    ;
-# 	has int    $!list_index;
-# }
-#
-# class XawTextEntity is repr<CStruct> is export {
-# 	has short           $!type    ;
-# 	has short           $!flags   ;
-# 	has XawTextEntity   $!next    ;
-# 	has XtPointer       $!data    ;
-# 	has XawTextPosition $!offset  ;
-# 	has Cardinal        $!length  ;
-# 	has XrmQuark        $!property;
-# }
-#
-# class XawTextMargin is repr<CStruct> is export {
-# 	has Position $!left  ;
-# 	has Position $!right ;
-# 	has Position $!top   ;
-# 	has Position $!bottom;
-# }
-#
-# class XawTextPaintStruct is repr<CStruct> is export {
-# 	has XawTextPaintStruct $!next       ;
-# 	has int                $!x          ;
-# 	has int                $!y          ;
-# 	has int                $!width      ;
-# 	has Str                $!text       ;
-# 	has Cardinal           $!length     ;
-# 	has XawTextProperty    $!property   ;
-# 	has int                $!max_ascent ;
-# 	has int                $!max_descent;
-# 	has XmuArea            $!backtabs   ;
-# 	has Boolean            $!highlight  ;
-# }
-#
-# class XawTextProperty is repr<CStruct> is export {
-# 	has XrmQuark    $!identifier         ;
-# 	has XrmQuark    $!code               ;
-# 	has long        $!mask               ;
-# 	has XFontStruct $!font               ;
-# 	has XFontSet    $!fontset            ;
-# 	has Pixel       $!foreground         ;
-# 	has Pixel       $!background         ;
-# 	has Pixmap      $!foreground_pixmap  ;
-# 	has Pixmap      $!background_pixmap  ;
-# 	has XrmQuark    $!xlfd               ;
-# 	has long        $!xlfd_mask          ;
-# 	has XrmQuark    $!foundry            ;
-# 	has XrmQuark    $!family             ;
-# 	has XrmQuark    $!weight             ;
-# 	has XrmQuark    $!slant              ;
-# 	has XrmQuark    $!setwidth           ;
-# 	has XrmQuark    $!addstyle           ;
-# 	has XrmQuark    $!pixel_size         ;
-# 	has XrmQuark    $!point_size         ;
-# 	has XrmQuark    $!res_x              ;
-# 	has XrmQuark    $!res_y              ;
-# 	has XrmQuark    $!spacing            ;
-# 	has XrmQuark    $!avgwidth           ;
-# 	has XrmQuark    $!registry           ;
-# 	has XrmQuark    $!encoding           ;
-# 	has short       $!underline_position ;
-# 	has short       $!underline_thickness;
-# }
-#
-# class XawTextPropertyList is repr<CStruct> is export {
-# 	has XrmQuark            $!identifier    ;
-# 	has Screen              $!screen        ;
-# 	has Colormap            $!colormap      ;
-# 	has int                 $!depth         ;
-# 	has XawTextProperty     $!properties    ;
-# 	has Cardinal            $!num_properties;
-# 	has XawTextPropertyList $!next          ;
-# }
+class XawTextPropertyList is repr<CStruct> is export {
+	has XrmQuark                         $.identifier      is rw;
+	has Screen                           $!screen               ;
+	has Colormap                         $.colormap        is rw;
+	has int                              $.depth           is rw;
+	has CArray[Pointer[XawTextProperty]] $!properties           ;
+	has Cardinal                         $.num_properties  is rw;
+	has XawTextPropertyList              $!next                 ;
+}
 #
 # class XawVendorShellExtRec is repr<CStruct> is export {
 # 	has ObjectPart            $!object    ;
@@ -5884,11 +5882,6 @@ class XkbConfigFields is repr<CStruct> is export {
 # 	has INT16  $!angle2;
 # }
 #
-# class xAxisInfo is repr<CStruct> is export {
-# 	has CARD32 $!resolution;
-# 	has CARD32 $!min_value ;
-# 	has CARD32 $!max_value ;
-# }
 #
 # class xButtonInfo is repr<CStruct> is export {
 # 	has CARD8  $!c_class    ;
