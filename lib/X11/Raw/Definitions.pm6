@@ -43,6 +43,7 @@ constant XrmQuark                     is export :=  int;
 constant XrmClass                     is export := XrmQuark;
 constant XrmName                      is export := XrmQuark;
 constant XtEnum                       is export := uint8;
+constant XtGeometryMask               is export := uint;
 constant XtGravity                    is export := int;
 constant XtInputMask                  is export := uint64;
 constant XtIntervalId                 is export := ulong;
@@ -804,7 +805,6 @@ constant _XtShellGeometryParsed           is export = 1 +< 3;
 constant IcePointer                       is export := Pointer;
 constant SmeObject                        is export := Pointer;
 constant TMBindCacheRec                   is export := Pointer;
-constant XawDisplayList                   is export := Pointer;
 
 INIT {
   $DEBUG = True if %*ENV<P6_X11_DEBUG>;
