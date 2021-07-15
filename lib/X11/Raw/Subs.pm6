@@ -322,6 +322,10 @@ sub toPointer (
 # Add Role to redefine name of method (guifa++)
 sub buildAccessors (\O) is export {
 	my $proxy = sub ($n, \attr) {
+    #»»»»»»»»»»»»»»»»»»»»
+    # cw: Any postprocessing based on attr.WHY.trailing will have
+    #     to be done RIGHT HERE!
+    #»»»»»»»»»»»»»»»»»»»»
 		my $m = method :: is rw {
 			Proxy.new(
 				FETCH => -> $,    { my $p = attr.get_value(self);
