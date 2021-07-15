@@ -7,10 +7,10 @@ unit package XLib::Raw::Definitions;
 our $DEBUG is export;
 
 constant uchar                        is export := uint8;
-constant char                         is export := int8;
+constant char                         is export :=  int8;
 constant float                        is export := num32;
 constant double                       is export := num64;
-constant short                        is export := int16;
+constant short                        is export :=  int16;
 constant ushort                       is export := uint16;
 constant wchar_t                      is export := uint16;
 constant unsigned                     is export := uint;
@@ -33,10 +33,11 @@ constant XIMFeedback                  is export := ulong;
 constant XIMPreeditState              is export := ulong;
 constant XIMStringConversionOperation is export := ushort;
 constant XIMStringConversionPosition  is export := ushort;
-constant XawTextPosition              is export := long;
+constant XawTextPosition              is export :=  long;
 constant XDouble                      is export := num64;
 constant XFixed                       is export :=  int;
 constant XFontSet                     is export := Pointer;  # os:XOC
+constant XIMStyle                     is export := ulong;
 constant XPointer                     is export := Str;
 constant XRandrSubpixelOrder          is export := ushort;
 constant XrmQuark                     is export :=  int;
@@ -44,12 +45,13 @@ constant XrmClass                     is export := XrmQuark;
 constant XrmName                      is export := XrmQuark;
 constant XtEnum                       is export := uint8;
 constant XtGeometryMask               is export := uint;
-constant XtGravity                    is export := int;
+constant XtGravity                    is export :=  int;
 constant XtInputMask                  is export := uint64;
 constant XtIntervalId                 is export := ulong;
 constant XtPointer                    is export := Pointer;
 constant XtVersionType                is export := uint64;
 
+constant XAppGroup                    is export := XID;
 constant GContext                     is export := XID;
 constant Picture                      is export := XID;
 
@@ -805,6 +807,7 @@ constant _XtShellGeometryParsed           is export = 1 +< 3;
 constant IcePointer                       is export := Pointer;
 constant SmeObject                        is export := Pointer;
 constant TMBindCacheRec                   is export := Pointer;
+constant XIM                              is export := Pointer;
 
 INIT {
   $DEBUG = True if %*ENV<P6_X11_DEBUG>;
