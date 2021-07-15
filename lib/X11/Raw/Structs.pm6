@@ -11,8 +11,6 @@ class TranslationData       is repr<CStruct> is export { ... } # L2306
 class ATranslationData      is repr<CStruct> is export { ... } # L13
 class TMComplexBindProcsRec is repr<CStruct> is export { ... } # L2039
 class XtAppContext          is repr<CStruct> is export { ... } # L?
-class XtActionHookProc      is repr<CStruct> is export { ... } # L?
-class XtPointer             is repr<CStruct> is export { ... } # L?
 
 class TMTypeMatchRec        is repr<CStruct> is export { ... } # L48
 class TMModifierMatchRec    is repr<CStruct> is export { ... } # L42
@@ -42,13 +40,24 @@ constant XtGeometryHandler is export := Pointer;
 #| ?
 constant XtWidgetProc      is export := Pointer;
 
-class TMLongCard            is repr<CStruct> is export { ... } # L?
-class LateBindingsPtr       is repr<CStruct> is export { ... } # L?
+class LateBindings is repr<CStruct> is export {
+  has uint   $.knot       is rw; #= b:1;
+  has uint   $.pair       is rw; #= b:1;
+  has ushort $.ref_count       ; #= garbage collection
+  has KeySym $.keysym     is rw;
+}
+
+class XtCallbackRec is repr<CStruct> is export {
+  has Pointer    $.callback; #= fp:XtCallbackProc
+  has XtPointer  $.closure;
+}
+# cw: Denotes TypedBuffer of XtCallbackRec
+class XtCallbackList is repr<CPointer> is export { * }
 
 class EventRec is repr<CStruct> is export {
 	has TMLongCard      $!modifiers    ;
 	has TMLongCard      $!modifierMask ;
-	has LateBindingsPtr $!lateModifiers;
+	has LateBindings    $!lateModifiers;
 	has TMLongCard      $!eventType    ;
 	has TMLongCard      $!eventCode    ;
 	has TMLongCard      $!eventCodeMask;
@@ -65,10 +74,10 @@ class TMEventRec is repr<CStruct> is export {
 }
 
 class TMModifierMatchRec {
-	has TMLongCard      $!modifiers    ;
-	has TMLongCard      $!modifierMask ;
-	has LateBindingsPtr $!lateModifiers;
-	has Boolean         $!standard     ;
+	has TMLongCard    $!modifiers    ;
+	has TMLongCard    $!modifierMask ;
+	has LateBindings  $!lateModifiers;
+	has Boolean       $!standard     ;
 }
 
 class TMTypeMatchRec {
@@ -87,10 +96,10 @@ class ATranslationData {
 }
 
 class ActionHookRec is repr<CStruct> is export {
-	has ActionHookRec    $!next   ;
-	has XtAppContext     $!app    ;
-	has XtActionHookProc $!proc   ;
-	has XtPointer        $!closure;
+	has ActionHookRec $!next   ;
+	has XtAppContext  $!app    ;
+	has Pointer       $!proc   ; #= fp:XtActionHookProc
+	has XtPointer     $!closure;
 }
 
 class ActionsRec is repr<CStruct> is export {
@@ -168,8 +177,6 @@ class AppleWMFrameHitTest is repr<CStruct> is export {
 	has CARD16 $.ow          is rw;
 	has CARD16 $.oh          is rw;
 }
-
-class Time is repr<CStruct> is export { ... }
 
 class AppleWMNotify is repr<CStruct> is export {
 	has BYTE   $.type           is rw;
@@ -335,10 +342,6 @@ class AsciiSrcClassRec is repr<CStruct> is export {
 	has AsciiSrcClassPart $!ascii_src_class;
 }
 
-class XawAsciiType     is repr<CStruct> is export { ... }
-class XawAsciiPosition is repr<CStruct> is export { ... }
-class XawTextPosition  is repr<CStruct> is export { ... }
-class XtCallbackList   is repr<CStruct> is export { ... }
 class Piece            is repr<CStruct> is export { ... }
 
 class AsciiSrcPart is repr<CStruct> is export {
@@ -479,8 +482,8 @@ class CompositeClassRec is repr<CStruct> is export {
 class WidgetRec is repr<CStruct> is export {
 	has CorePart $!core;
 }
+class WidgetList is repr<CPointer> is export { * }
 constant Widget     is export := WidgetRec;
-constant WidgetList is export := Pointer;   #= Widget *
 constant CoreRec    is export := WidgetRec;
 
 # Widget --> Cardinal
@@ -507,9 +510,7 @@ class XtResource is repr<CStruct> is export {
 	has String    $!default_type   ;
 	has XtPointer $!default_addr   ;
 }
-
-# XtResourceList is a TypedBuffer of XtResource
-constant XtResourceList is export := Pointer;
+class XtResourceList is repr<CPointer> is export { * }
 
 class ConstraintClassPart is repr<CStruct> is export {
 	has Pointer         $!resources      ; #= XtResource *
@@ -660,7 +661,8 @@ class TMStateTreeRec is repr<CUnion> is export {
   HAS TMComplexStateTreeRec $.complex;
 }
 constant TMStateTree     is export := TMStateTreeRec;
-constant TMStateTreeList is export := Pointer;        #= TmStateTree *
+
+class TMStateTreeList is repr<CPointer> is export { * }
 
 class TranslationData {
 	has Str              $!hasBindings  ;
@@ -746,6 +748,10 @@ class AsciiDiskClassPart {
 }
 
 class AsciiStringClassPart {
+  has XtPointer $.extension;
+}
+
+class BoxClassPart {
   has XtPointer $.extension;
 }
 
