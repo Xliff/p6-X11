@@ -3114,89 +3114,106 @@ class StripChartPart is repr<CStruct> is export {
     has XtPointer $!pad4;
 }
 
-# cw: ... 7/14/2021
 class StripChartRec is repr<CStruct> is export {
 	has CorePart       $!core       ;
 	has SimplePart     $!simple     ;
 	has StripChartPart $!strip_chart;
 }
 
-#
-# class SyncAlarm is repr<CStruct> is export {
-# 	has SyncTrigger         $!trigger      ;
-# 	has ClientPtr           $!client       ;
-# 	has XSyncAlarm          $!alarm_id     ;
-# 	has CARD64              $!delta        ;
-# 	has int                 $!events       ;
-# 	has int                 $!state        ;
-# 	has SyncAlarmClientList $!pEventClients;
-# }
-#
-# class SyncAlarmClientList is repr<CStruct> is export {
-# 	has ClientPtr            $!client   ;
-# 	has XID                  $!delete_id;
-# 	has _SyncAlarmClientList $!next     ;
-# }
-#
-# class SyncCounter is repr<CStruct> is export {
-# 	has ClientPtr        $!client         ;
-# 	has XSyncCounter     $!id             ;
-# 	has CARD64           $!value          ;
-# 	has _SyncTriggerList $!pTriglist      ;
-# 	has Bool             $!beingDestroyed ;
-# 	has _SysCounterInfo  $!pSysCounterInfo;
-# }
-#
-# class SyncTriggerList is repr<CStruct> is export {
-# 	has SyncTrigger      $!pTrigger;
-# 	has _SyncTriggerList $!next    ;
-# }
-#
-# class TMComplexBindProcsRec is repr<CStruct> is export {
-# 	has Widget         $!widget   ;
-# 	has XtTranslations $!aXlations;
-# 	has XtActionProc   $!procs    ;
-# }
-#
-# class TMConvertRec is repr<CStruct> is export {
-# 	has XtTranslations $!old;
-# 	has XtTranslations $!new;
-# }
-#
-# class TM4 is repr<CStruct> is export {
-# 	has XEvent $!xev  ;
-# 	has Event  $!event;
-# }
-#
-# class TMGlobalRec is repr<CStruct> is export {
-# 	has TMTypeMatchRec     $!typeMatchSegmentTbl    ;
-# 	has TMShortCard        $!numTypeMatches         ;
-# 	has TMShortCard        $!numTypeMatchSegments   ;
-# 	has TMShortCard        $!typeMatchSegmentTblSize;
-# 	has TMModifierMatchRec $!modMatchSegmentTbl     ;
-# 	has TMShortCard        $!numModMatches          ;
-# 	has TMShortCard        $!numModMatchSegments    ;
-# 	has TMShortCard        $!modMatchSegmentTblSize ;
-# 	has Boolean            $!newMatchSemantics      ;
-# 	has XtTranslations     $!tmTbl                  ;
-# 	has TMShortCard        $!numTms                 ;
-# 	has TMShortCard        $!tmTblSize              ;
-# 	has _TMBindCacheRec    $!bindCacheTbl           ;
-# 	has TMShortCard        $!numBindCache           ;
-# 	has TMShortCard        $!bindCacheTblSize       ;
-# 	has TMShortCard        $!numLateBindings        ;
-# 	has TMShortCard        $!numBranchHeads         ;
-# 	has TMShortCard        $!numComplexStates       ;
-# 	has TMShortCard        $!numComplexActions      ;
-# }
-#
-#
-#
+class SyncTrigger     is repr<CStruct> is export { ... }
+class SyncTriggerList is repr<CStruct> is export {
+	has SyncTrigger     $!pTrigger;
+	has SyncTriggerList $!next    ;
+}
+
+class SysCounterInfo is repr<CStruct> is export {
+  has Str             $.name                 ;
+  has CARD64          $.resolution      is rw;
+  has CARD64          $.bracket_greater is rw;
+  has CARD64          $.bracket_less    is rw;
+  has SyncCounterType $.counterType          ; #= how can this counter change
+  has Pointer         $.QueryValue           ; #= fp:(pointer *pCounter, CARD64 *freshvalue)
+  has Pointer         $.BracketValues        ; #= fp:(pointer, CARD64 *less, CARD64 *greater)
+}
+
+class SyncCounter is repr<CStruct> is export {
+  has Pointer          $!client              ; #= ot:ClientPtr  Owning client. 0 for system counters */
+  has XSyncCounter     $.id             is rw; #= resource ID
+  has CARD64           $.value          is rw; #= counter value
+  has SyncTriggerList  $!pTriglist           ; #= list of triggers
+  has Boolean          $.beingDestroyed      ; #= ot:Bool - in process of going away
+  has SysCounterInfo   $.pSysCounterInfo     ; #= NULL if not a system counter
+}
+
+class SyncTrigger {
+  has SyncCounter $.pCounter        ;
+  has CARD64      $.wait_value is rw; #= wait value
+  has uint        $.value_type is rw; #= Absolute or Relative
+  has uint        $.test_type  is rw; #= transition or Comparision type
+  has CARD64      $.test_value is rw; #= trigger event threshold value
+  has Pointer     $.CheckTrigger    ; #= fp:(SyncTrigger *, CARD64 --> Bool)
+  has Pointer     $.TriggerFired    ; #= fp:(SyncTrigger *)
+  has Pointer     $.CounterDestroyed; #= fp:(SyncTrigger *)
+}
+
+class SyncAlarmClientList is repr<CStruct> is export {
+	has Pointer             $!client   ; #= ot:ClientPtr
+	has XID                 $!delete_id;
+	has SyncAlarmClientList $!next     ;
+}
+
+class SyncAlarm is repr<CStruct> is export {
+	has SyncTrigger         $!trigger      ;
+	has Pointer             $!client       ; #= ot:ClientPtr
+	has XSyncAlarm          $!alarm_id     ;
+	has CARD64              $!delta        ;
+	has int                 $!events       ;
+	has int                 $!state        ;
+	has SyncAlarmClientList $!pEventClients;
+}
+
+class TMComplexBindProcsRec {
+	has Widget         $!widget   ;
+	has XtTranslations $!aXlations;
+	has Pointer        $!procs    ; #= fp:XtActionProc
+}
+
+class TMConvertRec is repr<CStruct> is export {
+	has XtTranslations $!old;
+	has XtTranslations $!new;
+}
+
+class TM4 is repr<CStruct> is export {
+	has XEvent $!xev  ;
+	has Event  $!event;
+}
+
+class TMGlobalRec is repr<CStruct> is export {
+	has TMTypeMatchRec     $!typeMatchSegmentTbl    ;
+	has TMShortCard        $!numTypeMatches         ;
+	has TMShortCard        $!numTypeMatchSegments   ;
+	has TMShortCard        $!typeMatchSegmentTblSize;
+	has TMModifierMatchRec $!modMatchSegmentTbl     ;
+	has TMShortCard        $!numModMatches          ;
+	has TMShortCard        $!numModMatchSegments    ;
+	has TMShortCard        $!modMatchSegmentTblSize ;
+	has Boolean            $!newMatchSemantics      ;
+	has XtTranslations     $!tmTbl                  ;
+	has TMShortCard        $!numTms                 ;
+	has TMShortCard        $!tmTblSize              ;
+	has TMBindCacheRec     $!bindCacheTbl           ;
+	has TMShortCard        $!numBindCache           ;
+	has TMShortCard        $!bindCacheTblSize       ;
+	has TMShortCard        $!numLateBindings        ;
+	has TMShortCard        $!numBranchHeads         ;
+	has TMShortCard        $!numComplexStates       ;
+	has TMShortCard        $!numComplexActions      ;
+}
+
+# cw: ... 7/14/2021
 # class TMSimpleBindProcsRec is repr<CStruct> is export {
 # 	has XtActionProc $!procs;
 # }
-#
-#
 #
 # class TemplateClassRec is repr<CStruct> is export {
 # 	has CoreClassPart     $!core_class    ;
@@ -3282,17 +3299,17 @@ class StripChartRec is repr<CStruct> is export {
 # }
 #
 # class TextSinkClassPart is repr<CStruct> is export {
-# 	has _XawSinkDisplayTextProc       $!DisplayText      ;
-# 	has _XawSinkInsertCursorProc      $!InsertCursor     ;
-# 	has _XawSinkClearToBackgroundProc $!ClearToBackground;
-# 	has _XawSinkFindPositionProc      $!FindPosition     ;
-# 	has _XawSinkFindDistanceProc      $!FindDistance     ;
-# 	has _XawSinkResolveProc           $!Resolve          ;
-# 	has _XawSinkMaxLinesProc          $!MaxLines         ;
-# 	has _XawSinkMaxHeightProc         $!MaxHeight        ;
-# 	has _XawSinkSetTabsProc           $!SetTabs          ;
-# 	has _XawSinkGetCursorBoundsProc   $!GetCursorBounds  ;
-# 	has TextSinkExt                   $!extension        ;
+# 	has Pointer      $!DisplayText      ; #= fp:XawSinkDisplayTextProc
+# 	has Pointer      $!InsertCursor     ; #= fp:XawSinkInsertCursorProc
+# 	has Pointer      $!ClearToBackground; #= fp:XawSinkClearToBackgroundProc
+# 	has Pointer      $!FindPosition     ; #= fp:XawSinkFindPositionProc
+# 	has Pointer      $!FindDistance     ; #= fp:XawSinkFindDistanceProc
+# 	has Pointer      $!Resolve          ; #= fp:XawSinkResolveProc
+# 	has Pointer      $!MaxLines         ; #= fp:XawSinkMaxLinesProc
+# 	has Pointer      $!MaxHeight        ; #= fp:XawSinkMaxHeightProc
+# 	has Pointer      $!SetTabs          ; #= fp:XawSinkSetTabsProc
+# 	has Pointer      $!GetCursorBounds  ; #= fp:XawSinkGetCursorBoundsProc
+# 	has TextSinkExt  $!extension        ;
 # }
 #
 # class TextSinkClassRec is repr<CStruct> is export {
