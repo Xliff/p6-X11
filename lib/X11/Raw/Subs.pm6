@@ -321,30 +321,75 @@ sub toPointer (
 
 # Add Role to redefine name of method (guifa++)
 sub buildAccessors (\O) is export {
-	my $proxy = sub ($n, \attr) {
-    #»»»»»»»»»»»»»»»»»»»»
-    # cw: Any postprocessing based on attr.WHY.trailing will have
-    #     to be done RIGHT HERE!
-    #»»»»»»»»»»»»»»»»»»»»
-		my $m = method :: is rw {
-			Proxy.new(
-				FETCH => -> $,    { my $p = attr.get_value(self);
-                            ($p does GLib::Roles::Pointers)
-                              if $p ~~ (Pointer, CArray).any;
-                            $p },
-				STORE => -> $, \v { attr.set_value(self, v) }
-			);
-		}
-    $m.set_name($n);
-    $m;
-	}
+
+  #»»»»»»»»»»»»»»»»»»»»
+  # cw: Any postprocessing based on attr.WHY.trailing will have
+  #     to be done RIGHT HERE!
+  #»»»»»»»»»»»»»»»»»»»»
+
+  # cw: The proxy block is the only thing that needs to change, so this
+  # can and should be simplified!
+	my $proxy-maker = sub ($typedBuffer = False, $typeStr = Nil, $size-attribute = '') {
+    $typeBuffer ??
+      sub ($n, \attr) {
+        my $m = method :: is rw {
+          Proxy.new(
+            FETCH => method (:$raw = False, :$buffer = False) {
+              my $p = attr.get_value(self);
+              return $p if $raw && $buffer;
+              my $tb = X11::Roles::TypedBuffer[ ::($typeStr) ].new($p);
+              $tb.setSize( ::($size-attribute) ) if $size-attribute;
+              return $tb if $raw;
+              $tb.Array;
+            },
+            STORE => -> $, \v { attr.set_value(self, v) }
+          );
+        }
+        $m.set_name($n);
+        $m;
+      }
+      !!
+      sub ($n, \attr) {
+        my $m = method :: is rw {
+          Proxy.new(
+            FETCH => -> $,    { my $p = attr.get_value(self);
+                                ($p does GLib::Roles::Pointers)
+                                  if $p ~~ (Pointer, CArray).any;
+                                $p },
+            STORE => -> $, \v { attr.set_value(self, v) }
+          );
+        }
+        $m.set_name($n);
+        $m;
+      }
+}
+
 
 	for O.^attributes.kv -> $k, \a {
 		my $full-name = a.name;
     my ($, $attr-name) = $full-name.&separate(2);
 		next if a.has_accessor;
 
+    my $proxy;
+    if a.WHY.trailing -> $t {
+      my ($ops, $desc) = $t.split(' - ');
+      for $ops.split(' ') {
+        my ($op, $params) = .split(':');
+        $params .= split(/\,/;
+        say "O: { $op} } / P: { $params }";
+
+        given $op {
+          when 'tb' {
+            $proxy = $proxy-maker( True, $params[0], $params[1] // '' )
+          }
+          default {
+          }
+        }
+      }
+    }
+
 		print "  Adding { $attr-name } to { O.^name }..." if $DEBUG;
+    my $proxy = $proxy-maker(
 		O.^add_method(
 			$attr-name,
 			$proxy($attr-name, a)    #= $proxy() returns Method
