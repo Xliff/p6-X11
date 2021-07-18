@@ -20,6 +20,7 @@ constant unsigned                     is export := uint;
 
 constant Boolean                      is export := uint8;
 constant BYTE                         is export := uint8;
+constant Client                       is export := Pointer;
 constant Cardinal                     is export := uint;
 constant Connection                   is export := ushort;
 constant Dimension                    is export := uint16;
@@ -56,6 +57,9 @@ constant XtInputMask                  is export := uint64;
 constant XtIntervalId                 is export := ulong;
 constant XtPointer                    is export := Pointer;
 constant XtVersionType                is export := uint64;
+
+constant XcursorDim                   is export := XcursorUInt;
+constant XcursorPixel                 is export := XcursorUInt;
 
 constant ZERO                         is export =  0;
 constant ONE                          is export =  1;
@@ -99,7 +103,10 @@ constant Cursor                       is export := CARD32;
 constant Damage                       is export := CARD32;
 constant Drawable                     is export := CARD32;
 constant EventID                      is export := CARD32;
-constant Font                         is export := CARD32;
+
+# cw: What are you? Int or struct?
+#constant Font                         is export := CARD32;
+
 constant KeyCode                      is export := CARD8;
 constant KeySym                       is export := CARD32;
 constant Mask                         is export := CARD32;
@@ -1572,6 +1579,7 @@ constant XkbName                                                         is expo
 constant XkbNewKeyboardNotifyMask                                        is export = 1;
 constant XkbNoModifierMask                                               is export = 0;
 constant XkbNumIndicators                                                is export = 32;
+constant XkbNumKbdGroups                                                 is export = 4;
 constant XkbNumRequiredTypes                                             is export = XkbLastRequiredType + 1;
 constant XkbNumVirtualMods                                               is export = 16;
 constant XkbOD_BadLibraryVersion                                         is export = 1;
