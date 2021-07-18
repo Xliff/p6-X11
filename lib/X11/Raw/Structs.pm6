@@ -2,6 +2,9 @@ use v6.c;
 
 use NativeCall;
 
+use Font::FreeType::Raw::Defs;
+
+use X11::Compat::Definitions;
 use X11::Raw::Definitions;
 use X11::Raw::Enums;
 
@@ -311,6 +314,7 @@ class AsciiDiskPart is repr<CStruct> is export {
 }
 
 class XFontStruct is repr<CStruct> is export { ... } # L1753
+class FontRec     is repr<CStruct> is export { ... } # L1791
 
 class XGCValues is repr<CStruct> is export {
   has int       $.function           is rw;  #= logical operation
@@ -328,7 +332,7 @@ class XGCValues is repr<CStruct> is export {
   has Pixmap    $.stipple            is rw;  #= stipple 1 plane pixmap for stipping
   has int       $.ts_x_origin        is rw;  #= offset for tile or stipple operations
   has int       $.ts_y_origin        is rw;
-  has Font      $!font;                      #= default text font for text operations
+  has FontRec   $!font;                      #= default text font for text operations
   has int       $.subwindow_mode     is rw;  #= ClipByChildren, IncludeInferiors
   has Boolean   $.graphics_exposures is rw;  #= ot:Bool - boolean, should exposures be generated
   has int       $.clip_x_origin      is rw;  #= origin for clipping
@@ -1784,7 +1788,7 @@ class FontPathElementRec is repr<CStruct> is export {
 }
 constant FontPathElement is export := FontPathElementRec;
 
-class FontRec is repr<CStruct> is export {
+class FontRec {
     has int             $.refcnt         is rw;
     HAS FontInfoRec     $!info;
     has uint8           $.bit            is rw;
@@ -4690,17 +4694,8 @@ class XcmsCIEuvY is repr<CStruct> is export {
   has XcmsFloat $.v_prime is rw;  #= r:0.0 .. 1.0
   has XcmsFloat $.Y       is rw;  #= r:0.0 .. 1.0
 
-  method u-prime is rw {
-    Proxy.new:
-      FETCH => -> $     { $!u_prime    },
-      STORE => -> $, \v { $!u_prime = v }
-  }
-
-  method v-prime is rw {
-    Proxy.new:
-      FETCH => -> $     { $!v_prime    },
-      STORE => -> $, \v { $!v_prime = v }
-  }
+  method u-prime is raw { $!u_prime }
+  method v-prime is raw { $!v_prime }
 }
 
 class XcmsCIExyY is repr<CStruct> is export {
@@ -4720,23 +4715,9 @@ class XcmsCIELab is repr<CStruct>  is export {
   has XcmsFloat $.a_star is rw;  # r:0.0..100.0
   has XcmsFloat $.b_star is rw;  # r:0.0..100.0
 
-  method L-star is rw {
-    Proxy.new:
-      FETCH => -> $     { $!L_star     },
-      STORE => -> $, \v { $!L_star = v }
-  }
-
-  method a-star is rw {
-    Proxy.new:
-      FETCH => -> $     { $!a_star     },
-      STORE => -> $, \v { $!a_star = v }
-  }
-
-  method b-star is rw {
-    Proxy.new:
-      FETCH => -> $     { $!b_star     },
-      STORE => -> $, \v { $!b_star = v }
-  }
+  method L-star is raw { $!L_star }
+  method a-star is raw { $!a_star }
+  method b-star is raw { $!b_star }
 }
 
 class XcmsCIELuv is repr<CStruct>  is export {
@@ -4744,24 +4725,9 @@ class XcmsCIELuv is repr<CStruct>  is export {
   has XcmsFloat $.u_star is rw;  # r:0.0..100.0
   has XcmsFloat $.v_star is rw;  # r:0.0..100.0
 
-  method L-star is rw {
-    Proxy.new:
-      FETCH => -> $     { $!L_star     },
-      STORE => -> $, \v { $!L_star = v }
-  }
-
-  method u-star is rw {
-    Proxy.new:
-      FETCH => -> $     { $!u_star     },
-      STORE => -> $, \v { $!u_star = v }
-  }
-
-  method v-star is rw {
-    Proxy.new:
-      FETCH => -> $     { $!v_star     },
-      STORE => -> $, \v { $!v_star = v }
-  }
-
+  method L-star is raw { $!L_star }
+  method u-star is raw { $!u_star }
+  method v-star is raw { $!v_star }
 }
 
 class XcmsTekHVC is repr<CStruct> is export {
@@ -4878,244 +4844,343 @@ class XcursorComment is repr<CStruct> is export {
 }
 
 class XcursorComments is repr<CStruct> is export {
-	has int            $!ncomment;
-	has XcursorComment $!comments;
+	has int                             $.ncomment is rw;
+	has CArray[Pointer[XcursorComment]] $.comments      ;
 }
 
-# cw: ... 7/17/2021
 class XcursorFileToc is repr<CStruct> is export {
-	has XcursorUInt $!type    ;
-	has XcursorUInt $!subtype ;
-	has XcursorUInt $!position;
+	has XcursorUInt $.type     is rw;
+	has XcursorUInt $.subtype  is rw;
+	has XcursorUInt $.position is rw;
 }
 
 class XcursorFileHeader is repr<CStruct> is export {
-	has XcursorUInt    $!magic  ;
-	has XcursorUInt    $!header ;
-	has XcursorUInt    $!version;
-	has XcursorUInt    $!ntoc   ;
-	has XcursorFileToc $!tocs   ;
+	has XcursorUInt    $.magic   is rw;
+	has XcursorUInt    $.header  is rw;
+	has XcursorUInt    $.version is rw;
+	has XcursorUInt    $.ntoc    is rw;
+	has XcursorFileToc $.tocs    is rw;
+}
+
+class XcursorImage is repr<CStruct> is export {
+	has XcursorUInt  $.version is rw;
+	has XcursorDim   $.size    is rw;
+	has XcursorDim   $.width   is rw;
+	has XcursorDim   $.height  is rw;
+	has XcursorDim   $.xhot    is rw;
+	has XcursorDim   $.yhot    is rw;
+	has XcursorUInt  $.delay   is rw;
+	has XcursorPixel $.pixels  is rw;
+}
+
+class XcursorImages is repr<CStruct> is export {
+	has int                           $.nimage is rw;
+	has CArray[Pointer[XcursorImage]] $.images is rw;
+	has Str                           $.name   is rw;
+}
+
+class XdmAuthKey is repr<CStruct> is export {
+	has BYTE $.data is rw;
+}
+
+class XdmcpBuffer is repr<CStruct> is export {
+	has BYTE $.data    is rw;
+	has int  $.size    is rw;
+	has int  $.pointer is rw;
+	has int  $.count   is rw;
+}
+
+class XdmcpHeader is repr<CStruct> is export {
+	has CARD16 $.version is rw;
+	has CARD16 $.opcode  is rw;
+	has CARD16 $.length  is rw;
+}
+
+class XftFont is repr<CStruct> is export {
+	has int       $!ascent           ;
+	has int       $!descent          ;
+	has int       $!height           ;
+	has int       $!max_advance_width;
+	has FcCharSet $!charset          ;
+	has FcPattern $!pattern          ;
+}
+
+class XRenderColor is repr<CStruct> is export {
+  has ushort $.red   is rw;
+  has ushort $.green is rw;
+  has ushort $.blue  is rw;
+  has ushort $.alpha is rw;
+}
+
+class XftCharFontSpec is repr<CStruct> is export {
+	has XftFont  $!font;
+	has FcChar32 $!ucs4;
+	has short    $!x   ;
+	has short    $!y   ;
+}
+
+class XftCharSpec is repr<CStruct> is export {
+	has FcChar32 $!ucs4;
+	has short    $!x   ;
+	has short    $!y   ;
+}
+
+class XftColor is repr<CStruct> is export {
+	has long         $!pixel;
+	has XRenderColor $!color;
 }
 
 
-#
-# class XcursorImage is repr<CStruct> is export {
-# 	has XcursorUInt  $!version;
-# 	has XcursorDim   $!size   ;
-# 	has XcursorDim   $!width  ;
-# 	has XcursorDim   $!height ;
-# 	has XcursorDim   $!xhot   ;
-# 	has XcursorDim   $!yhot   ;
-# 	has XcursorUInt  $!delay  ;
-# 	has XcursorPixel $!pixels ;
-# }
-#
-# class XcursorImages is repr<CStruct> is export {
-# 	has int          $!nimage;
-# 	has XcursorImage $!images;
-# 	has Str          $!name  ;
-# }
-#
-# class XdmAuthKey is repr<CStruct> is export {
-# 	has BYTE $!data;
-# }
-#
-# class XdmcpBuffer is repr<CStruct> is export {
-# 	has BYTE $!data   ;
-# 	has int  $!size   ;
-# 	has int  $!pointer;
-# 	has int  $!count  ;
-# }
-#
-# class XdmcpHeader is repr<CStruct> is export {
-# 	has CARD16 $!version;
-# 	has CARD16 $!opcode ;
-# 	has CARD16 $!length ;
-# }
-#
-# class XftCharFontSpec is repr<CStruct> is export {
-# 	has XftFont  $!font;
-# 	has FcChar32 $!ucs4;
-# 	has short    $!x   ;
-# 	has short    $!y   ;
-# }
-#
-# class XftCharSpec is repr<CStruct> is export {
-# 	has FcChar32 $!ucs4;
-# 	has short    $!x   ;
-# 	has short    $!y   ;
-# }
-#
-# class XftColor is repr<CStruct> is export {
-# 	has long         $!pixel;
-# 	has XRenderColor $!color;
-# }
-#
-# class XftFont is repr<CStruct> is export {
-# 	has int       $!ascent           ;
-# 	has int       $!descent          ;
-# 	has int       $!height           ;
-# 	has int       $!max_advance_width;
-# 	has FcCharSet $!charset          ;
-# 	has FcPattern $!pattern          ;
-# }
-#
-# class XftGlyphFontSpec is repr<CStruct> is export {
-# 	has XftFont $!font ;
-# 	has FT_UInt $!glyph;
-# 	has short   $!x    ;
-# 	has short   $!y    ;
-# }
-#
-# class XftGlyphSpec is repr<CStruct> is export {
-# 	has FT_UInt $!glyph;
-# 	has short   $!x    ;
-# 	has short   $!y    ;
-# }
-#
-# class XkbAccessXNotify is repr<CStruct> is export {
-# 	has int     $!type          ;
-# 	has long    $!serial        ;
-# 	has Bool    $!send_event    ;
-# 	has Display $!display       ;
-# 	has Time    $!time          ;
-# 	has int     $!xkb_type      ;
-# 	has int     $!device        ;
-# 	has int     $!detail        ;
-# 	has int     $!keycode       ;
-# 	has int     $!sk_delay      ;
-# 	has int     $!debounce_delay;
-# }
-#
-# class XkbAnyDoodad is repr<CStruct> is export {
-# 	has Atom  $!name    ;
-# 	has Str   $!type    ;
-# 	has Str   $!priority;
-# 	has short $!top     ;
-# 	has short $!left    ;
-# 	has short $!angle   ;
-# }
-#
-# class XkbAnyEvent is repr<CStruct> is export {
-# 	has int     $!type      ;
-# 	has long    $!serial    ;
-# 	has Bool    $!send_event;
-# 	has Display $!display   ;
-# 	has Time    $!time      ;
-# 	has int     $!xkb_type  ;
-# 	has int     $!device    ;
-# }
-#
-# class XkbBehavior is repr<CStruct> is export {
-# 	has Str  $!type;
-# 	has Str  $!data;
-# }
-#
-# class XkbBellNotify is repr<CStruct> is export {
-# 	has int     $!type      ;
-# 	has long    $!serial    ;
-# 	has Bool    $!send_event;
-# 	has Display $!display   ;
-# 	has Time    $!time      ;
-# 	has int     $!xkb_type  ;
-# 	has int     $!device    ;
-# 	has int     $!percent   ;
-# 	has int     $!pitch     ;
-# 	has int     $!duration  ;
-# 	has int     $!bell_class;
-# 	has int     $!bell_id   ;
-# 	has Atom    $!name      ;
-# 	has Window  $!window    ;
-# 	has Bool    $!event_only;
-# }
-#
-# class XkbBounds is repr<CStruct> is export {
-# 	has short $!x1;
-# 	has short $!y1;
-# 	has short $!x2;
-# 	has short $!y2;
-# }
-#
-# class XkbChanges is repr<CStruct> is export {
-# 	has short                  $!device_spec  ;
-# 	has short                  $!state_changes;
-# 	has XkbMapChangesRec       $!map          ;
-# 	has XkbControlsChangesRec  $!ctrls        ;
-# 	has XkbIndicatorChangesRec $!indicators   ;
-# 	has XkbNameChangesRec      $!names        ;
-# 	has XkbCompatChangesRec    $!compat       ;
-# }
-#
-# class XkbClientMapRec is repr<CStruct> is export {
-# 	has Str           $!size_types ;
-# 	has Str           $!num_types  ;
-# 	has XkbKeyTypePtr $!types      ;
-# 	has short         $!size_syms  ;
-# 	has short         $!num_syms   ;
-# 	has KeySym        $!syms       ;
-# 	has XkbSymMapPtr  $!key_sym_map;
-# 	has Str           $!modmap     ;
-# }
-#
-# class XkbColor is repr<CStruct> is export {
-# 	has int  $!pixel;
-# 	has Str  $!spec ;
-# }
-#
-# class XkbCompatChanges is repr<CStruct> is export {
-# 	has Str   $!changed_groups;
-# 	has short $!first_si      ;
-# 	has short $!num_si        ;
-# }
-#
-# class XkbCompatMapNotify is repr<CStruct> is export {
-# 	has int     $!type          ;
-# 	has long    $!serial        ;
-# 	has Bool    $!send_event    ;
-# 	has Display $!display       ;
-# 	has Time    $!time          ;
-# 	has int     $!xkb_type      ;
-# 	has int     $!device        ;
-# 	has int     $!changed_groups;
-# 	has int     $!first_si      ;
-# 	has int     $!num_si        ;
-# 	has int     $!num_total_si  ;
-# }
-#
-# class XkbComponentList is repr<CStruct> is export {
-# 	has int                 $!num_keymaps ;
-# 	has int                 $!num_keycodes;
-# 	has int                 $!num_types   ;
-# 	has int                 $!num_compat  ;
-# 	has int                 $!num_symbols ;
-# 	has int                 $!num_geometry;
-# 	has XkbComponentNamePtr $!keymaps     ;
-# 	has XkbComponentNamePtr $!keycodes    ;
-# 	has XkbComponentNamePtr $!types       ;
-# 	has XkbComponentNamePtr $!compat      ;
-# 	has XkbComponentNamePtr $!symbols     ;
-# 	has XkbComponentNamePtr $!geometry    ;
-# }
-#
-# class XkbComponentName is repr<CStruct> is export {
-# 	has short $!flags;
-# 	has Str   $!name ;
-# }
-#
-# class XkbComponentNames is repr<CStruct> is export {
-# 	has Str  $!keymap  ;
-# 	has Str  $!keycodes;
-# 	has Str  $!types   ;
-# 	has Str  $!compat  ;
-# 	has Str  $!symbols ;
-# 	has Str  $!geometry;
-# }
-#
-# class XkbConfigField is repr<CStruct> is export {
-# 	has Str  $!field   ;
-# 	has Str  $!field_id;
-# }
-#
+class XftGlyphFontSpec is repr<CStruct> is export {
+	has XftFont $!font ;
+	has FT_UInt $!glyph;
+	has short   $!x    ;
+	has short   $!y    ;
+}
+
+class XftGlyphSpec is repr<CStruct> is export {
+	has FT_UInt $!glyph;
+	has short   $!x    ;
+	has short   $!y    ;
+}
+
+class XkbAccessXNotify is repr<CStruct> is export {
+	has int     $.type           is rw;
+	has long    $.serial         is rw;
+	has Boolean $.send_event     is rw; #= ot:Bool
+	has Display $.display        is rw;
+	has Time    $.time           is rw;
+	has int     $.xkb_type       is rw;
+	has int     $.device         is rw;
+	has int     $.detail         is rw;
+	has int     $.keycode        is rw;
+	has int     $.sk_delay       is rw;
+	has int     $.debounce_delay is rw;
+}
+
+class XkbAnyDoodad is repr<CStruct> is export {
+	has Atom  $.name      is rw;
+	has Str   $!type           ;
+	has Str   $!priority       ;
+	has short $.top       is rw;
+	has short $.left      is rw;
+	has short $.angle     is rw;
+}
+
+class XkbAnyEvent is repr<CStruct> is export {
+	has int     $.type       is rw;
+	has long    $.serial     is rw;
+	has Boolean $.send_event is rw; #= ot:Bool
+	has Display $.display    is rw;
+	has Time    $.time       is rw;
+	has int     $.xkb_type   is rw;
+	has int     $.device     is rw;
+}
+
+class XkbBehavior is repr<CStruct> is export {
+	has Str  $!type;
+	has Str  $!data;
+}
+
+class XkbBellNotify is repr<CStruct> is export {
+	has int     $!type      ;
+	has long    $!serial    ;
+	has Boolean $!send_event; #= ot:Bool
+	has Display $!display   ;
+	has Time    $!time      ;
+	has int     $!xkb_type  ;
+	has int     $!device    ;
+	has int     $!percent   ;
+	has int     $!pitch     ;
+	has int     $!duration  ;
+	has int     $!bell_class;
+	has int     $!bell_id   ;
+	has Atom    $!name      ;
+	has Window  $!window    ;
+	has Boolean $!event_only; #= ot:Bool
+}
+
+class XkbBounds is repr<CStruct> is export {
+	has short $.x1 is rw;
+	has short $.y1 is rw;
+	has short $.x2 is rw;
+	has short $.y2 is rw;
+}
+
+class XkbMapChanges is repr<CStruct> is export {
+  has ushort    $.changed            is rw;
+  has KeyCode   $.min_key_code       is rw;
+  has KeyCode   $.max_key_code       is rw;
+  has uchar     $.first_type         is rw;
+  has uchar     $.num_types          is rw;
+  has KeyCode   $.first_key_sym      is rw;
+  has uchar     $.num_key_syms       is rw;
+  has KeyCode   $.first_key_act      is rw;
+  has uchar     $.num_key_acts       is rw;
+  has KeyCode   $.first_key_behavior is rw;
+  has uchar     $.num_key_behaviors  is rw;
+  has KeyCode   $.first_key_explicit is rw;
+  has uchar     $.num_key_explicit   is rw;
+  has KeyCode   $.first_modmap_key   is rw;
+  has uchar     $.num_modmap_keys    is rw;
+  has KeyCode   $.first_vmodmap_key  is rw;
+  has uchar     $.num_vmodmap_keys   is rw;
+  has uchar     $.pad                is rw;
+}
+
+class XkbControlsChanges is repr<CStruct> is export {
+  has uint     $.changed_ctrls         is rw;
+  has uint     $.enabled_ctrls_changes is rw;
+  has Boolean  $.num_groups_changed    is rw;
+}
+
+class XkbIndicatorChanges is repr<CStruct> is export {
+  has uint $.state_changes is rw;
+  has uint $.map_changes   is rw;
+}
+
+class XkbNameChanges is repr<CStruct> is export {
+  has uint    $.changed            is rw;
+  has uchar   $.first_type         is rw;
+  has uchar   $.num_types          is rw;
+  has uchar   $.first_lvl          is rw;
+  has uchar   $.num_lvls           is rw;
+  has uchar   $.num_aliases        is rw;
+  has uchar   $.num_rg             is rw;
+  has uchar   $.first_key          is rw;
+  has uchar   $.num_keys           is rw;
+  has ushort  $.changed_vmods      is rw;
+  has ulong   $.changed_indicators is rw;
+  has uchar   $.changed_groups     is rw;
+}
+
+class XkbCompatChanges is repr<CStruct> is export {
+  has uchar   $.changed_groups is rw;
+  has ushort  $.first_si       is rw;
+  has ushort  $.num_si         is rw;
+}
+
+class XkbChanges is repr<CStruct> is export {
+  has ushort               $.device_spec   is rw;
+  has ushort               $.state_changes is rw;
+  HAS XkbMapChanges        $.map;
+  HAS XkbControlsChanges   $.ctrls;
+  HAS XkbIndicatorChanges  $.indicators;
+  HAS XkbNameChanges       $.names;
+  HAS XkbCompatChanges     $.compat;
+}
+constant XkbChangesRec is export := XkbChanges;
+
+class XkbKeyName is repr<CStruct> is export {
+  HAS char @!name[XkbKeyNameLength] is CArray;
+
+  method name (:$encoding = 'utf8') is rw {
+    Proxy.new:
+      FETCH => -> $,    { Buf.new(@!name).decode($encoding) },
+
+      STORE => -> $, \v is copy {
+        unless v ~~ Str {
+          v .= Str if v.^can('Str');
+        }
+        die 'Value must be Str-compatible!' unless v ~~ Str;
+
+        my $idx = 0;
+        for v.encode($encoding) {
+          @!name[$idx++] = $_;
+          last unless $idx < XkbKeyNameLength;
+        }
+        @!name[$idx] = 0;
+      }
+  }
+}
+
+class XkbMods is repr<CStruct> is export {
+  has uchar  $.mask      is rw; #= effective mods
+  has uchar  $.real_mods is rw;
+  has ushort $.vmods     is rw;
+}
+
+class XkbKeyType is repr<CStruct> is export {
+  HAS XkbMods  $.mods;
+  has uchar    $.num_levels;
+  has uchar    $.map_count;
+  has Pointer  $!map;         #= tb:XkbKTMapEntry
+  has Pointer  $!preserve;    #= tb:XkbMods
+  has Atom     $.name;
+  has Pointer  $!level_names; #= tb:Atom
+}
+
+class XkbSymMap is repr<CStruct> is export {
+  HAS uchar    @.kt_index[XkbNumKbdGroups] is CArray;
+  has uchar    $.group_info                is rw;
+  has uchar    $.width                     is rw;
+  has ushort   $.offset                    is rw;
+}
+
+class XkbClientMapRec is repr<CStruct> is export {
+	has Str                      $!size_types       ;
+	has Str                      $!num_types        ;
+	has XkbKeyType               $!types            ;
+	has short                    $.size_syms   is rw;
+	has short                    $.num_syms    is rw;
+	has CArray[Pointer[KeySym]]  $!syms             ;
+	has XkbSymMap                $!key_sym_map      ;
+	has Str                      $!modmap           ;
+}
+
+class XkbColor is repr<CStruct> is export {
+	has int  $.pixel is rw;
+	has Str  $!spec       ;
+}
+
+class XkbCompatMapNotify is repr<CStruct> is export {
+	has int        $!type          ;
+	has long       $!serial        ;
+	has Boolean    $!send_event    ; #= ot:Bool
+	has Display    $!display       ;
+	has Time       $!time          ;
+	has int        $!xkb_type      ;
+	has int        $!device        ;
+	has int        $!changed_groups;
+	has int        $!first_si      ;
+	has int        $!num_si        ;
+	has int        $!num_total_si  ;
+}
+
+class XkbComponentName is repr<CStruct> is export {
+	has short $.flags is rw;
+	has Str   $!name       ;
+}
+
+class XkbComponentNames is repr<CStruct> is export {
+	has Str  $!keymap  ;
+	has Str  $!keycodes;
+	has Str  $!types   ;
+	has Str  $!compat  ;
+	has Str  $!symbols ;
+	has Str  $!geometry;
+}
+
+class XkbComponentList is repr<CStruct> is export {
+	has int              $.num_keymaps  is rw;
+	has int              $.num_keycodes is rw;
+	has int              $.num_types    is rw;
+	has int              $.num_compat   is rw;
+	has int              $.num_symbols  is rw;
+	has int              $.num_geometry is rw;
+	has XkbComponentName $!keymaps           ;
+	has XkbComponentName $!keycodes          ;
+	has XkbComponentName $!types             ;
+	has XkbComponentName $!compat            ;
+	has XkbComponentName $!symbols           ;
+	has XkbComponentName $!geometry          ;
+}
+
+class XkbConfigField is repr<CStruct> is export {
+	has Str  $!field   ;
+	has Str  $!field_id;
+}
+
 class XkbConfigFields is repr<CStruct> is export {
 	has short            $!cfg_id    ;
 	has short            $!num_fields;
@@ -5125,133 +5190,467 @@ class XkbConfigFields is repr<CStruct> is export {
 	has XPointer         $!priv      ;
 	has XkbConfigFields  $!next      ;
 }
-#
-# class XkbConfigModInfo is repr<CStruct> is export {
-# 	has Bool  $!replace    ;
-# 	has Str   $!mods       ;
-# 	has Str   $!mods_clear ;
-# 	has short $!vmods      ;
-# 	has short $!vmods_clear;
-# }
-#
-# class XkbConfigRtrnPriv is repr<CStruct> is export {
-# 	has int                $!cfg_id;
-# 	has XPointer           $!priv  ;
-# 	has _XkbConfigRtrnPriv $!next  ;
-# }
-#
-# class XkbConfigUnboundMod is repr<CStruct> is export {
-# 	has Str   $!what ;
-# 	has Str   $!mods ;
-# 	has short $!vmods;
-# 	has short $!merge;
-# 	has Str   $!name ;
-# }
-#
-# class XkbControlsChanges is repr<CStruct> is export {
-# 	has int  $!changed_ctrls        ;
-# 	has int  $!enabled_ctrls_changes;
-# 	has Bool $!num_groups_changed   ;
-# }
-#
-# class XkbControlsNotify is repr<CStruct> is export {
-# 	has int     $!type                ;
-# 	has long    $!serial              ;
-# 	has Bool    $!send_event          ;
-# 	has Display $!display             ;
-# 	has Time    $!time                ;
-# 	has int     $!xkb_type            ;
-# 	has int     $!device              ;
-# 	has int     $!changed_ctrls       ;
-# 	has int     $!enabled_ctrls       ;
-# 	has int     $!enabled_ctrl_changes;
-# 	has int     $!num_groups          ;
-# 	has KeyCode $!keycode             ;
-# 	has Str     $!event_type          ;
-# 	has Str     $!req_major           ;
-# 	has Str     $!req_minor           ;
-# }
-#
-# class XkbCtrlsAction is repr<CStruct> is export {
-# 	has Str  $!type  ;
-# 	has Str  $!flags ;
-# 	has Str  $!ctrls3;
-# 	has Str  $!ctrls2;
-# 	has Str  $!ctrls1;
-# 	has Str  $!ctrls0;
-# }
-#
-# class XkbDesc is repr<CStruct> is export {
-# 	has _XDisplay       $!dpy         ;
-# 	has short           $!flags       ;
-# 	has short           $!device_spec ;
-# 	has KeyCode         $!min_key_code;
-# 	has KeyCode         $!max_key_code;
-# 	has XkbControlsPtr  $!ctrls       ;
-# 	has XkbServerMapPtr $!server      ;
-# 	has XkbClientMapPtr $!map         ;
-# 	has XkbIndicatorPtr $!indicators  ;
-# 	has XkbNamesPtr     $!names       ;
-# 	has XkbCompatMapPtr $!compat      ;
-# 	has XkbGeometryPtr  $!geom        ;
-# }
-#
-# class XkbDeviceBtnAction is repr<CStruct> is export {
-# 	has Str  $!type  ;
-# 	has Str  $!flags ;
-# 	has Str  $!count ;
-# 	has Str  $!button;
-# 	has Str  $!device;
-# }
-#
-# class XkbDeviceChanges is repr<CStruct> is export {
-# 	has int                    $!changed  ;
-# 	has short                  $!first_btn;
-# 	has short                  $!num_btns ;
-# 	has XkbDeviceLedChangesRec $!leds     ;
-# }
-#
-# class XkbDeviceInfo is repr<CStruct> is export {
-# 	has Str                 $!name         ;
-# 	has Atom                $!type         ;
-# 	has short               $!device_spec  ;
-# 	has Bool                $!has_own_state;
-# 	has short               $!supported    ;
-# 	has short               $!unsupported  ;
-# 	has short               $!num_btns     ;
-# 	has XkbAction           $!btn_acts     ;
-# 	has short               $!sz_leds      ;
-# 	has short               $!num_leds     ;
-# 	has short               $!dflt_kbd_fb  ;
-# 	has short               $!dflt_led_fb  ;
-# 	has XkbDeviceLedInfoPtr $!leds         ;
-# }
-#
-# class XkbDeviceLedChanges is repr<CStruct> is export {
-# 	has short                $!led_class;
-# 	has short                $!led_id   ;
-# 	has int                  $!defined  ;
-# 	has _XkbDeviceLedChanges $!next     ;
-# }
-#
-# class XkbDeviceValuatorAction is repr<CStruct> is export {
-# 	has Str  $!type    ;
-# 	has Str  $!device  ;
-# 	has Str  $!v1_what ;
-# 	has Str  $!v1_ndx  ;
-# 	has Str  $!v1_value;
-# 	has Str  $!v2_what ;
-# 	has Str  $!v2_ndx  ;
-# 	has Str  $!v2_value;
-# }
-#
-# class XkbEventCause is repr<CStruct> is export {
-# 	has CARD8     $!kc    ;
-# 	has CARD8     $!event ;
-# 	has CARD8     $!mjr   ;
-# 	has CARD8     $!mnr   ;
-# 	has ClientPtr $!client;
-# }
+
+class XkbConfigModInfo is repr<CStruct> is export {
+	has Boolean  $.replace     is rw; #= ot:Bool
+	has Str      $!mods             ;
+	has Str      $!mods_clear       ;
+	has short    $.vmods       is rw;
+	has short    $.vmods_clear is rw;
+}
+
+class XkbConfigRtrnPriv is repr<CStruct> is export {
+	has int                $.cfg_id  is rw;
+	has XPointer           $!priv         ;
+	has XkbConfigRtrnPriv  $!next         ;
+}
+
+class XkbConfigUnboundMod is repr<CStruct> is export {
+	has Str   $!what       ;
+	has Str   $!mods       ;
+	has short $.vmods is rw;
+	has short $.merge is rw;
+	has Str   $!name       ;
+}
+
+class XkbControlsNotify is repr<CStruct> is export {
+	has int     $.type                 is rw;
+	has long    $.serial               is rw;
+	has Boolean $.send_event           is rw; #= ot:Bool
+	has Display $.display              is rw;
+	has Time    $.time                 is rw;
+	has int     $.xkb_type             is rw;
+	has int     $.device               is rw;
+	has int     $.changed_ctrls        is rw;
+	has int     $.enabled_ctrls        is rw;
+	has int     $.enabled_ctrl_changes is rw;
+	has int     $.num_groups           is rw;
+	has KeyCode $.keycode              is rw;
+	has Str     $!event_type                ;
+	has Str     $!req_major                 ;
+	has Str     $!req_minor                 ;
+
+  method changed-ctrls        is rw { $!changed_ctrls        }
+  method enabled-ctrls        is rw { $!enabled_ctrls        }
+  method enabled-ctrl-changes is rw { $!enabled_ctrl_changes }
+  method num-groups           is rw { $!num_groups           }
+}
+
+class XkbCtrlsAction is repr<CStruct> is export {
+	has Str  $!type  ;
+	has Str  $!flags ;
+	has Str  $!ctrls3;
+	has Str  $!ctrls2;
+	has Str  $!ctrls1;
+	has Str  $!ctrls0;
+}
+
+class XkbNames is repr<CStruct> is export {
+  has Atom         $.keycodes                     is rw;
+  has Atom         $.geometry                     is rw;
+  has Atom         $.symbols                      is rw;
+  has Atom         $.types                        is rw;
+  has Atom         $.compat                       is rw;
+  HAS Atom         @.vmods[XkbNumVirtualMods]     is CArray;
+  HAS Atom         @.indicators[XkbNumIndicators] is CArray;
+  HAS Atom         @.groups[XkbNumKbdGroups]      is CArray;
+  has Pointer      $!keys;                                    #= tb:XkbKeyName - keys is an array of (xkb->max_key_code + 1) XkbKeyNameRec entries
+  has Pointer      $!key_aliases;                             #= tb:XkbKeyAlias - key_aliases is an array of num_key_aliases XkbKeyAliasRec entries
+  has CArray[Atom] $.radio_groups;                            #= radio_groups is an array of num_rg Atoms
+  has Atom         $.phys_symbols;
+
+  # num_keys seems to be unused in libX11
+  has uchar        $.num_keys                     is rw;
+  has uchar        $.num_key_aliases              is rw;
+  has ushort       $.num_rg                       is rw;
+}
+
+class XkbControls is repr<CStruct> is export {
+  has uchar   $.mk_dflt_btn                               is rw;
+  has uchar   $.num_groups                                is rw;
+  has uchar   $.groups_wrap                               is rw;
+  HAS XkbMods $.internal                                  is rw;
+  HAS XkbMods $.ignore_lock                               is rw;
+  has uint    $.enabled_ctrls                             is rw;
+  has ushort  $.repeat_delay                              is rw;
+  has ushort  $.repeat_interval                           is rw;
+  has ushort  $.slow_keys_delay                           is rw;
+  has ushort  $.debounce_delay                            is rw;
+  has ushort  $.mk_delay                                  is rw;
+  has ushort  $.mk_interval                               is rw;
+  has ushort  $.mk_time_to_max                            is rw;
+  has ushort  $.mk_max_speed                              is rw;
+  has short   $.mk_curve                                  is rw;
+  has ushort  $.ax_options                                is rw;
+  has ushort  $.ax_timeout                                is rw;
+  has ushort  $.axt_opts_mask                             is rw;
+  has ushort  $.axt_opts_values                           is rw;
+  has uint    $.axt_ctrls_mask                            is rw;
+  has uint    $.axt_ctrls_values                          is rw;
+  HAS uchar   @.per_key_repeat[XkbPerKeyBitArraySize.Int] is CArray;
+}
+
+class XkbServerMap is repr<CStruct> is export {
+  has ushort         $.num_acts                 is rw    ;
+  has Pointer        $.acts                              ; #= tb:XkbAction - acts is an array of XkbActions structs, with size_acts entries allocated, and num_acts entries used.
+  has ushort         $.size_acts                is rw    ;
+  has Pointer        $.behaviors                         ; #= tb:XkbBehavior - behaviors, key_acts, explicit, & vmodmap are all arrays with (xkb->max_key_code + 1) entries allocated for each.
+  has CArray[ushort] $.key_acts                          ;
+  has CArray[uchar]  $.explicit                          ;
+  HAS uchar          @.vmods[XkbNumVirtualMods] is CArray;
+  has CArray[ushort] $.vmodmap                           ;
+}
+
+class XkbClientMap is repr<CStruct> is export {
+  has uchar          $.size_types is rw;
+  has uchar          $.num_types  is rw;
+  has Pointer        $.types           ; #= tb:XkbKeyType - types is an array of XkbKeyTypeRec structs, with size_types entrie allocated, and num_types entries used. */
+  has ushort         $.size_syms  is rw;
+  has ushort         $.num_syms   is rw;
+  has CArray[KeySym] $.syms            ; #= - syms is an array of size_syms KeySyms, in which num_syms are used */
+  has Pointer        $.key_sym_map     ; #= tb:XkbSymMap - key_sym_map is an array of (max_key_code + 1) XkbSymMapRec structs
+  has CArray[uchar]      $.modmap      ; #= - modmap is an array of (max_key_code + 1) unsigned chars
+}
+
+class XkbCompatMap is repr<CStruct> is export {
+  has Pointer $.sym_interpret                    ; #= tb:XkbSymInterpret - sym_interpret is an array of XkbSymInterpretRec structs, in which size_si are allocated & num_si are used.
+  HAS XkbMods @.groups[XkbNumKbdGroups] is CArray;
+  has ushort  $.num_si                  is rw    ;
+  has ushort  $.size_si                 is rw    ;
+}
+
+class XkbIndicatorMap is repr<CStruct> is export {
+	has Str     $!flags       ;
+	has Str     $!which_groups;
+	has Str     $!groups      ;
+	has Str     $!which_mods  ;
+	HAS XkbMods $!mods        ;
+	has int     $!ctrls       ;
+}
+constant XkbIndicatorMapRec is export := XkbIndicatorMap;
+
+class XkbIndicator is repr<CStruct> is export {
+  has ulong            $.phys_indicators        is rw;
+  HAS XkbIndicatorMap  @.maps[XkbNumIndicators] is CArray;
+}
+
+class XkbProperty is repr<CStruct> is export {
+	has Str  $!name ;
+	has Str  $!value;
+}
+
+class XkbOutline is repr<CStruct> is export {
+	has short       $.num_points    is rw;
+	has short       $.sz_points     is rw;
+	has short       $.corner_radius is rw;
+	has Pointer     $!points             ; #= tb:XkbPoint,$!num_points
+}
+
+class XkbShape is repr<CStruct> is export {
+	has Atom          $.name          is rw;
+	has short         $.num_outlines  is rw;
+	has short         $.sz_outlines   is rw;
+	has Pointer       $!outlines           ; #= tb:XkbOutline,$!num_outlines
+	has XkbOutline    $!approx             ;
+	has XkbOutline    $!primary            ;
+	HAS XkbBounds     $!bounds             ;
+}
+
+class XkbGeometry is repr<CStruct> is export {
+  has Atom           $.name            is rw;
+  has ushort         $.width_mm        is rw;
+  has ushort         $.height_mm       is rw;
+  has Str            $!label_font           ;
+  has XkbColor       $.label_color          ;
+  has XkbColor       $.base_color           ;
+  has ushort         $.sz_properties   is rw;
+  has ushort         $.sz_colors       is rw;
+  has ushort         $.sz_shapes       is rw;
+  has ushort         $.sz_sections     is rw;
+  has ushort         $.sz_doodads      is rw;
+  has ushort         $.sz_key_aliases  is rw;
+  has ushort         $.num_properties  is rw;
+  has ushort         $.num_colors      is rw;
+  has ushort         $.num_shapes      is rw;
+  has ushort         $.num_sections    is rw;
+  has ushort         $.num_doodads     is rw;
+  has ushort         $.num_key_aliases is rw;
+  has Pointer        $.properties           ; #= tb:XkbProperty,$!num_properties
+  has Pointer        $.colors               ; #= tb:XkbColor,$!num_colors
+  has Pointer        $.shapes               ; #= tb:XkbShape,$!num_shapes
+  has Pointer        $.sections             ; #= tb:XkbSection,$!num_sections
+  has Pointer        $.doodads              ; #= tb:XkbDoodad,$!num_doodads
+  has Pointer        $.key_aliases          ; #= tb:XkbKeyAlias,$!num_key_aliases
+}
+
+class XkbOverlay is repr<CStruct> is export { ... }
+
+class XkbSection is repr<CStruct> is export {
+  has Atom       $.name         is rw;
+  has uchar      $.priority     is rw;
+  has short      $.top          is rw;
+  has short      $.left         is rw;
+  has ushort     $.width        is rw;
+  has ushort     $.height       is rw;
+  has short      $.angle        is rw;
+  has ushort     $.num_rows     is rw;
+  has ushort     $.num_doodads  is rw;
+  has ushort     $.num_overlays is rw;
+  has ushort     $.sz_rows      is rw;
+  has ushort     $.sz_doodads   is rw;
+  has ushort     $.sz_overlays  is rw;
+  has Pointer    $!rows              ; #= tb:XkbRow,$!num_rows
+  has Pointer    $!doodads           ; #= tb:XkbDoodad,$!num_doodads
+  HAS XkbBounds  $.bounds            ;
+  has Pointer    $!overlays          ; #= tb:XkbOverlay,$!num_overlays
+}
+
+class XkbOverlay {
+  has Atom        $.name           is rw;
+  has XkbSection  $.section_under       ;
+  has ushort      $.num_rows       is rw;
+  has ushort      $.sz_rows        is rw;
+  has Pointer     $!rows                ; #= tb:XkbOverlayRow,$!num_rows
+  has XkbBounds   $!bounds              ;
+}
+
+class XkbIndicatorDoodad is repr<CStruct> is export {
+	has Atom  $.name          is rw;
+	has Str   $.type          is rw;
+	has Str   $!priority           ;
+	has short $.top           is rw;
+	has short $.left          is rw;
+	has short $.angle         is rw;
+	has short $.shape_ndx     is rw;
+	has short $.on_color_ndx  is rw;
+	has short $.off_color_ndx is rw;
+}
+
+class XkbLogoDoodad is repr<CStruct> is export {
+	has Atom  $.name      is rw;
+	has Str   $!type           ;
+	has Str   $!priority       ;
+	has short $.top       is rw;
+	has short $.left      is rw;
+	has short $.angle     is rw;
+	has short $.color_ndx is rw;
+	has short $.shape_ndx is rw;
+	has Str   $!logo_name      ;
+}
+
+class XkbShapeDoodad is repr<CStruct> is export {
+	has Atom  $!name     ;
+	has Str   $!type     ;
+	has Str   $!priority ;
+	has short $!top      ;
+	has short $!left     ;
+	has short $!angle    ;
+	has short $!color_ndx;
+	has short $!shape_ndx;
+}
+
+class XkbTextDoodad is repr<CStruct> is export {
+	has Atom  $.name      is rw;
+	has Str   $!type           ;
+	has Str   $!priority       ;
+	has short $.top       is rw;
+	has short $.left      is rw;
+	has short $.angle     is rw;
+	has short $.width     is rw;
+	has short $.height    is rw;
+	has short $.color_ndx is rw;
+	has Str   $!text           ;
+	has Str   $!font           ;
+}
+
+
+class XkbDesc is repr<CStruct> is export {
+	has Display         $!dpy         ;
+	has short           $!flags       ;
+	has short           $!device_spec ;
+	has KeyCode         $!min_key_code;
+	has KeyCode         $!max_key_code;
+	has XkbControls     $!ctrls       ;
+	has XkbServerMap    $!server      ;
+	has XkbClientMap    $!map         ;
+	has XkbIndicator    $!indicators  ;
+	has XkbNames        $!names       ;
+	has XkbCompatMap    $!compat      ;
+	has XkbGeometry     $!geom        ;
+}
+
+class XkbDeviceBtnAction is repr<CStruct> is export {
+	has Str  $!type  ;
+	has Str  $!flags ;
+	has Str  $!count ;
+	has Str  $!button;
+	has Str  $!device;
+}
+
+class XkbDeviceLedChanges is repr<CStruct> is export {
+	has short                $.led_class is rw;
+	has short                $.led_id    is rw;
+	has int                  $.defined   is rw;
+	has XkbDeviceLedChanges  $.next           ;
+
+  method led-id    is rw { $!led_id    }
+  method led-class is rw { $!led_class }
+}
+
+class XkbDeviceChanges is repr<CStruct> is export {
+	has int                    $.changed   is rw;
+	has short                  $.first_btn is rw;
+	has short                  $.num_btns  is rw;
+	has XkbDeviceLedChanges    $.leds           ;
+
+  method first-btn  is rw { $!first_btn }
+  method num-btns   is rw { $!num_btns  }
+}
+
+class XkbDeviceLedInfo is repr<CStruct> is export {
+  has ushort                  $.led_class                 is rw;
+  has ushort                  $.led_id                    is rw;
+  has uint                    $.phys_indicators           is rw;
+  has uint                    $.maps_present              is rw;
+  has uint                    $.names_present             is rw;
+  has uint                    $.state                     is rw;
+  HAS Atom                    @.names[XkbNumIndicators]   is CArray;
+  HAS XkbIndicatorMap         @.maps[XkbNumIndicators]    is CArray;
+
+  method led-id    is rw { $!led_id    }
+  method led-class is rw { $!led_class }
+}
+
+class XkbAnyAction is repr<CStruct> is export {
+  has uchar   $.type;
+  HAS uchar   @.data[XkbAnyActionDataSize] is CArray;
+}
+
+class XkbDeviceValuatorAction is repr<CStruct> is export {
+	has Str  $!type    ;
+	has Str  $!device  ;
+	has Str  $!v1_what ;
+	has Str  $!v1_ndx  ;
+	has Str  $!v1_value;
+	has Str  $!v2_what ;
+	has Str  $!v2_ndx  ;
+	has Str  $!v2_value;
+}
+
+class XkbGroupAction is repr<CStruct> is export {
+	has Str  $!type     ;
+	has Str  $!flags    ;
+	has Str  $!group_XXX;
+}
+
+class XkbISOAction is repr<CStruct> is export {
+	has Str  $!type     ;
+	has Str  $!flags    ;
+	has Str  $!mask     ;
+	has Str  $!real_mods;
+	has Str  $!group_XXX;
+	has Str  $!affect   ;
+	has Str  $!vmods1   ;
+	has Str  $!vmods2   ;
+}
+
+class XkbMessageAction is repr<CStruct> is export {
+	has Str  $!type   ;
+	has Str  $!flags  ;
+	has Str  $!message;
+}
+
+class XkbModAction is repr<CStruct> is export {
+	has Str  $!type     ;
+	has Str  $!flags    ;
+	has Str  $!mask     ;
+	has Str  $!real_mods;
+	has Str  $!vmods1   ;
+	has Str  $!vmods2   ;
+}
+
+class XkbPtrAction is repr<CStruct> is export {
+	has Str  $!type    ;
+	has Str  $!flags   ;
+	has Str  $!high_XXX;
+	has Str  $!low_XXX ;
+	has Str  $!high_YYY;
+	has Str  $!low_YYY ;
+}
+
+class XkbPtrBtnAction is repr<CStruct> is export {
+	has Str  $!type  ;
+	has Str  $!flags ;
+	has Str  $!count ;
+	has Str  $!button;
+}
+
+class XkbPtrDfltAction is repr<CStruct> is export {
+	has Str  $!type    ;
+	has Str  $!flags   ;
+	has Str  $!affect  ;
+	has Str  $!valueXXX;
+}
+
+class XkbSwitchScreenAction is repr<CStruct> is export {
+	has Str  $!type     ;
+	has Str  $!flags    ;
+	has Str  $!screenXXX;
+}
+
+class XkbRedirectKeyAction is repr<CStruct> is export {
+	has Str  $!type       ;
+	has Str  $!new_key    ;
+	has Str  $!mods_mask  ;
+	has Str  $!mods       ;
+	has Str  $!vmods_mask0;
+	has Str  $!vmods_mask1;
+	has Str  $!vmods0     ;
+	has Str  $!vmods1     ;
+}
+
+class XkbAction is repr<CUnion> is export {
+  HAS XkbAnyAction            $.any            ;
+  HAS XkbModAction            $.mods           ;
+  HAS XkbGroupAction          $.group          ;
+  HAS XkbISOAction            $.iso            ;
+  HAS XkbPtrAction            $.ptr            ;
+  HAS XkbPtrBtnAction         $.btn            ;
+  HAS XkbPtrDfltAction        $.dflt           ;
+  HAS XkbSwitchScreenAction   $.screen         ;
+  HAS XkbCtrlsAction          $.ctrls          ;
+  HAS XkbMessageAction        $.msg            ;
+  HAS XkbRedirectKeyAction    $.redirect       ;
+  HAS XkbDeviceBtnAction      $.devbtn         ;
+  HAS XkbDeviceValuatorAction $.devval         ;
+  has uchar                   $.type      is rw;
+}
+
+class XkbDeviceInfo is repr<CStruct> is export {
+	has Str                 $!name         ;
+	has Atom                $!type         ;
+	has short               $!device_spec  ;
+	has Boolean             $!has_own_state; #= ot:Bool
+	has short               $!supported    ;
+	has short               $!unsupported  ;
+	has short               $!num_btns     ;
+	has XkbAction           $!btn_acts     ;
+	has short               $!sz_leds      ;
+	has short               $!num_leds     ;
+	has short               $!dflt_kbd_fb  ;
+	has short               $!dflt_led_fb  ;
+	has Pointer             $!leds         ; #= tb:XkbDeviceLedInfo
+}
+
+class XkbEventCause is repr<CStruct> is export {
+	has CARD8     $!kc    ;
+	has CARD8     $!event ;
+	has CARD8     $!mjr   ;
+	has CARD8     $!mnr   ;
+	has Client $!client;
+}
+
+# cw: ... 7/18/2021
 #
 # class XkbExtensionDeviceNotify is repr<CStruct> is export {
 # 	has int     $!type        ;
@@ -5272,32 +5671,6 @@ class XkbConfigFields is repr<CStruct> is export {
 # 	has int     $!led_id      ;
 # }
 #
-# class XkbGeometry is repr<CStruct> is export {
-# 	has Atom           $!name           ;
-# 	has short          $!width_mm       ;
-# 	has short          $!height_mm      ;
-# 	has Str            $!label_font     ;
-# 	has XkbColorPtr    $!label_color    ;
-# 	has XkbColorPtr    $!base_color     ;
-# 	has short          $!sz_properties  ;
-# 	has short          $!sz_colors      ;
-# 	has short          $!sz_shapes      ;
-# 	has short          $!sz_sections    ;
-# 	has short          $!sz_doodads     ;
-# 	has short          $!sz_key_aliases ;
-# 	has short          $!num_properties ;
-# 	has short          $!num_colors     ;
-# 	has short          $!num_shapes     ;
-# 	has short          $!num_sections   ;
-# 	has short          $!num_doodads    ;
-# 	has short          $!num_key_aliases;
-# 	has XkbPropertyPtr $!properties     ;
-# 	has XkbColorPtr    $!colors         ;
-# 	has XkbShapePtr    $!shapes         ;
-# 	has XkbSectionPtr  $!sections       ;
-# 	has XkbDoodadPtr   $!doodads        ;
-# 	has XkbKeyAliasPtr $!key_aliases    ;
-# }
 #
 # class XkbGeometrySizes is repr<CStruct> is export {
 # 	has int   $!which          ;
@@ -5309,48 +5682,6 @@ class XkbConfigFields is repr<CStruct> is export {
 # 	has short $!num_key_aliases;
 # }
 #
-# class XkbGroupAction is repr<CStruct> is export {
-# 	has Str  $!type     ;
-# 	has Str  $!flags    ;
-# 	has Str  $!group_XXX;
-# }
-#
-# class XkbISOAction is repr<CStruct> is export {
-# 	has Str  $!type     ;
-# 	has Str  $!flags    ;
-# 	has Str  $!mask     ;
-# 	has Str  $!real_mods;
-# 	has Str  $!group_XXX;
-# 	has Str  $!affect   ;
-# 	has Str  $!vmods1   ;
-# 	has Str  $!vmods2   ;
-# }
-#
-# class XkbIndicatorChanges is repr<CStruct> is export {
-# 	has int $!state_changes;
-# 	has int $!map_changes  ;
-# }
-#
-# class XkbIndicatorDoodad is repr<CStruct> is export {
-# 	has Atom  $!name         ;
-# 	has Str   $!type         ;
-# 	has Str   $!priority     ;
-# 	has short $!top          ;
-# 	has short $!left         ;
-# 	has short $!angle        ;
-# 	has short $!shape_ndx    ;
-# 	has short $!on_color_ndx ;
-# 	has short $!off_color_ndx;
-# }
-#
-# class XkbIndicatorMapRec is repr<CStruct> is export {
-# 	has Str        $!flags       ;
-# 	has Str        $!which_groups;
-# 	has Str        $!groups      ;
-# 	has Str        $!which_mods  ;
-# 	has XkbModsRec $!mods        ;
-# 	has int        $!ctrls       ;
-# }
 #
 # class XkbIndicatorNotify is repr<CStruct> is export {
 # 	has int     $!type      ;
@@ -5397,27 +5728,6 @@ class XkbConfigFields is repr<CStruct> is export {
 # 	has Str           $!color_ndx;
 # }
 #
-# class XkbKeyType is repr<CStruct> is export {
-# 	has XkbModsRec       $!mods       ;
-# 	has Str              $!num_levels ;
-# 	has Str              $!map_count  ;
-# 	has XkbKTMapEntryPtr $!map        ;
-# 	has XkbModsPtr       $!preserve   ;
-# 	has Atom             $!name       ;
-# 	has Atom             $!level_names;
-# }
-#
-# class XkbLogoDoodad is repr<CStruct> is export {
-# 	has Atom  $!name     ;
-# 	has Str   $!type     ;
-# 	has Str   $!priority ;
-# 	has short $!top      ;
-# 	has short $!left     ;
-# 	has short $!angle    ;
-# 	has short $!color_ndx;
-# 	has short $!shape_ndx;
-# 	has Str   $!logo_name;
-# }
 #
 # class XkbMapChanges is repr<CStruct> is export {
 # 	has short   $!changed           ;
@@ -5470,20 +5780,6 @@ class XkbConfigFields is repr<CStruct> is export {
 # 	has int     $!vmods             ;
 # }
 #
-# class XkbMessageAction is repr<CStruct> is export {
-# 	has Str  $!type   ;
-# 	has Str  $!flags  ;
-# 	has Str  $!message;
-# }
-#
-# class XkbModAction is repr<CStruct> is export {
-# 	has Str  $!type     ;
-# 	has Str  $!flags    ;
-# 	has Str  $!mask     ;
-# 	has Str  $!real_mods;
-# 	has Str  $!vmods1   ;
-# 	has Str  $!vmods2   ;
-# }
 #
 # class XkbMods is repr<CStruct> is export {
 # 	has Str   $!mask     ;
@@ -5546,12 +5842,7 @@ class XkbConfigFields is repr<CStruct> is export {
 # 	has Str     $!req_minor       ;
 # }
 #
-# class XkbOutline is repr<CStruct> is export {
-# 	has short       $!num_points   ;
-# 	has short       $!sz_points    ;
-# 	has short       $!corner_radius;
-# 	has XkbPointPtr $!points       ;
-# }
+
 #
 # class XkbOverlay is repr<CStruct> is export {
 # 	has Atom             $!name         ;
@@ -5579,33 +5870,7 @@ class XkbConfigFields is repr<CStruct> is export {
 # 	has short $!y;
 # }
 #
-# class XkbProperty is repr<CStruct> is export {
-# 	has Str  $!name ;
-# 	has Str  $!value;
-# }
 #
-# class XkbPtrAction is repr<CStruct> is export {
-# 	has Str  $!type    ;
-# 	has Str  $!flags   ;
-# 	has Str  $!high_XXX;
-# 	has Str  $!low_XXX ;
-# 	has Str  $!high_YYY;
-# 	has Str  $!low_YYY ;
-# }
-#
-# class XkbPtrBtnAction is repr<CStruct> is export {
-# 	has Str  $!type  ;
-# 	has Str  $!flags ;
-# 	has Str  $!count ;
-# 	has Str  $!button;
-# }
-#
-# class XkbPtrDfltAction is repr<CStruct> is export {
-# 	has Str  $!type    ;
-# 	has Str  $!flags   ;
-# 	has Str  $!affect  ;
-# 	has Str  $!valueXXX;
-# }
 #
 # class XkbRF_DescribeVars is repr<CStruct> is export {
 # 	has int              $!sz_desc ;
@@ -5652,16 +5917,6 @@ class XkbConfigFields is repr<CStruct> is export {
 # 	has Str  $!desc;
 # }
 #
-# class XkbRedirectKeyAction is repr<CStruct> is export {
-# 	has Str  $!type       ;
-# 	has Str  $!new_key    ;
-# 	has Str  $!mods_mask  ;
-# 	has Str  $!mods       ;
-# 	has Str  $!vmods_mask0;
-# 	has Str  $!vmods_mask1;
-# 	has Str  $!vmods0     ;
-# 	has Str  $!vmods1     ;
-# }
 #
 # class XkbRow is repr<CStruct> is export {
 # 	has short        $!top     ;
@@ -5671,47 +5926,6 @@ class XkbConfigFields is repr<CStruct> is export {
 # 	has int          $!vertical;
 # 	has XkbKeyPtr    $!keys    ;
 # 	has XkbBoundsRec $!bounds  ;
-# }
-#
-# class XkbSection is repr<CStruct> is export {
-# 	has Atom         $!name        ;
-# 	has Str          $!priority    ;
-# 	has short        $!top         ;
-# 	has short        $!left        ;
-# 	has short        $!width       ;
-# 	has short        $!height      ;
-# 	has short        $!angle       ;
-# 	has short        $!num_rows    ;
-# 	has short        $!num_doodads ;
-# 	has short        $!num_overlays;
-# 	has short        $!sz_rows     ;
-# 	has short        $!sz_doodads  ;
-# 	has short        $!sz_overlays ;
-# 	has XkbRowPtr    $!rows        ;
-# 	has XkbDoodadPtr $!doodads     ;
-# 	has XkbBoundsRec $!bounds      ;
-# 	has _XkbOverlay  $!overlays    ;
-# }
-#
-# class XkbShape is repr<CStruct> is export {
-# 	has Atom          $!name        ;
-# 	has short         $!num_outlines;
-# 	has short         $!sz_outlines ;
-# 	has XkbOutlinePtr $!outlines    ;
-# 	has XkbOutlinePtr $!approx      ;
-# 	has XkbOutlinePtr $!primary     ;
-# 	has XkbBoundsRec  $!bounds      ;
-# }
-#
-# class XkbShapeDoodad is repr<CStruct> is export {
-# 	has Atom  $!name     ;
-# 	has Str   $!type     ;
-# 	has Str   $!priority ;
-# 	has short $!top      ;
-# 	has short $!left     ;
-# 	has short $!angle    ;
-# 	has short $!color_ndx;
-# 	has short $!shape_ndx;
 # }
 #
 # class XkbSrvInfo is repr<CStruct> is export {
@@ -5799,11 +6013,6 @@ class XkbConfigFields is repr<CStruct> is export {
 # 	has short $!ptr_buttons       ;
 # }
 #
-# class XkbSwitchScreenAction is repr<CStruct> is export {
-# 	has Str  $!type     ;
-# 	has Str  $!flags    ;
-# 	has Str  $!screenXXX;
-# }
 #
 # class XkbSymInterpretRec is repr<CStruct> is export {
 # 	has KeySym       $!sym        ;
@@ -5814,19 +6023,6 @@ class XkbConfigFields is repr<CStruct> is export {
 # 	has XkbAnyAction $!act        ;
 # }
 #
-# class XkbTextDoodad is repr<CStruct> is export {
-# 	has Atom  $!name     ;
-# 	has Str   $!type     ;
-# 	has Str   $!priority ;
-# 	has short $!top      ;
-# 	has short $!left     ;
-# 	has short $!angle    ;
-# 	has short $!width    ;
-# 	has short $!height   ;
-# 	has short $!color_ndx;
-# 	has Str   $!text     ;
-# 	has Str   $!font     ;
-# }
 #
 # class XmuArea is repr<CStruct> is export {
 # 	has XmuScanline $!scanline;
