@@ -4646,7 +4646,6 @@ class XawTextPaintStruct is repr<CStruct> is export {
 	has Boolean            $!highlight  ;
 }
 
-# cw: ... 7/15/2021
 class XawTextPropertyList is repr<CStruct> is export {
 	has XrmQuark                         $.identifier      is rw;
 	has Screen                           $!screen               ;
@@ -4656,112 +4655,249 @@ class XawTextPropertyList is repr<CStruct> is export {
 	has Cardinal                         $.num_properties  is rw;
 	has XawTextPropertyList              $!next                 ;
 }
-#
-# class XawVendorShellExtRec is repr<CStruct> is export {
-# 	has ObjectPart            $!object    ;
-# 	has XawVendorShellExtPart $!vendor_ext;
-# }
-#
-# class XcmsCCC is repr<CStruct> is export {
-# 	has Display             $!dpy                 ;
-# 	has int                 $!screenNumber        ;
-# 	has Visual              $!visual              ;
-# 	has XcmsColor           $!clientWhitePt       ;
-# 	has XcmsCompressionProc $!gamutCompProc       ;
-# 	has XPointer            $!gamutCompClientData ;
-# 	has XcmsWhiteAdjustProc $!whitePtAdjProc      ;
-# 	has XPointer            $!whitePtAdjClientData;
-# 	has XcmsPerScrnInfo     $!pPerScrnInfo        ;
-# }
-#
-# class XcmsColorSpace is repr<CStruct> is export {
-# 	has Str                 $!prefix      ;
-# 	has XcmsColorFormat     $!id          ;
-# 	has XcmsParseStringProc $!parseString ;
-# 	has XcmsFuncListPtr     $!to_CIEXYZ   ;
-# 	has XcmsFuncListPtr     $!from_CIEXYZ ;
-# 	has int                 $!inverse_flag;
-# }
-#
-# class XcmsFunctionSet is repr<CStruct> is export {
-# 	has XcmsColorSpace     $!DDColorSpaces ;
-# 	has XcmsScreenInitProc $!screenInitProc;
-# 	has XcmsScreenFreeProc $!screenFreeProc;
-# }
-#
-# class XcmsPerScrnInfo is repr<CStruct> is export {
-# 	has XcmsColor $!screenWhitePt;
-# 	has XPointer  $!functionSet  ;
-# 	has XPointer  $!screenData   ;
-# 	has Str       $!state        ;
-# 	has Str       $!pad          ;
-# }
-#
-# class XcupGetReservedColormapEntries is repr<CStruct> is export {
-# 	has CARD8  $!reqType    ;
-# 	has CARD8  $!xcupReqType;
-# 	has CARD16 $!length     ;
-# 	has CARD32 $!screen     ;
-# }
-#
-# class XcupQueryVersion is repr<CStruct> is export {
-# 	has CARD8  $!reqType             ;
-# 	has CARD8  $!xcupReqType         ;
-# 	has CARD16 $!length              ;
-# 	has CARD16 $!client_major_version;
-# 	has CARD16 $!client_minor_version;
-# }
-#
-# class XcupStoreColors is repr<CStruct> is export {
-# 	has CARD8  $!reqType    ;
-# 	has CARD8  $!xcupReqType;
-# 	has CARD16 $!length     ;
-# 	has CARD32 $!cmap       ;
-# }
-#
-# class XcursorAnimate is repr<CStruct> is export {
-# 	has XcursorCursors $!cursors ;
-# 	has int            $!sequence;
-# }
-#
-# class XcursorChunkHeader is repr<CStruct> is export {
-# 	has XcursorUInt $!header ;
-# 	has XcursorUInt $!type   ;
-# 	has XcursorUInt $!subtype;
-# 	has XcursorUInt $!version;
-# }
-#
-# class XcursorComment is repr<CStruct> is export {
-# 	has XcursorUInt $!version     ;
-# 	has XcursorUInt $!comment_type;
-# 	has Str         $!comment     ;
-# }
-#
-# class XcursorComments is repr<CStruct> is export {
-# 	has int            $!ncomment;
-# 	has XcursorComment $!comments;
-# }
-#
-# class XcursorCursors is repr<CStruct> is export {
-# 	has Display $!dpy    ;
-# 	has int     $!ref    ;
-# 	has int     $!ncursor;
-# 	has Cursor  $!cursors;
-# }
-#
-# class XcursorFileHeader is repr<CStruct> is export {
-# 	has XcursorUInt    $!magic  ;
-# 	has XcursorUInt    $!header ;
-# 	has XcursorUInt    $!version;
-# 	has XcursorUInt    $!ntoc   ;
-# 	has XcursorFileToc $!tocs   ;
-# }
-#
-# class XcursorFileToc is repr<CStruct> is export {
-# 	has XcursorUInt $!type    ;
-# 	has XcursorUInt $!subtype ;
-# 	has XcursorUInt $!position;
-# }
+
+class XawVendorShellExtPart is repr<CStruct> is export {
+  has  Widget      $.parent;
+  HAS  XawImPart   $.im    ;
+  HAS  XawIcPart   $.ic    ;
+
+  #has XtPointer pad[4];   /* for future use and keep binary compatability */
+  has XtPointer    $!pad1  ;
+  has XtPointer    $!pad2  ;
+  has XtPointer    $!pad3  ;
+  has XtPointer    $!pad4  ;
+}
+
+class XawVendorShellExtRec is repr<CStruct> is export {
+	has ObjectPart            $!object    ;
+	has XawVendorShellExtPart $!vendor_ext;
+}
+
+class XcmsRGB is repr<CStruct> is export {
+  has ushort $.red   is rw;   #= r:0x0000 .. 0xffff
+  has ushort $.green is rw;   #= r:0x0000 .. 0xffff
+  has ushort $.blue  is rw;   #= r:0x0000 .. 0xffff
+}
+
+class XcmsRGBi is repr<CStruct> is export {
+  has XcmsFloat $.red   is rw;     #= r:0.0 .. 1.0
+  has XcmsFloat $.green is rw;     #= r:0.0 .. 1.0
+  has XcmsFloat $.blue  is rw;     #= r:0.0 .. 1.0
+}
+
+class XcmsCIEuvY is repr<CStruct> is export {
+  has XcmsFloat $.u_prime is rw;  #= r:0.0 .. 1.0
+  has XcmsFloat $.v_prime is rw;  #= r:0.0 .. 1.0
+  has XcmsFloat $.Y       is rw;  #= r:0.0 .. 1.0
+
+  method u-prime is rw {
+    Proxy.new:
+      FETCH => -> $     { $!u_prime    },
+      STORE => -> $, \v { $!u_prime = v }
+  }
+
+  method v-prime is rw {
+    Proxy.new:
+      FETCH => -> $     { $!v_prime    },
+      STORE => -> $, \v { $!v_prime = v }
+  }
+}
+
+class XcmsCIExyY is repr<CStruct> is export {
+  has XcmsFloat $.x is rw;
+  has XcmsFloat $.y is rw;
+  has XcmsFloat $.Y is rw;
+}
+
+class XcmsCIEXYZ is repr<CStruct> is export {
+  has XcmsFloat $.X is rw;
+  has XcmsFloat $.Y is rw;
+  has XcmsFloat $.Z is rw;
+}
+
+class XcmsCIELab is repr<CStruct>  is export {
+  has XcmsFloat $.L_star is rw;  # r:0.0..100.0
+  has XcmsFloat $.a_star is rw;  # r:0.0..100.0
+  has XcmsFloat $.b_star is rw;  # r:0.0..100.0
+
+  method L-star is rw {
+    Proxy.new:
+      FETCH => -> $     { $!L_star     },
+      STORE => -> $, \v { $!L_star = v }
+  }
+
+  method a-star is rw {
+    Proxy.new:
+      FETCH => -> $     { $!a_star     },
+      STORE => -> $, \v { $!a_star = v }
+  }
+
+  method b-star is rw {
+    Proxy.new:
+      FETCH => -> $     { $!b_star     },
+      STORE => -> $, \v { $!b_star = v }
+  }
+}
+
+class XcmsCIELuv is repr<CStruct>  is export {
+  has XcmsFloat $.L_star is rw;  # r:0.0..100.0
+  has XcmsFloat $.u_star is rw;  # r:0.0..100.0
+  has XcmsFloat $.v_star is rw;  # r:0.0..100.0
+
+  method L-star is rw {
+    Proxy.new:
+      FETCH => -> $     { $!L_star     },
+      STORE => -> $, \v { $!L_star = v }
+  }
+
+  method u-star is rw {
+    Proxy.new:
+      FETCH => -> $     { $!u_star     },
+      STORE => -> $, \v { $!u_star = v }
+  }
+
+  method v-star is rw {
+    Proxy.new:
+      FETCH => -> $     { $!v_star     },
+      STORE => -> $, \v { $!v_star = v }
+  }
+
+}
+
+class XcmsTekHVC is repr<CStruct> is export {
+  has XcmsFloat $.H is rw;  #= r:0.0 .. 360.0
+  has XcmsFloat $.V is rw;  #= r:0.0 .. 100.0
+  has XcmsFloat $.C is rw;  #= r:0.0 .. 100.0
+}
+
+class XcmsPad is repr<CStruct> is export {
+  has XcmsFloat $.pad0;
+  has XcmsFloat $.pad1;
+  has XcmsFloat $.pad2;
+  has XcmsFloat $.pad3;
+}
+
+class XcmsSpec is repr<CUnion> is export {
+  has XcmsRGB    $.RGB;
+  has XcmsRGBi   $.RGBi;
+  has XcmsCIEXYZ $.CIEXYZ;
+  has XcmsCIEuvY $.CIEuvY;
+  has XcmsCIExyY $.CIExyY;
+  has XcmsCIELab $.CIELab;
+  has XcmsCIELuv $.CIELuv;
+  has XcmsTekHVC $.TekHVC;
+  has XcmsPad    $.Pad;
+}
+
+class XcmsColor is repr<CStruct> is export {
+  HAS XcmsSpec        $.spec;
+  has ulong           $.pixel   is rw; #= pixel value (as needed)
+  has XcmsColorFormat $.format  is rw; #= the specification format
+}
+
+class XcmsPerScrnInfo is repr<CStruct> is export {
+	has XcmsColor $!screenWhitePt;
+	has XPointer  $!functionSet  ;
+	has XPointer  $!screenData   ;
+	has Str       $!state        ;
+	has Str       $!pad          ;
+}
+
+class XcmsCCC is repr<CStruct> is export {
+	has Display          $!dpy                 ;
+	has int              $!screenNumber        ;
+	has Visual           $!visual              ;
+	has XcmsColor        $!clientWhitePt       ;
+	has Pointer          $!gamutCompProc       ; #= fp:XcmsCompressionProc
+	has XPointer         $!gamutCompClientData ;
+	has Pointer          $!whitePtAdjProc      ; #= fp:XcmsWhiteAdjustProc
+	has XPointer         $!whitePtAdjClientData;
+	has XcmsPerScrnInfo  $!pPerScrnInfo        ;
+}
+
+class XcmsColorSpace is repr<CStruct> is export {
+	has Str              $!prefix      ;
+	has XcmsColorFormat  $!id          ;
+	has Pointer          $!parseString ; #= fp:XcmsParseStringProc
+	has Pointer          $!to_CIEXYZ   ; #= fp:XcmsFuncListPtr
+	has Pointer          $!from_CIEXYZ ; #= fp:XcmsFuncListPtr
+	has int              $!inverse_flag;
+}
+
+class XcmsFunctionSet is repr<CStruct> is export {
+	has XcmsColorSpace  $!DDColorSpaces ;
+	has Pointer         $!screenInitProc; #= fp:XcmsScreenInitProc
+	has Pointer         $!screenFreeProc; #= fp:XcmsScreenFreeProc
+}
+
+class XcupGetReservedColormapEntries is repr<CStruct> is export {
+	has CARD8  $!reqType    ;
+	has CARD8  $!xcupReqType;
+	has CARD16 $!length     ;
+	has CARD32 $!screen     ;
+}
+
+class XcupQueryVersion is repr<CStruct> is export {
+	has CARD8  $!reqType             ;
+	has CARD8  $!xcupReqType         ;
+	has CARD16 $!length              ;
+	has CARD16 $!client_major_version;
+	has CARD16 $!client_minor_version;
+}
+
+class XcupStoreColors is repr<CStruct> is export {
+	has CARD8  $!reqType    ;
+	has CARD8  $!xcupReqType;
+	has CARD16 $!length     ;
+	has CARD32 $!cmap       ;
+}
+
+class XcursorCursors is repr<CStruct> is export {
+  has Display         $.dpy;             #= Display holding cursors
+  has int             $.ref     is rw;   #= reference count
+  has int             $.ncursor is rw;   #= number of cursors
+  has CArray[Cursor]  $.cursors;         #= array of cursors
+}
+
+class XcursorAnimate is repr<CStruct> is export {
+	has XcursorCursors $!cursors ;
+	has int            $!sequence;
+}
+
+class XcursorChunkHeader is repr<CStruct> is export {
+	has XcursorUInt $.header  is rw;
+	has XcursorUInt $.type    is rw;
+	has XcursorUInt $.subtype is rw;
+	has XcursorUInt $.version is rw;
+}
+
+class XcursorComment is repr<CStruct> is export {
+	has XcursorUInt $.version      is rw;
+	has XcursorUInt $.comment_type is rw;
+	has Str         $!comment           ;
+}
+
+class XcursorComments is repr<CStruct> is export {
+	has int            $!ncomment;
+	has XcursorComment $!comments;
+}
+
+# cw: ... 7/17/2021
+class XcursorFileToc is repr<CStruct> is export {
+	has XcursorUInt $!type    ;
+	has XcursorUInt $!subtype ;
+	has XcursorUInt $!position;
+}
+
+class XcursorFileHeader is repr<CStruct> is export {
+	has XcursorUInt    $!magic  ;
+	has XcursorUInt    $!header ;
+	has XcursorUInt    $!version;
+	has XcursorUInt    $!ntoc   ;
+	has XcursorFileToc $!tocs   ;
+}
+
+
 #
 # class XcursorImage is repr<CStruct> is export {
 # 	has XcursorUInt  $!version;
