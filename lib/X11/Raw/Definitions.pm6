@@ -1597,6 +1597,7 @@ constant XkbPerKeyBitArraySize                                           is expo
 constant XkbPhysSymbolsNameMask                                          is export = (1 +< 3);
 constant XkbRedirectIntoRange                                            is export = (0x80);
 constant XkbRF_PendingMatch                                              is export = (1 +< 1);
+constant XkbRGMaxMembers                                                 is export = 12;
 constant XkbSA_ActionMessage                                             is export = 0x10;
 constant XkbSA_AffectDfltBtn                                             is export = 1;
 constant XkbSA_ClearLocks                                                is export = 1;
