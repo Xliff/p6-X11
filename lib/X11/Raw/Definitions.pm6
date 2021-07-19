@@ -30,6 +30,7 @@ constant Pixel                        is export := uint64;
 constant Position                     is export :=  int16;
 constant Modifiers                    is export := uint;
 constant String                       is export := Str;
+constant Status                       is export := int;
 constant TMLongCard                   is export := ulong;
 constant XIC                          is export := Pointer;
 constant XID                          is export := uint64;
@@ -2480,3 +2481,14 @@ constant zeroPosition                                                    is expo
 constant ZLNSPERBATCH                                                    is export = 1024;
 constant ZoomState                                                       is export = 2;
 constant ZRCTSPERBATCH                                                   is export = 256;
+
+
+# cw: Temporary stubs.
+constant Display is export := Pointer;
+constant XConnectionWatchProc is export := Pointer;
+constant XExtCodes is export := Pointer;
+constant XHostAddress is export := Pointer;
+constant XExtData is export := Pointer;
+constant XColor is export := Pointer;
+constant Screen is export := Pointer;
+constant GC is export := Pointer;
