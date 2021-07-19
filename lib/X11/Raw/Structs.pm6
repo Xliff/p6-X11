@@ -1,5 +1,6 @@
 use v6.c;
 
+use Method::Also;
 use NativeCall;
 
 use Font::FreeType::Raw::Defs;
@@ -5827,170 +5828,182 @@ class XkbNewKeyboardNotify is repr<CStruct> is export {
 	has Str     $!req_minor             ;
 }
 
-# cw: ... 7/18/2021
-# class XkbRF_DescribeVars is repr<CStruct> is export {
-# 	has int              $!sz_desc ;
-# 	has int              $!num_desc;
-# 	has XkbRF_VarDescPtr $!desc    ;
-# }
-#
-# class XkbRF_Group is repr<CStruct> is export {
-# 	has int  $!number;
-# 	has Str  $!name  ;
-# 	has Str  $!words ;
-# }
-#
-# class XkbRF_Rules is repr<CStruct> is export {
-# 	has XkbRF_DescribeVarsRec $!models     ;
-# 	has XkbRF_DescribeVarsRec $!layouts    ;
-# 	has XkbRF_DescribeVarsRec $!variants   ;
-# 	has XkbRF_DescribeVarsRec $!options    ;
-# 	has short                 $!sz_extra   ;
-# 	has short                 $!num_extra  ;
-# 	has Str                   $!extra_names;
-# 	has XkbRF_DescribeVarsPtr $!extra      ;
-# 	has short                 $!sz_rules   ;
-# 	has short                 $!num_rules  ;
-# 	has XkbRF_RulePtr         $!rules      ;
-# 	has short                 $!sz_groups  ;
-# 	has short                 $!num_groups ;
-# 	has XkbRF_GroupPtr        $!groups     ;
-# }
-#
-# class XkbRF_VarDefs is repr<CStruct> is export {
-# 	has Str   $!model       ;
-# 	has Str   $!layout      ;
-# 	has Str   $!variant     ;
-# 	has Str   $!options     ;
-# 	has short $!sz_extra    ;
-# 	has short $!num_extra   ;
-# 	has Str   $!extra_names ;
-# 	has Str   $!extra_values;
-# }
-#
-# class XkbRF_VarDesc is repr<CStruct> is export {
-# 	has Str  $!name;
-# 	has Str  $!desc;
-# }
-#
-#
-#
-# class XkbSrvInfo is repr<CStruct> is export {
-# 	has XkbStateRec      $!prev_state          ;
-# 	has XkbStateRec      $!state               ;
-# 	has XkbDescPtr       $!desc                ;
-# 	has DeviceIntPtr     $!device              ;
-# 	has KbdCtrlProcPtr   $!kbdProc             ;
-# 	has XkbRadioGroupPtr $!radioGroups         ;
-# 	has CARD8            $!nRadioGroups        ;
-# 	has CARD8            $!clearMods           ;
-# 	has CARD8            $!setMods             ;
-# 	has INT16            $!groupChange         ;
-# 	has CARD16           $!dfltPtrDelta        ;
-# 	has double           $!mouseKeysCurve      ;
-# 	has double           $!mouseKeysCurveFactor;
-# 	has INT16            $!mouseKeysDX         ;
-# 	has INT16            $!mouseKeysDY         ;
-# 	has CARD8            $!mouseKeysFlags      ;
-# 	has Bool             $!mouseKeysAccel      ;
-# 	has CARD8            $!mouseKeysCounter    ;
-# 	has CARD8            $!lockedPtrButtons    ;
-# 	has CARD8            $!shiftKeyCount       ;
-# 	has KeyCode          $!mouseKey            ;
-# 	has KeyCode          $!inactiveKey         ;
-# 	has KeyCode          $!slowKey             ;
-# 	has KeyCode          $!repeatKey           ;
-# 	has CARD8            $!krgTimerActive      ;
-# 	has CARD8            $!beepType            ;
-# 	has CARD8            $!beepCount           ;
-# 	has CARD32           $!flags               ;
-# 	has CARD32           $!lastPtrEventTime    ;
-# 	has CARD32           $!lastShiftEventTime  ;
-# 	has OsTimerPtr       $!beepTimer           ;
-# 	has OsTimerPtr       $!mouseKeyTimer       ;
-# 	has OsTimerPtr       $!slowKeysTimer       ;
-# 	has OsTimerPtr       $!bounceKeysTimer     ;
-# 	has OsTimerPtr       $!repeatKeyTimer      ;
-# 	has OsTimerPtr       $!krgTimer            ;
-# }
-#
-# class XkbStateNotifyEvent is repr<CStruct> is export {
-# 	has int     $!type              ;
-# 	has long    $!serial            ;
-# 	has Bool    $!send_event        ;
-# 	has Display $!display           ;
-# 	has Time    $!time              ;
-# 	has int     $!xkb_type          ;
-# 	has int     $!device            ;
-# 	has int     $!changed           ;
-# 	has int     $!group             ;
-# 	has int     $!base_group        ;
-# 	has int     $!latched_group     ;
-# 	has int     $!locked_group      ;
-# 	has int     $!mods              ;
-# 	has int     $!base_mods         ;
-# 	has int     $!latched_mods      ;
-# 	has int     $!locked_mods       ;
-# 	has int     $!compat_state      ;
-# 	has Str     $!grab_mods         ;
-# 	has Str     $!compat_grab_mods  ;
-# 	has Str     $!lookup_mods       ;
-# 	has Str     $!compat_lookup_mods;
-# 	has int     $!ptr_buttons       ;
-# 	has KeyCode $!keycode           ;
-# 	has Str     $!event_type        ;
-# 	has Str     $!req_major         ;
-# 	has Str     $!req_minor         ;
-# }
-#
-# class XkbStateRec is repr<CStruct> is export {
-# 	has Str   $!group             ;
-# 	has Str   $!locked_group      ;
-# 	has short $!base_group        ;
-# 	has short $!latched_group     ;
-# 	has Str   $!mods              ;
-# 	has Str   $!base_mods         ;
-# 	has Str   $!latched_mods      ;
-# 	has Str   $!locked_mods       ;
-# 	has Str   $!compat_state      ;
-# 	has Str   $!grab_mods         ;
-# 	has Str   $!compat_grab_mods  ;
-# 	has Str   $!lookup_mods       ;
-# 	has Str   $!compat_lookup_mods;
-# 	has short $!ptr_buttons       ;
-# }
-#
-#
-# class XkbSymInterpretRec is repr<CStruct> is export {
-# 	has KeySym       $!sym        ;
-# 	has Str          $!flags      ;
-# 	has Str          $!match      ;
-# 	has Str          $!mods       ;
-# 	has Str          $!virtual_mod;
-# 	has XkbAnyAction $!act        ;
-# }
-#
-#
-# class XmuArea is repr<CStruct> is export {
-# 	has XmuScanline $!scanline;
-# }
-#
-# class XmuScanline is repr<CStruct> is export {
-# 	has int          $!y      ;
-# 	has XmuSegment   $!segment;
-# 	has _XmuScanline $!next   ;
-# }
-#
-# class XmuSegment is repr<CStruct> is export {
-# 	has int         $!x1  ;
-# 	has int         $!x2  ;
-# 	has _XmuSegment $!next;
-# }
-#
-# class XtActionsRec is repr<CStruct> is export {
-# 	has String       $!string;
-# 	has XtActionProc $!proc  ;
-# }
+my %var-defs-extra-values-cache;
+class XkbRF_VarDefs is repr<CStruct> is export {
+	has Str          $!model       ;
+	has Str          $!layout      ;
+	has Str          $!variant     ;
+	has Str          $!options     ;
+	has short        $!sz_extra    ;
+	has short        $!num_extra   ;
+	has Str          $!extra_names ;
+	has CArray[Str]  $!extra_values;
+
+  # submethod DESTROY {
+  #   # cw: Still not right!
+  #   %var-defs-extra-values-cache{ $!extra_values.WHERE }:delete;
+  # }
+  #
+  # method extra_values is also<extra-values> {
+  #   unless %var-defs-extra-values-cache{ $!extra_values.WHERE } {
+  #     %var-defs-extra-values-cache{ !$extra_values.WHERE } = SizedCArray.new(
+  #       $!extra_values,
+  #       $!num_extra
+  #     );
+  #   }
+  #   %var-defs-extra-values-cache{ $!extar_values.WHERE}
+  # }
+}
+
+class XkbRF_VarDesc is repr<CStruct> is export {
+	has Str  $!name;
+	has Str  $!desc;
+}
+
+class XkbRF_DescribeVars is repr<CStruct> is export {
+	has int     $.sz_desc   is rw;
+	has int     $.num_desc  is rw;
+	has Pointer $!desc           ; #= tb:XkbRF_VarDesc
+}
+
+class XkbRF_Group is repr<CStruct> is export {
+	has int  $.number is rw;
+	has Str  $!name        ;
+	has Str  $!words       ;
+}
+
+class XkbRF_Rules is repr<CStruct> is export {
+	has XkbRF_DescribeVars    $!models           ;
+	has XkbRF_DescribeVars    $!layouts          ;
+	has XkbRF_DescribeVars    $!variants         ;
+	has XkbRF_DescribeVars    $!options          ;
+	has short                 $.sz_extra    is rw;
+	has short                 $.num_extra   is rw;
+	has Str                   $!extra_names      ;
+	has Pointer               $!extra            ; #= tb:XkbRF_DescribeVars
+	has short                 $.sz_rules    is rw;
+	has short                 $.num_rules   is rw;
+	has Pointer               $!rules            ; #= tb:XkbRF_Rule
+	has short                 $.sz_groups   is rw;
+	has short                 $.num_groups  is rw;
+	has Pointer               $!groups           ; #= tb:XkbRF_Group
+}
+
+class XkbState is repr<CStruct> is export {
+	has Str   $!group                   ;
+	has Str   $!locked_group            ;
+	has short $.base_group         is rw;
+	has short $.latched_group      is rw;
+	has Str   $!mods                    ;
+	has Str   $!base_mods               ;
+	has Str   $!latched_mods            ;
+	has Str   $!locked_mods             ;
+	has Str   $!compat_state            ;
+	has Str   $!grab_mods               ;
+	has Str   $!compat_grab_mods        ;
+	has Str   $!lookup_mods             ;
+	has Str   $!compat_lookup_mods      ;
+	has short $.ptr_buttons        is rw;
+}
+
+class XkbRadioGroup is repr<CStruct> is export {
+  has CARD8  $.flags                    is rw    ;
+  has CARD8  $.nMembers                 is rw    ;
+  has CARD8  $.dfltDown                 is rw    ;
+  has CARD8  $.currentDown              is rw    ;
+  HAS CARD8  @.members[XkbRGMaxMembers] is CArray;
+}
+
+class XkbSrvInfo is repr<CStruct> is export {
+	HAS XkbState         $!prev_state                ;
+	HAS XkbState         $!state                     ;
+	has XkbDesc          $!desc                      ;
+	has Pointer          $!device                    ; #= ot:DeviceInt
+	has Pointer          $!kbdProc                   ; #= fp:KbdCtrlProcP - required Xorg
+	has XkbRadioGroup    $!radioGroups               ;
+	has CARD8            $.nRadioGroups         is rw;
+	has CARD8            $.clearMods            is rw;
+	has CARD8            $.setMods              is rw;
+	has INT16            $.groupChange          is rw;
+	has CARD16           $.dfltPtrDelta         is rw;
+	has double           $.mouseKeysCurve       is rw;
+	has double           $.mouseKeysCurveFactor is rw;
+	has INT16            $.mouseKeysDX          is rw;
+	has INT16            $.mouseKeysDY          is rw;
+	has CARD8            $.mouseKeysFlags       is rw;
+	has Boolean          $.mouseKeysAccel       is rw; #= ot:Bool
+	has CARD8            $.mouseKeysCounter     is rw;
+	has CARD8            $.lockedPtrButtons     is rw;
+	has CARD8            $.shiftKeyCount        is rw;
+	has KeyCode          $.mouseKey             is rw;
+	has KeyCode          $.inactiveKey          is rw;
+	has KeyCode          $.slowKey              is rw;
+	has KeyCode          $.repeatKey            is rw;
+	has CARD8            $.krgTimerActive       is rw;
+	has CARD8            $.beepType             is rw;
+	has CARD8            $.beepCount            is rw;
+	has CARD32           $.flags                is rw;
+	has CARD32           $.lastPtrEventTime     is rw;
+	has CARD32           $.lastShiftEventTime   is rw;
+	has Pointer          $!beepTimer                 ; # ot:OsTimer
+	has Pointer          $!mouseKeyTimer             ; # ot:OsTimer
+	has Pointer          $!slowKeysTimer             ; # ot:OsTimer
+	has Pointer          $!bounceKeysTimer           ; # ot:OsTimer
+	has Pointer          $!repeatKeyTimer            ; # ot:OsTimer
+	has Pointer          $!krgTimer                  ; # ot:OsTimer
+}
+
+class XkbStateNotifyEvent is repr<CStruct> is export {
+	has int     $.type               is rw;
+	has long    $.serial             is rw;
+	has Boolean $.send_event         is rw; #= ot:Bool
+	has Display $!display                 ;
+	has Time    $.time               is rw;
+	has int     $.xkb_type           is rw;
+	has int     $.device             is rw;
+	has int     $.changed            is rw;
+	has int     $.group              is rw;
+	has int     $.base_group         is rw;
+	has int     $.latched_group      is rw;
+	has int     $.locked_group       is rw;
+	has int     $.mods               is rw;
+	has int     $.base_mods          is rw;
+	has int     $.latched_mods       is rw;
+	has int     $.locked_mods        is rw;
+	has int     $.compat_state       is rw;
+	has Str     $.grab_mods          is rw;
+	has Str     $.compat_grab_mods   is rw;
+	has Str     $.lookup_mods        is rw;
+	has Str     $.compat_lookup_mods is rw;
+	has int     $.ptr_buttons        is rw;
+	has KeyCode $.keycode            is rw;
+	has Str     $.event_type         is rw;
+	has Str     $.req_major          is rw;
+	has Str     $.req_minor          is rw;
+}
+
+class XkbSymInterpretRec is repr<CStruct> is export {
+	has KeySym       $.sym         is rw;
+	has Str          $!flags            ;
+	has Str          $!match            ;
+	has Str          $!mods             ;
+	has Str          $!virtual_mod      ;
+	has XkbAnyAction $!act              ;
+}
+
+class XtActionsRec is repr<CStruct> is export {
+	has String  $!string;
+	has Pointer $!proc  ; #= fp:XtActionProc
+}
+
+class XtGrabExt is repr<CStruct> is export {
+	has Mask   $.pKeyButMask    is rw;
+	has Mask   $.pModifiersMask is rw;
+	has Window $.confineTo      is rw;
+	has Cursor $.cursor         is rw;
+}
+
+# cw: ... 7/19/2021
 #
 # class XtAppStruct is repr<CStruct> is export {
 # 	has XtAppContext             $!next              ;
@@ -6044,10 +6057,6 @@ class XkbNewKeyboardNotify is repr<CStruct> is export {
 # 	has ThreadAppProc            $!free_lock         ;
 # }
 #
-# class XtCallbackRec is repr<CStruct> is export {
-# 	has XtCallbackProc $!callback;
-# 	has XtPointer      $!closure ;
-# }
 #
 # class XtCheckpointTokenRec is repr<CStruct> is export {
 # 	has int     $!save_type           ;
@@ -6069,12 +6078,6 @@ class XkbNewKeyboardNotify is repr<CStruct> is export {
 # 	has XtServerGrabType $!grabType;
 # }
 #
-# class XtGrabExtRec is repr<CStruct> is export {
-# 	has Mask   $!pKeyButMask   ;
-# 	has Mask   $!pModifiersMask;
-# 	has Window $!confineTo     ;
-# 	has Cursor $!cursor        ;
-# }
 #
 # class XtPerDisplayInputRec is repr<CStruct> is export {
 # 	has XtGrabList  $!grabList     ;
