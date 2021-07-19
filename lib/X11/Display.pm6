@@ -559,16 +559,22 @@ class X11::Display {
 
   # 1/4 - cw: 7/19/2021
 
-  method DefaultColormap (gint $var1) {
-    XDefaultColormap($!d, $var1);
+  method DefaultColormap (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XDefaultColormap($!d, $v1);
   }
 
-  method DefaultDepth (gint $var1) {
-    XDefaultDepth($!d, $var1);
+  method DefaultDepth (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XDefaultDepth($!d, $v1);
   }
 
-  method DefaultGC (gint $var1) {
-    XDefaultGC($!d, $var1);
+  method DefaultGC (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XDefaultGC($!d, $v1);
   }
 
   method DefaultRootWindow {
@@ -583,148 +589,321 @@ class X11::Display {
     XDefaultScreenOfDisplay($!d);
   }
 
-  method DefaultVisual (gint $var1) {
-    XDefaultVisual($!d, $var1);
+  method DefaultVisual (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XDefaultVisual($!d, $v1);
   }
 
-  method DefineCursor (Window $var1, Cursor $var2) {
-    XDefineCursor($!d, $var1, $var2);
+  method DefineCursor (Int() $var1, Int() $var2) {
+    my Window $v1 = $var1;
+    my Cursor $v2 = $var2;
+
+    XDefineCursor($!d, $v1, $v2);
   }
 
-  method DeleteProperty (Window $var1, Atom $var2) {
-    XDeleteProperty($!d, $var1, $var2);
+  method DeleteProperty (Int() $var1, Int() $var2) {
+    my Window $v1 = $var1;
+    my Atom   $v2 = $var2;
+
+
+    XDeleteProperty($!d, $v1, $v2);
   }
 
-  method DestroySubwindows (Window $var1) {
-    XDestroySubwindows($!d, $var1);
+  method DestroySubwindows (Int() $var1) {
+    my Window $v1 = $var1;
+
+    XDestroySubwindows($!d, $v1);
   }
 
-  method DestroyWindow (Window $var1) {
-    XDestroyWindow($!d, $var1);
+  method DestroyWindow (Int() $var1) {
+    my Window $v1 = $var1;
+
+    XDestroyWindow($!d, $v1);
   }
 
   method DisableAccessControl {
     XDisableAccessControl($!d);
   }
 
-  method DisplayCells (gint $var1) {
-    XDisplayCells($!d, $var1);
+  method DisplayCells (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XDisplayCells($!d, $v1);
   }
 
-  method DisplayHeight (gint $var1) {
-    XDisplayHeight($!d, $var1);
+  method DisplayHeight (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XDisplayHeight($!d, $v1);
   }
 
-  method DisplayHeightMM (gint $var1) {
-    XDisplayHeightMM($!d, $var1);
+  method DisplayHeightMM (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XDisplayHeightMM($!d, $v1);
   }
 
-  method DisplayKeycodes (gint $var1 is rw, gint $var2 is rw) {
-    XDisplayKeycodes($!d, $var1 is rw, $var2 is rw);
+  proto method DisplayKeycodes (|)
+  { * }
+
+  method DisplayKeycodes {
+    samewith($, $);
+  }
+  method DisplayKeycodes ($var1 is rw, $var2 is rw) {
+    my gint ($v1, $v1) = 0 xx 2;
+
+    XDisplayKeycodes($!d, $v1, $v2);
+    ($var1, $var2) = ($v1, $v2);
   }
 
   method DisplayMotionBufferSize {
     XDisplayMotionBufferSize($!d);
   }
 
-  method DisplayPlanes (gint $var1) {
-    XDisplayPlanes($!d, $var1);
+  method DisplayPlanes (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XDisplayPlanes($!d, $v1);
   }
 
   method DisplayString {
     XDisplayString($!d);
   }
 
-  method DisplayWidth (gint $var1) {
-    XDisplayWidth($!d, $var1);
+  method DisplayWidth (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XDisplayWidth($!d, $v1);
   }
 
-  method DisplayWidthMM (gint $var1) {
-    XDisplayWidthMM($!d, $var1);
+  method DisplayWidthMM (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XDisplayWidthMM($!d, $v1);
   }
 
-  method DrawArc (Drawable $var1, GC $var2, gint $var3, gint $var4, gint $var5, gint $var6, gint $var7, gint $var8) {
-    XDrawArc($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8);
+  method DrawArc (Int() $var1, GC() $var2, gint $var3, gint $var4, gint $var5, gint $var6, gint $var7, gint $var8) {
+    my Drawable $var1 = $v1;
+
+    XDrawArc($!d, $v1, $var2, $var3, $var4, $var5, $var6, $var7, $var8);
   }
 
-  method DrawArcs (Drawable $var1, GC $var2, XArc $var3, gint $var4) {
-    XDrawArcs($!d, $var1, $var2, $var3, $var4);
+  method DrawArcs (Int() $var1, GC() $var2, XArc $var3, gint $var4) {
+    my Drawable $var1 = $v1;
+
+    XDrawArcs($!d, $v1, $var2, $var3, $var4);
   }
 
-  method DrawImageString (Drawable $var1, GC $var2, gint $var3, gint $var4, Str $var5, gint $var6) {
-    XDrawImageString($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method DrawImageString (
+    Int() $var1,
+    GC()  $var2,
+    Int() $var3,
+    Int() $var4,
+    Str() $var5,
+    Int() $var6
+  ) {
+    my Drawable $var1           = $v1;
+    my gint     ($v3, $v4, $v6) = ($var3, $var4, $var6);
+
+    XDrawImageString($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
 
-  method DrawImageString16 (Drawable $var1, GC $var2, gint $var3, gint $var4, XChar2b $var5, gint $var6) {
-    XDrawImageString16($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method DrawImageString16 (
+    Int()   $var1,
+    GC()    $var2,
+    Int()   $var3,
+    Int()   $var4,
+    XChar2b $var5,
+    Int()   $var6
+  ) {
+    my Drawable $var1 = $v1;
+    my gint     ($v3, $v4, $v6) = ($var3, $var4, $var6);
+
+    XDrawImageString16($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
 
-  method DrawLine (Drawable $var1, GC $var2, gint $var3, gint $var4, gint $var5, gint $var6) {
-    XDrawLine($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method DrawLine (
+    Int() $var1,
+    GC()  $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6
+  ) {
+    my Drawable $var1 = $v1;
+    my gint     ($v3, $v4, $v5, $v6) = ($var3, $var4, $var5, $var6);
+
+    XDrawLine($!d, $v1, $var2, $v3, $v4, $v5, $v6);
   }
 
-  method DrawLines (Drawable $var1, GC $var2, XPoint $var3, gint $var4, gint $var5) {
-    XDrawLines($!d, $var1, $var2, $var3, $var4, $var5);
+  method DrawLines (
+    Int()  $var1,
+    GC()   $var2,
+    XPoint $var3,
+    Int()  $var4,
+    Int()  $var5
+  ) {
+    my Drawable $var1 = $v1;
+    my gint     ($v4, $v5) = ($var4, $var5);
+
+    XDrawLines($!d, $v1, $var2, $var3, $v4, $v5);
   }
 
-  method DrawPoint (Drawable $var1, GC $var2, gint $var3, gint $var4) {
-    XDrawPoint($!d, $var1, $var2, $var3, $var4);
+  method DrawPoint (
+    Int() $var1,
+    GC()  $var2,
+    Int() $var3,
+    Int() $var4
+  ) {
+    my Drawable $var1 = $v1;
+    my gint     ($v3, $v4) = ($var3, $var4);
+
+    XDrawPoint($!d, $v1, $var2, $v3, $v4);
   }
 
-  method DrawPoints (Drawable $var1, GC $var2, XPoint $var3, gint $var4, gint $var5) {
-    XDrawPoints($!d, $var1, $var2, $var3, $var4, $var5);
+  method DrawPoints (
+    Int()  $var1,
+    GC()   $var2,
+    XPoint $var3,
+    Int()  $var4,
+    Int()  $var5
+  ) {
+    my Drawable $var1 = $v1;
+    my gint     ($v4, $v5) = ($var4, $var5);
+
+    XDrawPoints($!d, $v1, $var2, $var3, $v4, $v5);
   }
 
-  method DrawRectangle (Drawable $var1, GC $var2, gint $var3, gint $var4, gint $var5, gint $var6) {
-    XDrawRectangle($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method DrawRectangle (
+    Int() $var1,
+    GC()  $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6
+  ) {
+    my Drawable $var1 = $v1;
+    my gint     ($v3, $v4, $v5, $v6) = ($var3, $var4, $var5, $var6);
+
+    XDrawRectangle($!d, $v1, $var2, $v3, $v4, $v5, $v6);
   }
 
-  method DrawRectangles (Drawable $var1, GC $var2, XRectangle $var3, gint $var4) {
-    XDrawRectangles($!d, $var1, $var2, $var3, $var4);
+  method DrawRectangles (
+    Int()      $var1,
+    GC()       $var2,
+    XRectangle $var3,
+    Int()      $var4
+  ) {
+    my Drawable $var1 = $v1;
+    my gint     $v4   = $var4;
+
+    XDrawRectangles($!d, $v1, $var2, $var3, $v4);
   }
 
-  method DrawSegments (Drawable $var1, GC $var2, XSegment $var3, gint $var4) {
-    XDrawSegments($!d, $var1, $var2, $var3, $var4);
+  method DrawSegments (
+    Int()    $var1,
+    GC()     $var2,
+    XSegment $var3,
+    Int()    $var4
+  ) {
+    my Drawable $var1 = $v1;
+    my gint     $v4   = $var4;
+
+    XDrawSegments($!d, $v1, $var2, $var3, $var4);
   }
 
-  method DrawString (Drawable $var1, GC $var2, gint $var3, gint $var4, Str $var5, gint $var6) {
-    XDrawString($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method DrawString (
+    Int() $var1,
+    GC() $var2,
+    gint $var3,
+    gint $var4,
+    Str $var5,
+    gint $var6
+  ) {
+    my Drawable $var1 = $v1;
+
+    XDrawString($!d, $v1, $var2, $var3, $var4, $var5, $var6);
   }
 
-  method DrawString16 (Drawable $var1, GC $var2, gint $var3, gint $var4, XChar2b $var5, gint $var6) {
-    XDrawString16($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method DrawString16 (
+    Int()   $var1,
+    GC()    $var2,
+    Int()   $var3,
+    Int()   $var4,
+    XChar2b $var5,
+    Int()   $var6
+  ) {
+    my Drawable $var1 = $v1;
+    my gint     ($v3, $v4, $v6) = ($var3, $var4, $var6);
+
+    XDrawString16($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
 
-  method DrawText (Drawable $var1, GC $var2, gint $var3, gint $var4, XTextItem $var5, gint $var6) {
-    XDrawText($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method DrawText (
+    Int()     $var1,
+    GC()      $var2,
+    Int()     $var3,
+    Int()     $var4,
+    XTextItem $var5,
+    Int()     $var6
+  ) {
+    my Drawable $var1 = $v1;Int()
+    my gint     ($v3, $v4, $v6) = ($var3, $var4, $var6);
+
+    XDrawText($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
 
-  method DrawText16 (Drawable $var1, GC $var2, gint $var3, gint $var4, XTextItem16 $var5, gint $var6) {
-    XDrawText16($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method DrawText16 (
+    Int()       $var1,
+    GC()        $var2,
+    Int()       $var3,
+    Int()       $var4,
+    XTextItem16 $var5,
+    Int()       $var6
+  ) {
+    my Drawable $var1 = $v1;
+    my gint     ($v3, $v4, $v6) = ($var3, $var4, $var6);
+
+    XDrawText16($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
 
   method EnableAccessControl {
     XEnableAccessControl($!d);
   }
 
-  method EventsQueued (gint $var1) {
-    XEventsQueued($!d, $var1);
+  method EventsQueued (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XEventsQueued($!d, $v1);
   }
 
   method ExtendedMaxRequestSize {
     XExtendedMaxRequestSize($!d);
   }
 
-  method FetchBuffer (gint $var1 is rw, gint $var2) {
-    XFetchBuffer($!d, $var1 is rw, $var2);
+  method FetchBuffer ($var1 is rw, Int() $var2) {
+    my gint ($v1, $v2) = (0, $var2);
+
+    my $r = XFetchBuffer($!d, $v1, $v2);
+    $var1 = $v1;
+    $r;
   }
 
-  method FetchBytes (gint $var1 is rw) {
-    XFetchBytes($!d, $var1 is rw);
+  method FetchBytes ($var1 is rw) {
+    my gint $v1 = 0;
+
+    my $r = XFetchBytes($!d, $v1);
+    $var1 = $v1;
+    $r;
   }
 
-  method FetchName (Window $var1, Str $var2) {
-    XFetchName($!d, $var1, $var2);
+  # 2/8
+
+  method FetchName (Int() $var1, Str() $var2) {
+    my Window $v1 = $var1;
+
+    XFetchName($!d, $v1, $var2);
   }
 
   method FillArc (Drawable $var1, GC $var2, gint $var3, gint $var4, gint $var5, gint $var6, gint $var7, gint $var8) {
