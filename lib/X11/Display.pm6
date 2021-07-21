@@ -683,13 +683,22 @@ class X11::Display {
     XDisplayWidthMM($!d, $v1);
   }
 
-  method DrawArc (Int() $var1, GC() $var2, gint $var3, gint $var4, gint $var5, gint $var6, gint $var7, gint $var8) {
+  method DrawArc (
+    Int() $var1,
+    GC()  $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6,
+    Int() $var7,
+    Int() $var8
+  ) {
     my Drawable $var1 = $v1;
 
     XDrawArc($!d, $v1, $var2, $var3, $var4, $var5, $var6, $var7, $var8);
   }
 
-  method DrawArcs (Int() $var1, GC() $var2, XArc $var3, gint $var4) {
+  method DrawArcs (Int() $var1, GC() $var2, XArc() $var3, Int() $var4) {
     my Drawable $var1 = $v1;
 
     XDrawArcs($!d, $v1, $var2, $var3, $var4);
@@ -710,12 +719,12 @@ class X11::Display {
   }
 
   method DrawImageString16 (
-    Int()   $var1,
-    GC()    $var2,
-    Int()   $var3,
-    Int()   $var4,
-    XChar2b $var5,
-    Int()   $var6
+    Int()     $var1,
+    GC()      $var2,
+    Int()     $var3,
+    Int()     $var4,
+    XChar2b() $var5,
+    Int()     $var6
   ) {
     my Drawable $var1 = $v1;
     my gint     ($v3, $v4, $v6) = ($var3, $var4, $var6);
@@ -816,10 +825,10 @@ class X11::Display {
   method DrawString (
     Int() $var1,
     GC() $var2,
-    gint $var3,
-    gint $var4,
+    Int() $var3,
+    Int() $var4,
     Str $var5,
-    gint $var6
+    Int() $var6
   ) {
     my Drawable $var1 = $v1;
 
@@ -898,90 +907,227 @@ class X11::Display {
     $r;
   }
 
-  # 2/8
-
   method FetchName (Int() $var1, Str() $var2) {
     my Window $v1 = $var1;
 
     XFetchName($!d, $v1, $var2);
   }
 
-  method FillArc (Drawable $var1, GC $var2, gint $var3, gint $var4, gint $var5, gint $var6, gint $var7, gint $var8) {
-    XFillArc($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8);
+  method FillArc (
+    Int() $var1,
+    GC()  $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6,
+    Int() $var7,
+    Int() $var8
+  ) {
+    my Drawable $v1                            = $var1;
+    my gint     ($v3, $v4, $v5, $v6, $v7, $v8) = (
+      $var3,
+      $var4,
+      $var5,
+      $var6,
+      $var7,
+      $var8
+    );
+
+    XFillArc($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7, $v8);
   }
 
-  method FillArcs (Drawable $var1, GC $var2, XArc $var3, gint $var4) {
-    XFillArcs($!d, $var1, $var2, $var3, $var4);
+  method FillArcs (Int() $var1, GC() $var2, XArc() $var3, Int() $var4) {
+    my Drawable $v1  = $var1;
+    my gint     $v4, = $var4;
+
+    XFillArcs($!d, $v1, $var2, $var3, $v4);
   }
 
-  method FillPolygon (Drawable $var1, GC $var2, XPoint $var3, gint $var4, gint $var5, gint $var6) {
-    XFillPolygon($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method FillPolygon (
+    Drawable() $var1,
+    GC()       $var2,
+    XPoint()   $var3,
+    Int()      $var4,
+    Int()      $var5,
+    Int()      $var6
+  ) {
+    my gint ($v4, $v5, $v6) = ($var4, $var5, $var6);
+
+    XFillPolygon($!d, $var1, $var2, $var3, $v4, $v5, $v6);
   }
 
-  method FillRectangle (Drawable $var1, GC $var2, gint $var3, gint $var4, gint $var5, gint $var6) {
-    XFillRectangle($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method FillRectangle (
+    Drawable() $var1,
+    GC()       $var2,
+    Int()      $var3,
+    Int()      $var4,
+    Int()      $var5,
+    Int()      $var6
+  ) {
+    my gint ($v3, $v4, $v5, $v6) = ($var3, $var4, $var5, $var6);
+
+    XFillRectangle($!d, $var1, $var2, $v3, $v4, $v5, $v6);
   }
 
-  method FillRectangles (Drawable $var1, GC $var2, XRectangle $var3, gint $var4) {
-    XFillRectangles($!d, $var1, $var2, $var3, $var4);
+  method FillRectangles (
+    Drawable()   $var1,
+    GC()         $var2,
+    XRectangle() $var3,
+    Int()        $var4
+  ) {
+    my Drawable $v1 = $var1;
+    my gint     $v4 = $var4;
+
+    XFillRectangles($!d, $v1, $var2, $var3, $v4);
   }
 
   method Flush {
     XFlush($!d);
   }
 
-  method FlushGC (GC $var1) {
+  method FlushGC (GC() $var1) {
     XFlushGC($!d, $var1);
   }
 
-  method ForceScreenSaver (gint $var1) {
+  method ForceScreenSaver (Int() $var1) {
+    my gint $v1 = $var1;
     XForceScreenSaver($!d, $var1);
   }
 
-  method FreeColormap (Colormap $var1) {
+  method FreeColormap (Int() $var1) {
     XFreeColormap($!d, $var1);
   }
 
-  method FreeColors (Colormap $var1, long $var2, gint $var3, long $var4) {
-    XFreeColors($!d, $var1, $var2, $var3, $var4);
+  method FreeColors (Int() $var1, Int() $var2, Int() $var3, Int() $var4) {
+    my Colormap $v1        = $var1;
+    my long     ($v2, $v4) = ($var2, $var4);
+    my gint     $v3        = $var3;
+
+    XFreeColors($!d, $v1, $v2, $v3, $v4);
   }
 
-  method FreeCursor (Cursor $var1) {
-    XFreeCursor($!d, $var1);
+  method FreeCursor (Int() $var1) {
+    my Cursor $v1 = $var1;
+
+    XFreeCursor($!d, $v1);
   }
 
-  method FreeEventData (XGenericEventCookie $var1) {
+  method FreeEventData (XGenericEventCookie() $var1) {
     XFreeEventData($!d, $var1);
   }
 
-  method FreeFont (XFontStruct $var1) {
+  method FreeFont (XFontStruct() $var1) {
     XFreeFont($!d, $var1);
   }
 
-  method FreeFontSet (XFontSet $var1) {
+  method FreeFontSet (XFontSet() $var1) {
     XFreeFontSet($!d, $var1);
   }
 
-  method FreeGC (GC $var1) {
+  method FreeGC (GC() $var1) {
     XFreeGC($!d, $var1);
   }
 
-  method FreePixmap (Pixmap $var1) {
-    XFreePixmap($!d, $var1);
+  method FreePixmap (Int() $var1) {
+    my Pixmap $v1 = $var1;
+
+    XFreePixmap($!d, $v1);
   }
 
-  method Geometry (gint $var1, Str $var2, Str $var3, gint $var4, gint $var5, gint $var6, gint $var7, gint $var8, gint $var9 is rw, gint $var10 is rw, gint $var11 is rw, gint $var12 is rw) {
-    XGeometry($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8, $var9 is rw, $var10 is rw, $var11 is rw, $var12 is rw);
+  proto method Geometry (|)
+  { * }
+
+  method Geometry (
+    Int() $var1,
+    Str() $var2,
+    Str() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6,
+    Int() $var7,
+    Int() $var8
+  ) {
+    samewith(
+      $var1,
+      $var2,
+      $var3,
+      $var4,
+      $var5,
+      $var6,
+      $var7,
+      $var8,
+      $,
+      $,
+      $,
+      $
+    );
+  }
+  method Geometry (
+    Int() $var1,
+    Str() $var2,
+    Str() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6,
+    Int() $var7,
+    Int() $var8,
+    Int() $var9  is rw,
+    Int() $var10 is rw,
+    Int() $var11 is rw,
+    Int() $var12 is rw
+  ) {
+    my gint ($v1, $v4, $v5, $v6, $v7, $v8, $v9, $v10, $v11, $v12) = (
+      $var1,
+      $var4,
+      $var5,
+      $var6,
+      $var7,
+      $var8,
+      0 xx 4
+    ).flat;
+
+    XGeometry(
+      $!d,
+      $v1,
+      $v2,
+      $v3,
+      $v4,
+      $v5,
+      $v6,
+      $v7,
+      $v8,
+      $v9,
+      $v10,
+      $v11,
+      $v12
+    );
+    ($var9, $var10, $var11, $var12) = ($v9, $v10, $v11, $v12);
   }
 
-  method GetAtomName (Atom $var1) {
-    XGetAtomName($!d, $var1);
+  method GetAtomName (Int() $var1) {
+    my Atom $v1 = $var1;
+
+    CStringArrayToArray( XGetAtomName($!d, $v1) );
   }
 
-  method GetAtomNames (Atom $var1, gint $var2, Str $var3) {
+  proto method GetAtomNames (|)
+  { * }
+
+  method GetAtomNames (@atoms)
+    (my CArray[Str] $names .= new)[0] = Str;
+
+    samewith( ArrayToCArray(Atom, @atoms), @atoms.elems, $names) );
+    CStringArrayToArray($names);
+  }
+  method GetAtomNames (
+    CArray[Atom] $var1,
+    Int()        $var2,
+    CArray[Str]  $var3,
+  ) {
     XGetAtomNames($!d, $var1, $var2, $var3);
   }
 
+  # cw: ... 7/20/2021
   method GetCommand (Window $var1, Str $var2, gint $var3 is rw) {
     XGetCommand($!d, $var1, $var2, $var3 is rw);
   }
@@ -1109,6 +1255,8 @@ class X11::Display {
   method ImageByteOrder {
     XImageByteOrder($!d);
   }
+
+  # 1/5
 
   method InitExtension (Str $var1) {
     XInitExtension($!d, $var1);
@@ -1258,6 +1406,8 @@ class X11::Display {
     XProcessInternalConnection($!d, $var1);
   }
 
+  # 2 / 5
+
   method ProtocolRevision {
     XProtocolRevision($!d);
   }
@@ -1405,6 +1555,8 @@ class X11::Display {
   method ScreenCount {
     XScreenCount($!d);
   }
+
+  # 3 / 6
 
   method ScreenOfDisplay (gint $var1) {
     XScreenOfDisplay($!d, $var1);
@@ -1554,6 +1706,7 @@ class X11::Display {
     XSetWMProtocols($!d, $var1, $var2, $var3);
   }
 
+  # 4 / 5
   method SetWindowBackground (Window $var1, long $var2) {
     XSetWindowBackground($!d, $var1, $var2);
   }
