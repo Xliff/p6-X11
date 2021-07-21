@@ -557,8 +557,6 @@ class X11::Display {
     );
   }
 
-  # 1/4 - cw: 7/19/2021
-
   method DefaultColormap (Int() $var1) {
     my gint $v1 = $var1;
 
@@ -1127,12 +1125,13 @@ class X11::Display {
     XGetAtomNames($!d, $var1, $var2, $var3);
   }
 
-  # cw: ... 7/20/2021
+  # cw: Aaieee! 7/20/2021 ↓↓↓
+
   method GetCommand (Window $var1, Str $var2, gint $var3 is rw) {
     XGetCommand($!d, $var1, $var2, $var3 is rw);
   }
 
-  method GetDefault (Str $var1, Str $var2) {
+  method GetDefault (Str() $var1, Str() $var2) {
     XGetDefault($!d, $var1, $var2);
   }
 
@@ -1140,193 +1139,680 @@ class X11::Display {
     XGetErrorDatabaseText($!d, $var1, $var2, $var3, $var4, $var5);
   }
 
-  method GetErrorText (gint $var1, Str $var2, gint $var3) {
-    XGetErrorText($!d, $var1, $var2, $var3);
+  method GetErrorText (Int() $var1, Str() $var2, Int() $var3) {
+    my gint ($v1, $v3) = ($var1, $var3);
+
+    XGetErrorText($!d, $v1, $var2, $v3);
   }
 
-  method GetEventData (XGenericEventCookie $var1) {
+  method GetEventData (XGenericEventCookie() $var1) {
     XGetEventData($!d, $var1);
   }
 
-  method GetFontPath (gint $var1 is rw) {
-    XGetFontPath($!d, $var1 is rw);
+  proto method GetFontPath (|)
+  { * }
+
+  method GetFontPath {
+    samewith($);
+  }
+  method GetFontPath ($var1 is rw) {
+    my gint $v1 = 0;
+
+    my $r = XGetFontPath($!d, $var1 is rw);
+    CStringArrayToArray($r, $var1 = $v1);
   }
 
-  method GetGCValues (GC $var1, long $var2, XGCValues $var3) {
-    XGetGCValues($!d, $var1, $var2, $var3);
+  proto method GetFontPath (|)
+  { * }
+
+  multi method GetFontPath (GC() $var1, Int() $var2) {
+    my XGCValues $gcv .= new;
+
+    samewith($var1, $var2, $gcv, :all);
+  }
+  multi method GetGCValues (
+    GC()        $var1,
+    Int()       $var2,
+    XGCValues() $var3,
+                :$all  = False
+  ) {
+    my long $v2 = $var2;
+
+    my $r = XGetGCValues($!d, $var1, $v2, $var3);
+    return $r unless $all;
+    ($r, $var3);
   }
 
-  method GetGeometry (Drawable $var1, Window $var2, gint $var3 is rw, gint $var4 is rw, gint $var5 is rw, gint $var6 is rw, gint $var7 is rw, gint $var8 is rw) {
-    XGetGeometry($!d, $var1, $var2, $var3 is rw, $var4 is rw, $var5 is rw, $var6 is rw, $var7 is rw, $var8 is rw);
+  proto method GetGeometry (|)
+  { * }
+
+  multi method GetGeometry (Int() $var1, Int() $var2) {
+    samewith($var1, $var2, $, $, $, $, $, $);
+  }
+  multi method GetGeometry (
+    Int() $var1,
+    Int() $var2,
+          $var3 is rw,
+          $var4 is rw,
+          $var5 is rw,
+          $var6 is rw,
+          $var7 is rw,
+          $var8 is rw
+  ) {
+    my gint ($v3, $v4, $v5, $v6, $v7, $v8) =  0 xx 6;
+
+    my Drawable $v1 = $var1;
+    my Window   $v2 = $var2;
+    XGetGeometry($!d, $var1, $var2, $v3, $v4, $v5, $v6, $v7, $v8);
+    ($var3 ,$var4 ,$var5 ,$var6 ,$var7 ,$var8) = ($v3, $v4, $v5, $v6, $v7, $v8);
+
   }
 
-  method GetIconName (Window $var1, Str $var2) {
-    XGetIconName($!d, $var1, $var2);
+  proto method XGetIconName (|)
+  { * }
+
+  multi method XGetIconName (Int() $var1) {
+    (my $cr = (CArray[Str].new)[0] = 0;
+    samewith($var1, $var2, :all);
+  }
+  multi method XGetIconName (Int() $var1, CArray[Str] $var2, :$all = False) {
+    my Window $v1 = $var1;
+    my        $s  = XGetIconName($!d, $var1, $var2);
+
+    return $s unless $all;
+    ( $s, ppr($var2) );
   }
 
-  method GetImage (Drawable $var1, gint $var2, gint $var3, gint $var4, gint $var5, long $var6, gint $var7) {
-    XGetImage($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
+  method GetImage (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6,
+    Int() $var7
+  ) {
+    my Drawable $v1 = $var1;
+    my long     $v6 = $var6
+
+    my gint ($v2, $v3, $v4, $v5, $v7) = ($var2, $var3, $var4, $var5, $var7);
+
+    XGetImage($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7);
   }
 
-  method GetInputFocus (Window $var1, gint $var2 is rw) {
-    XGetInputFocus($!d, $var1, $var2 is rw);
+  proto method GetInputFocus (|)
+  { * }
+
+  multi method GetInputFocus (Int() $var1) {
+    samewith($, $, :all);
+  }
+  multi method GetInputFocus (Int() $var1, $var2 is rw, :$all = False) {
+    my Window $v1 = $var1;
+    my gint   $v2 = 0;
+
+    my $s = XGetInputFocus($!d, $v1, $v2);
+    $var2 = $v2;
+    return $s unless $raw;
+    ($s, $var2);
   }
 
-  method GetKeyboardControl (XKeyboardState $var1) {
+  proto method GetKeyboardControl (|)
+  { * }
+
+  multi method GetKeyboardControl {
+    my $ks = XKeyboardState.nw;
+
+    samewith($ks);
+  }
+  multi method GetKeyboardControl (XKeyboardState() $var1) {
     XGetKeyboardControl($!d, $var1);
+    $var1;
   }
 
-  method GetKeyboardMapping (gint $var1, KeyCode $var2, gint $var3, gint $var4 is rw) {
-    XGetKeyboardMapping($!d, $var1, $var2, $var3, $var4 is rw);
+  proto method GetKeyboardMapping (|)
+  { * }
+
+  method GetKeyboardMapping (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+  ) {
+    samewith($var1, $var2, $var3, $);
+  }
+  method GetKeyboardMapping (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+          $var4  is rw
+  ) {
+    my gint    ($v1, $v3, $v4) = ($var1, $var3, 0);
+    my KeyCode $v2             = $var2;
+
+    XGetKeyboardMapping($!d, $v1, $v2, $v3, $v4);
+    $var4 = $v4;
   }
 
   method GetModifierMapping {
     XGetModifierMapping($!d);
   }
 
-  method GetMotionEvents (Window $var1, Time $var2, Time $var3, gint $var4 is rw) {
-    XGetMotionEvents($!d, $var1, $var2, $var3, $var4 is rw);
+  proto method GetMotionEvents (|)
+  { * }
+
+  multi method GetMotionEvents (Int() $var1, Int() $var2, Int() $var3) {
+    samewith($var1, $var2, $var3, $, :all);
+  }
+  multi method GetMotionEvents (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+          $var4  is rw
+          :$all  =  False
+  ) {
+    my Window $v1        = $var1;
+    my Time   ($v2, $v3) = ($var2, $var3);
+    my gint   $v4        = 0;
+
+    my $xtc = GetMotionEvents($!d, $v1, $v2, $v3, $v4);
+    $var4 = $v4;
+    return $xtc unless $all;
+    ($xtc, $v4);
   }
 
-  method GetPointerControl (gint $var1 is rw, gint $var2 is rw, gint $var3 is rw) {
-    XGetPointerControl($!d, $var1 is rw, $var2 is rw, $var3 is rw);
+  proto method GetPointerControl (|)
+  { * }
+
+  multi method GetPointerControl {
+    samewith($, $, $);
+  }
+  multi method GetPointerControl (
+    $var1 is rw,
+    $var2 is rw,
+    $var3 is rw
+  ) {
+    my gint ($v1, $v2, $v3) = 0 xx 3;
+
+    XGetPointerControl($!d, $v1, $v2, $v3);
+    ($var1, $var2, $var3) = ($v1, $v2, $v3);
   }
 
-  method GetPointerMapping (Str $var1, gint $var2) {
+  method GetPointerMapping (Str() $var1, Int() $var2) {
+    my gint $v2 = $var2;
+
     XGetPointerMapping($!d, $var1, $var2);
   }
 
-  method GetScreenSaver (gint $var1 is rw, gint $var2 is rw, gint $var3 is rw, gint $var4 is rw) {
-    XGetScreenSaver($!d, $var1 is rw, $var2 is rw, $var3 is rw, $var4 is rw);
+  proto method GetScreenSaver (|)
+  { * }
+
+  multi method GetScreenSaver {
+    samewith($, $, $, $);
+  }
+  multi method GetScreenSaver (
+    $var1 is rw,
+    $var2 is rw,
+    $var3 is rw,
+    $var4 is rw
+  ) {
+    my gint ($v1, $v2, $v3, $v4) = 0 xx 4;
+
+    XGetScreenSaver($!d, $v1, $v2, $v3, $v4);
+    ($var1, $var2, $var3, $var4) = ($v1, $v2, $v3, $v4);
   }
 
-  method GetSelectionOwner (Atom $var1) {
-    XGetSelectionOwner($!d, $var1);
+  method GetSelectionOwner (Int() $var1) {
+    my Atom $v1 = $var1;
+
+    XGetSelectionOwner($!d, $v1);
   }
 
-  method GetSubImage (Drawable $var1, gint $var2, gint $var3, gint $var4, gint $var5, long $var6, gint $var7, XImage $var8, gint $var9, gint $var10) {
-    XGetSubImage($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8, $var9, $var10);
+  method GetSubImage (
+    Int()    $var1,
+    Int()    $var2,
+    Int()    $var3,
+    Int()    $var4,
+    Int()    $var5,
+    Int()    $var6,
+    Int()    $var7,
+    XImage() $var8,
+    Int()    $var9,
+    Int()    $var10
+  ) {
+    my Drawable $v1 = $var1;
+    my long     $v6 = $var6;
+
+    my gint ($v2, $v3, $v4, $v5, $v7, $v9, $v10) = (
+      $var2,
+      $var3,
+      $var4,
+      $var5,
+      $var7,
+      $var9,
+      $var10
+    );
+
+    XGetSubImage($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7, $v8, $v9, $v10);
   }
 
-  method GetTransientForHint (Window $var1, Window $var2) {
-    XGetTransientForHint($!d, $var1, $var2);
+  method GetTransientForHint (Int() $var1, Int() $var2) {
+    my Window ($v1, $v2) = ($var1, $var2);
+
+    XGetTransientForHint($!d, $v1, $v2);
   }
 
-  method GetWMColormapWindows (Window $var1, Window $var2, gint $var3 is rw) {
-    XGetWMColormapWindows($!d, $var1, $var2, $var3 is rw);
+  proto method GetWMColormapWindows (|)
+  { * }
+
+  multi method GetWMColormapWindows (Int() $var1) {
+    (my $rw = CArray[Window].new)[0] = Window;
+
+    samewith($var1, $rw, $, :all);
+  }
+  multi method GetWMColormapWindows (
+    Int()          $var1,
+    CArray[Window] $var2,
+                   $var3 is rw
+                   :$all =  False
+  ) {
+    my Window $v1 = $var1;
+    my gint   $v3 = 0;
+
+    my $s = XGetWMColormapWindows($!d, $v1, $var2, $v3);
+    $var3 = $v3;
+    return $s unless $all;
+    ( $s, CArrayToArray($var2, $var3) )
   }
 
-  method GetWMProtocols (Window $var1, Atom $var2, gint $var3 is rw) {
-    XGetWMProtocols($!d, $var1, $var2, $var3 is rw);
+  proto method GetWMProtocols (|)
+  { * }
+
+  multi method GetWMProtocols (Int() $var1) {
+    (my $rw = CArray[Atom].new)[0] = Window;
+
+    samewith($var1, $rw, $, :all);
+  }
+  multi method GetWMProtocols (Int() $var1, CArray[Atom] $var2, $var3 is rw) {
+    my Window $v1 = $var1;
+    my gint   $v3 = 0;
+
+    my $s = XGetWMProtocols($!d, $var1, $var2, $v3);
+    $var3 = $v3;
+    return $s unless $all;
+    ( $s, CArrayToArray($var2, $var3) )
   }
 
-  method GetWindowAttributes (Window $var1, XWindowAttributes $var2) {
-    XGetWindowAttributes($!d, $var1, $var2);
+  proto method GetWindowAttributes (|)
+  { * }
+
+  multi method GetWindowAttributes (Int() $var1) {
+    my $wa = XWindowAttributes.new;
+
+    samewith($var1, $wa, :all);
+  }
+  multi method GetWindowAttributes (
+    Int()               $var1,
+    XWindowAttributes() $var2,
+                        :$all  = False
+  ) {
+    my Window            $v1 = $var1;
+
+    my $s = XGetWindowAttributes($!d, $v1, $var2);
+    return $s unless $all;
+    ($s, $var2);
   }
 
-  method GetWindowProperty (Window $var1, Atom $var2, long $var3, long $var4, Bool $var5, Atom $var6, Atom $var7, gint $var8 is rw, long $var9, long $var10, Str $var11) {
-    XGetWindowProperty($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8 is rw, $var9, $var10, $var11);
+  proto method GetWindowProperty (|)
+  { * }
+
+  method GetWindowProperty (
+    Int()        $var1,
+    Int()        $var2,
+    Int()        $var3,
+    Int()        $var4,
+    Int()        $var5,
+    Int()        $var6,
+                 :$pointer = False,
+                 :$carray  = False
+  ) {
+    (my $p = CArray[Str].new)[0] = Str;
+
+    my @returns = samewith(
+      $var1,
+      $var2,
+      $var3,
+      $var4,
+      $var5,
+      $var6,
+      $,
+      $,
+      $,
+      $,
+      $p,
+      :all
+    );
+
+    return @returns if $pointer;
+
+    @returns.tail = do given @returns[2] {
+      when 8   { @returns.tail }
+      when 16  { cast(CArray[short], @returns.tail) }
+      when 32  { cast(CArray[num32], @returns.tail) }
+
+      default {
+        die "Invalid format value { @returns[2] } given to {
+             ''} .GetWindowProperty! Must be 8, 16, or 32!";
+      }
+    }
+
+    return @returns if $carray;
+
+    @returns.tail = CArrayToArray( @returns.tail, @returns[3] );
+    @returns;
+  }
+  method GetWindowProperty (
+    Int()        $var1,
+    Int()        $var2,
+    Int()        $var3,
+    Int()        $var4,
+    Int()        $var5,
+    Int()        $var6,
+                 $var7   is rw,
+                 $var8   is rw,
+                 $var9   is rw,
+                 $var10  is rw,
+                 $var11  is rw,
+                 :$all   =  False
+  ) {
+    my Window $v1                   = $var1;
+    my Atom   ($v2, $v6, $v7)       = ($var2, $var6, 0);
+    my long   ($v3, $v4, $v9, $v10) = ($var3, $var4, 0, 0);
+    my gint   $v8                   = 0;
+
+    (my CArray[uint8] $v11 = .new;)[0] = uint8;
+
+    my $retVal = $XGetWindowProperty(
+      $!d,
+      $v1,
+      $v2,
+      $v3,
+      $v4,
+      $v5,
+      $v6,
+      $v7,
+      $v8,
+      $v9,
+      $v10,
+      $v11
+    );
+    ($var7, $var8, $var9, $var10, $var11) = ($v7, $v8, $v9, $v10, $v11);
+    return $retVal unless $all;
+    ($retVal, $var7, $var8, $var9, $var10, $var11);
   }
 
-  method GrabButton (gint $var1, gint $var2, Window $var3, Bool $var4, gint $var5, gint $var6, gint $var7, Window $var8, Cursor $var9) {
-    XGrabButton($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8, $var9);
+  method GrabButton (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6,
+    Int() $var7,
+    Int() $var8,
+    Int() $var9
+  ) {
+    my gint   ($v1, $v2, $v5, $v6, $v7) = ($var1, $var2, $var5, $var6, $var7);
+    my Window ($v3, $v8)                = ($var3, $var8);
+    my Boolean $v4                      = $var4.so.Int;
+    my Cursor  $v9                      = $var9;
+
+    XGrabButton($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7, $v8, $v9);
   }
 
-  method GrabKey (gint $var1, gint $var2, Window $var3, Bool $var4, gint $var5, gint $var6) {
-    XGrabKey($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method GrabKey (
+    gint $var1,
+    gint $var2,
+    Window $var3,
+    Bool $var4,
+    gint $var5,
+    gint $var6
+  ) {
+    my gint    ($v1, $v2, $v5, $v6) = ($var1, $var2, $var5, $var6)
+    my Window  $v3                  = $var3;
+    my Boolean $v4                  = $v4.so.Int
+
+    XGrabKey($!d, $v1, $v2, $v3, $v4, $v5, $v6);
   }
 
-  method GrabKeyboard (Window $var1, Bool $var2, gint $var3, gint $var4, Time $var5) {
-    XGrabKeyboard($!d, $var1, $var2, $var3, $var4, $var5);
+  method GrabKeyboard (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5
+  ) {
+    my Window  $v1        = $var1;
+    my Boolean $v2        = $var2.so.Int;
+    my gint    ($v3, $v4) = ($var3, $var4);
+    my Time    $v5        = $var5;
+
+    XGrabKeyboard($!d, $v1, $v2, $v3, $v4, $v5);
   }
 
-  method GrabPointer (Window $var1, Bool $var2, gint $var3, gint $var4, gint $var5, Window $var6, Cursor $var7, Time $var8) {
-    XGrabPointer($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8);
+  method GrabPointer (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6,
+    Int() $var7,
+    Int() $var8
+  ) {
+    my Window  ($v1, $v6)      = ($var1, $var6);
+    my Boolean $v2             = $var2.so.Int;
+    my Time    $v8             = $var8;
+    my gint    ($v3, $v4 ,$v5) = ($var3, $var4, $var5);
+
+    XGrabPointer($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7, $v8);
   }
 
   method GrabServer {
     XGrabServer($!d);
   }
 
-  method IconifyWindow (Window $var1, gint $var2) {
-    XIconifyWindow($!d, $var1, $var2);
+  method IconifyWindow (Int() $var1, Int() $var2) {
+    my Window $v1 = $var1;
+    my gint   $v2 = $var2;
+
+    XIconifyWindow($!d, $v1, $v2);
   }
+
+  # cw: Don't forget! 7/20/2021 ↑↑↑
 
   method ImageByteOrder {
     XImageByteOrder($!d);
   }
 
-  # 1/5
-
-  method InitExtension (Str $var1) {
+  method InitExtension (Str() $var1) {
     XInitExtension($!d, $var1);
   }
 
-  method InstallColormap (Colormap $var1) {
-    XInstallColormap($!d, $var1);
+  method InstallColormap (Int() $var1) {
+    my Colormap $v1 = $var1;
+
+    XInstallColormap($!d, $v1);
   }
 
-  method InternAtom (Str $var1, Bool $var2) {
-    XInternAtom($!d, $var1, $var2);
+  method InternAtom (Str() $var1, Int() $var2) {
+    my Boolean $v2 = $var2.so.int;
+
+    XInternAtom($!d, $var1, $v2);
   }
 
-  method InternAtoms (Str $var1, gint $var2, Bool $var3, Atom $var4) {
-    XInternAtoms($!d, $var1, $var2, $var3, $var4);
+  method InternAtoms (Str $var1, Int() $var2, Int() $var3, Int() $var4) {
+    my gint     $v2 = $var2;
+    my Boolean  $v3 = $var3.so.int;
+    my Atom     $v4 = $var4;
+
+    XInternAtoms($!d, $v1, $v2, $v3, $v4);
   }
 
-  method InternalConnectionNumbers (gint $var1, gint $var2 is rw) {
-    XInternalConnectionNumbers($!d, $var1, $var2 is rw);
+  proto method InternalConnectionNumbers (|)
+  { * }
+
+  multi method InternalConnectionNumbers {
+    (my $fds = CArray[realInt])[0] = realInt;
+    my  $c   = 0;
+
+    samewith($fds, $c);
+    CArrayToArray($fds, $c);
+  }
+  multi method InternalConnectionNumbers (CArray[realInt] $var1, $var2 is rw) {
+    my gint ($v1, $v2) = ($var1, 0);
+
+    XInternalConnectionNumbers($!d, $v1, $v2);
   }
 
-  method KeycodeToKeysym (gint $var1, KeyCode $var2, gint $var3) {
-    XKeycodeToKeysym($!d, $var1, $var2, $var3);
+  method KeycodeToKeysym (Int() $var1, Int() $var2, Int() $var3) {
+    my gint    ($v1, $v3) = ($var1, $var3);
+    my KeyCode $v2        = $var2;
+
+    XKeycodeToKeysym($!d, $v1, $v2, $v3);
   }
 
-  method KeysymToKeycode (KeySym $var1) {
-    XKeysymToKeycode($!d, $var1);
+  method KeysymToKeycode (Int() $var1) {
+    my KeySym $v1 = $var1;
+
+    XKeysymToKeycode($!d, $v1);
   }
 
-  method KillClient (XID $var1) {
-    XKillClient($!d, $var1);
+  method KillClient (Int() $var1) {
+    my XID $v1 = $var1;
+
+    XKillClient($!d, $v1);
   }
 
   method LastKnownRequestProcessed {
     XLastKnownRequestProcessed($!d);
   }
 
-  method ListDepths (gint $var1, gint $var2 is rw) {
+  proto method ListDepths (|)
+  { * }
+
+  multi method ListDepths (Int() $var1) {
+    samewith($var1, $);
+  }
+  multi method ListDepths (Int() $var1, $var2 is rw) {
+    my gint    ($v1, $v2) = ($var1, 0);
+
     XListDepths($!d, $var1, $var2 is rw);
   }
 
-  method ListExtensions (gint $var1 is rw) {
-    XListExtensions($!d, $var1 is rw);
+  proto method ListExtensions (|)
+  { * }
+
+  multi method ListExtensions {
+    samewith($);
+  }
+  multi method ListExtensions ($var1 is rw) {
+    my gint $v1 = 0;
+    my      $e  = XListExtensions($!d, $v1);
+
+    CStringArrayToArray($e, $var1 = $v1)
   }
 
-  method ListFonts (Str $var1, gint $var2, gint $var3 is rw) {
-    XListFonts($!d, $var1, $var2, $var3 is rw);
+  proto method ListFonts (|)
+  { * }
+
+  method ListFonts (Str() $var1, Int() $var2 = 9999) {
+    samewith($var1, $var2, $);
+  }
+  method ListFonts (Str() $var1, Int() $var2, $var3 is rw) {
+    my gint ($v2, $v3) = ($var2, 0);
+
+    my $fn = XListFonts($!d, $var1, $v2, $v3);
+    CStringArrayToArray($fn, $var3 = $v3);
   }
 
-  method ListFontsWithInfo (Str $var1, gint $var2, gint $var3 is rw, XFontStruct $var4) {
-    XListFontsWithInfo($!d, $var1, $var2, $var3 is rw, $var4);
+  method ListFontsWithInfo (
+    Str()         $var1,
+    Int()         $var2,
+                  $var3  is rw,
+    XFontStruct() $var4
+  ) {
+    my gint ($v2, $v3) = ($var2, 0);
+
+    my $fn = XListFontsWithInfo($!d, $var1, $v2, $v3, $var4);
+    CStringArrayToArray($fn, $var3 = $v3);
   }
 
-  method ListHosts (gint $var1 is rw, Bool $var2) {
-    XListHosts($!d, $var1 is rw, $var2);
+  proto method ListHosts (|)
+  { * }
+
+  multi method ListHosts {
+    samewith($, $);
+  }
+  multi method ListHosts (Int() $var1 is rw, Int() $var2 is rw, :$raw = False) {
+    my gint    $v1 = 0;
+    my Boolean $v2 = 0;
+
+    my $hl = XListHosts($!d, $v1, $v2);
+    ($var1, $var2) = ($v1, $v2.so);
+    return $hl if $raw;
+    $hl = X11::Roles::TypedBuffer[XHostAddress].new($hl, $var1);
+    $hl.Array
   }
 
-  method ListInstalledColormaps (Window $var1, gint $var2 is rw) {
-    XListInstalledColormaps($!d, $var1, $var2 is rw);
+  proto method ListInstalledColormaps (|)
+  { * }
+
+  method ListInstalledColormaps (Int() $var1) {
+    samewith($var1, $);
+  }
+  method ListInstalledColormaps (Int() $var1, $var2 is rw, :$raw = False) {
+    my Window $v1 = $var1;
+    my gint   $v2 = 0;
+
+    my $a = XListInstalledColormaps($!d, $v1, $v2);
+    $var2 = $v2;
+    return $a if $raw;
+    CArrayToArray($a, $var2);
   }
 
-  method ListPixmapFormats (gint $var1 is rw) {
-    XListPixmapFormats($!d, $var1 is rw);
+  proto method ListPixmapFormats (|)
+  { * }
+
+  multi method ListPixmapFormats {
+    samewith($);
+  }
+  multi method ListPixmapFormats ($var1 is rw, :$raw = False) {
+    my gint $v1 = 0;
+
+    my $pf = XListPixmapFormats($!d, $v1);
+    $var1 = $v1;
+    return $pf if $raw;
+    $pf = X11::Raw::TypedBuffer[XPixmapFormatValues].new($pf, size => $var1);
+    $pf.Array;
   }
 
-  method ListProperties (Window $var1, gint $var2 is rw) {
-    XListProperties($!d, $var1, $var2 is rw);
+  proto method ListProperties (|)
+  { * }
+
+  method ListProperties (Int() $var1) {
+    samewith($var1, $);
+  }
+  method ListProperties (Int() $var1, $var2 is rw, :$raw = False) {
+    my Window $v1 = $var1;
+    my gint   $v2 = 0;
+
+    my $pl = XListProperties($!d, $var1, $v2);
+    $var2 = $v2;
+    return $pl if $raw;
+    $pl = X11::Roles::TypedBuffer.new($pl, size => $var2);
+    $pl.Array;
   }
 
-  method LoadFont (Str $var1) {
+  method LoadFont (Str() $var1) {
     XLoadFont($!d, $var1);
   }
 
@@ -1334,27 +1820,48 @@ class X11::Display {
     XLockDisplay($!d);
   }
 
-  method LookupColor (Colormap $var1, Str $var2, XColor $var3, XColor $var4) {
-    XLookupColor($!d, $var1, $var2, $var3, $var4);
+  method LookupColor (Int() $var1, Str() $var2, XColor() $var3, XColor $var4) {
+    my Colormap $v1 = $var1;
+
+    XLookupColor($!d, $v1, $var2, $var3, $var4);
   }
 
-  method LowerWindow (Window $var1) {
-    XLowerWindow($!d, $var1);
+  method LowerWindow (Int() $var1) {
+    my Window $v1 = $var1;
+
+    XLowerWindow($!d, $v1);
   }
 
-  method MapRaised (Window $var1) {
+  method MapRaised (Int() $var1) {
+    my Window $v1 = $var1;
+
     XMapRaised($!d, $var1);
   }
 
-  method MapSubwindows (Window $var1) {
+  method MapSubwindows (Int() $var1) {
+    my Window $v1 = $var1;
+
     XMapSubwindows($!d, $var1);
   }
 
-  method MapWindow (Window $var1) {
+  method MapWindow (Int() $var1) {
+    my Window $v1 = $var1;
+
     XMapWindow($!d, $var1);
   }
 
-  method MaskEvent (long $var1, XEvent $var2) {
+  proto method MaskEvent (|)
+  { * }
+
+  multi method MaskEvent (Int() $var1) {
+    my $xe = XEvent.new;
+
+    samewith($var1, $xe);
+    $xe;
+  }
+  multi method MaskEvent (Int() $var1, XEvent $var2) {
+    my long $v1 = $var2;
+
     XMaskEvent($!d, $var1, $var2);
   }
 
@@ -1362,15 +1869,36 @@ class X11::Display {
     XMaxRequestSize($!d);
   }
 
-  method MoveResizeWindow (Window $var1, gint $var2, gint $var3, gint $var4, gint $var5) {
-    XMoveResizeWindow($!d, $var1, $var2, $var3, $var4, $var5);
+  method MoveResizeWindow (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5
+  ) {
+    my Window $v1                  = $var1;
+    my gint   ($v2, $v3, $v4, $v5) = ($var2, $var3, $var4, $var5);
+
+    XMoveResizeWindow($!d, $v1, $v2, $v3, $v4, $v5);
   }
 
-  method MoveWindow (Window $var1, gint $var2, gint $var3) {
-    XMoveWindow($!d, $var1, $var2, $var3);
+  method MoveWindow (Int() $var1, Int() $var2, Int() $var3) {
+    my Window $v1      = $var1;
+    my gint ($v2, $v3) = ($var2, $var3);
+
+    XMoveWindow($!d, $v1, $v2, $v3);
   }
 
-  method NextEvent (XEvent $var1) {
+  proto method NextEvent (|)
+  { * }
+
+  multi method NextEvent {
+    my $xe = XEvent.new;
+
+    samewith($xe);
+    $xe;
+  }
+  multi method NextEvent (XEvent $var1) {
     XNextEvent($!d, $var1);
   }
 
@@ -1382,19 +1910,40 @@ class X11::Display {
     XNoOp($!d);
   }
 
-  method OpenIM (_XrmHashBucketRec $var1, Str $var2, Str $var3) {
+  method OpenIM (XrmHashBucket() $var1, Str() $var2, Str() $var3) {
     XOpenIM($!d, $var1, $var2, $var3);
   }
 
-  method OpenOM (_XrmHashBucketRec $var1, Str $var2, Str $var3) {
+  method OpenOM (XrmHashBucket() $var1, Str() $var2, Str() $var3) {
     XOpenOM($!d, $var1, $var2, $var3);
   }
 
-  method ParseColor (Colormap $var1, Str $var2, XColor $var3) {
+  proto method ParseColor (|)
+  { * }
+
+  multi method ParseColor (Int() $var1, Str $var2) {
+    my Colormap $v1 = $var1;
+
+    my $xc = XColor.new;
+    samewith($v1, $xc);
+    $xc
+  }
+  multi method ParseColor (Int() $var1, Str $var2, XColor() $var3) {
+    my Coolormap $v1 = $var1;
+
     XParseColor($!d, $var1, $var2, $var3);
   }
 
-  method PeekEvent (XEvent $var1) {
+  proto method PeekEvent (|)
+  { * }
+
+  multi method PeekEvent {
+    my $xe = XEvent.new;
+
+    samewith($xe);
+    $xe;
+  }
+  multi method PeekEvent (XEvent() $var1) {
     XPeekEvent($!d, $var1);
   }
 
@@ -1402,8 +1951,10 @@ class X11::Display {
     XPending($!d);
   }
 
-  method ProcessInternalConnection (gint $var1) {
-    XProcessInternalConnection($!d, $var1);
+  method ProcessInternalConnection (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XProcessInternalConnection($!d, $v1);
   }
 
   # 2 / 5
@@ -1420,7 +1971,7 @@ class X11::Display {
     XPutBackEvent($!d, $var1);
   }
 
-  method PutImage (Drawable $var1, GC $var2, XImage $var3, gint $var4, gint $var5, gint $var6, gint $var7, gint $var8, gint $var9) {
+  method PutImage (Drawable $var1, GC $var2, $ $var3, gint $var4, gint $var5, gint $var6, gint $var7, gint $var8, gint $var9) {
     XPutImage($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8, $var9);
   }
 
@@ -1476,7 +2027,13 @@ class X11::Display {
     XQueryTextExtents16($!d, $var1, $var2, $var3, $var4 is rw, $var5 is rw, $var6 is rw, $var7);
   }
 
-  method QueryTree (Window $var1, Window $var2, Window $var3, Window $var4, gint $var5 is rw) {
+  method QueryTree (
+    Pointer[Pointer[Window]] $var1,
+    Window                   $var2,
+    Window                   $var3,
+    Window                   $var4,
+    gint                     $var5 is rw
+  ) {
     XQueryTree($!d, $var1, $var2, $var3, $var4, $var5 is rw);
   }
 
