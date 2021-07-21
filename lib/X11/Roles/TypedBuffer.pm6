@@ -98,8 +98,14 @@ role X11::Roles::TypedBuffer[::T] does Positional {
   }
 
   # cw: These to be dropped for .new-typedbuffer-obj
-  multi method new (Pointer $buffer, :$autosize = True, :$clear = False) {
+  multi method new (
+    Pointer $buffer,
+            :$autosize = True,
+            :$size     = 0,
+            :$clear    = False
+  ) {
     self.new-typedbuffer-obj($buffer, :$autosize, :$clear);
+    self.setSize($size) if $size;
   }
   multi method new (@entries) {
     self.new-typedbuffer-obj(@entries);
