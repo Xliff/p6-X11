@@ -1063,7 +1063,7 @@ sub XGetAtomName (Display $var0, Atom $var1)
   is export
 { * }
 
-sub XGetAtomNames (Display $var0, Atom $var1, int $var2, Str $var3)
+sub XGetAtomNames (Display $var0, Atom $var1, int $var2, CArray[Str] $var3)
   returns Status
   is native(x11)
   is export
