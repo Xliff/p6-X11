@@ -203,20 +203,21 @@ sub get_flags($t, $s, $j = ', ') is export {
 #|            a CStruct, then that value will be dereferenced.
 sub ppr (*@a) is export {
   @a .= map({
-    if $_ ~~ CArray {
+    if $_ ~~ (CArray, Pointer).any {
       if .[0].defined {
         if .[0].REPR.chars.not {
           .[0]
         } else {
-          my $p = .[0];
-          $p.defined ?? ( .[0] !~~ Pointer ?? .[0]
-                                           !! (
-                                               .[0].of.REPR eq 'CStruct'
-                                                  ?? .[0].deref
-                                                  !! .[0]
-                                              )
-                        )
-                     !! Nil;
+          ( my $p = .[0] ).defined
+            ?? ( .[0] !~~ (CArray, Pointer).any
+                 ?? .[0]
+                 !! (
+                      .[0].of.REPR eq 'CStruct'
+                        ?? .[0].deref
+                        !! .[0]
+                    )
+               )
+            !! Nil;
         }
       } else {
         Nil;
