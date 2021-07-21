@@ -7,6 +7,12 @@ unit package XLib::Raw::Definitions;
 our $DEBUG is export;
 INIT $DEBUG = True if %*ENV<P6_X11_DEBUG>;
 
+constant realInt  is export := $*KERNEL.bits == 64 ?? int64
+                                                   !! int32;
+                                                   
+constant realUInt is export := $*KERNEL.bits == 64 ?? uint64
+                                                   !! uint32;
+
 constant x11                          is export = 'x11',v6;
 
 constant uchar                        is export := uint8;
