@@ -1,5 +1,9 @@
 use v6.c;
 
+use X11::Raw::Definitions;
+use X11::Raw::Subs;
+use X11::Raw::Lib;
+
 class X11::Display {
   has Display $!d;
 
@@ -1127,16 +1131,41 @@ class X11::Display {
 
   # cw: Aaieee! 7/20/2021 ↓↓↓
 
-  method GetCommand (Window $var1, Str $var2, gint $var3 is rw) {
-    XGetCommand($!d, $var1, $var2, $var3 is rw);
+  proto method GetCommand (|)
+  { * }
+
+  multi method GetCommand (Int() $var1, Str() $var2) {
+    samewith($var1, $var2, :all);
+  }
+  multi method GetCommand (
+    Int() $var1,
+    Str() $var2,
+          $var3 is rw,
+          :$all =  False
+  ) {
+    my Window $v1 = $var1;
+    my gint   $v3 = $var3;
+
+    my $s = XGetCommand($!d, $v1, $var2, $v3);
+    $var3 = $v3;
+    return $s unless $all;
+    ($s, $var3);
   }
 
   method GetDefault (Str() $var1, Str() $var2) {
     XGetDefault($!d, $var1, $var2);
   }
 
-  method GetErrorDatabaseText (Str $var1, Str $var2, Str $var3, Str $var4, gint $var5) {
-    XGetErrorDatabaseText($!d, $var1, $var2, $var3, $var4, $var5);
+  method GetErrorDatabaseText (
+    Str() $var1,
+    Str() $var2,
+    Str() $var3,
+    Str() $var4,
+    Int() $var5
+  ) {
+    my gint $v5 = $var5;
+
+    XGetErrorDatabaseText($!d, $v1, $v2, $v3, $v4, $v5);
   }
 
   method GetErrorText (Int() $var1, Str() $var2, Int() $var3) {
@@ -1158,7 +1187,7 @@ class X11::Display {
   method GetFontPath ($var1 is rw) {
     my gint $v1 = 0;
 
-    my $r = XGetFontPath($!d, $var1 is rw);
+    my $r = XGetFontPath($!d, $v1);
     CStringArrayToArray($r, $var1 = $v1);
   }
 
@@ -1510,18 +1539,18 @@ class X11::Display {
     @returns;
   }
   method GetWindowProperty (
-    Int()        $var1,
-    Int()        $var2,
-    Int()        $var3,
-    Int()        $var4,
-    Int()        $var5,
-    Int()        $var6,
-                 $var7   is rw,
-                 $var8   is rw,
-                 $var9   is rw,
-                 $var10  is rw,
-                 $var11  is rw,
-                 :$all   =  False
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6,
+          $var7   is rw,
+          $var8   is rw,
+          $var9   is rw,
+          $var10  is rw,
+          $var11  is rw,
+          :$all   =  False
   ) {
     my Window $v1                   = $var1;
     my Atom   ($v2, $v6, $v7)       = ($var2, $var6, 0);
@@ -1569,12 +1598,12 @@ class X11::Display {
   }
 
   method GrabKey (
-    gint $var1,
-    gint $var2,
-    Window $var3,
-    Bool $var4,
-    gint $var5,
-    gint $var6
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6
   ) {
     my gint    ($v1, $v2, $v5, $v6) = ($var1, $var2, $var5, $var6)
     my Window  $v3                  = $var3;
@@ -1705,7 +1734,7 @@ class X11::Display {
   multi method ListDepths (Int() $var1, $var2 is rw) {
     my gint    ($v1, $v2) = ($var1, 0);
 
-    XListDepths($!d, $var1, $var2 is rw);
+    XListDepths($!d, $v1, $v2);
   }
 
   proto method ListExtensions (|)
@@ -1898,7 +1927,7 @@ class X11::Display {
     samewith($xe);
     $xe;
   }
-  multi method NextEvent (XEvent $var1) {
+  multi method NextEvent (XEvent() $var1) {
     XNextEvent($!d, $var1);
   }
 
@@ -1967,153 +1996,386 @@ class X11::Display {
     XProtocolVersion($!d);
   }
 
-  method PutBackEvent (XEvent $var1) {
+  method PutBackEvent (XEvent() $var1) {
     XPutBackEvent($!d, $var1);
   }
 
-  method PutImage (Drawable $var1, GC $var2, $ $var3, gint $var4, gint $var5, gint $var6, gint $var7, gint $var8, gint $var9) {
-    XPutImage($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8, $var9);
+  method PutImage (
+    Int() $var1,
+    GC()  $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6,
+    Int() $var7,
+    Int() $var8,
+    Int() $var9
+  ) {
+    my Drawable $v1 = $var1;
+    my Image    $v3 = $var3;
+    my gint ($var4, $var5, $var6, $var7, $var8, $var9) =
+      ($v4, $v5, $v6, $v7, $v8, $v9);
+
+    XPutImage($!d, $v1, $var2, $v3, $v4, $v5, $v6, $v7, $v8, $v9);
   }
 
   method QLength {
     XQLength($!d);
   }
 
-  method QueryBestCursor (Drawable $var1, gint $var2, gint $var3, gint $var4 is rw, gint $var5 is rw) {
-    XQueryBestCursor($!d, $var1, $var2, $var3, $var4 is rw, $var5 is rw);
+  method QueryBestCursor (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+          $var4 is rw,
+          $var5 is rw
+  ) {
+    my Display $v2                   = $var2;
+    my gint    ($var3, $var4  $var5) = ($v3, 0, 0);
+
+    XQueryBestCursor($!d, $var1, $v2, $v3, $v4, $v5);
   }
 
-  method QueryBestSize (gint $var1, Drawable $var2, gint $var3, gint $var4, gint $var5 is rw, gint $var6 is rw) {
-    XQueryBestSize($!d, $var1, $var2, $var3, $var4, $var5 is rw, $var6 is rw);
+  method QueryBestSize (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+          $var5 is rw,
+          $var6 is rw
+  ) {
+    my Drawable $v2                  = $var2;
+    my gint     ($v3, $v4, $v5, $v6) = ($var3, $var4, 0, 0);
+
+    XQueryBestSize($!d, $v1, $v2, $v3, $v4, $v5, $v6);
   }
 
-  method QueryBestStipple (Drawable $var1, gint $var2, gint $var3, gint $var4 is rw, gint $var5 is rw) {
-    XQueryBestStipple($!d, $var1, $var2, $var3, $var4 is rw, $var5 is rw);
+  method QueryBestStipple (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+          $var4 is rw,
+          $var5 is rw
+  ) {
+    my Drawable $v1                   = $var1;
+    my gint      ($v2, $v3, $v4, $v5) = ($var2, $var3, 0, 0);
+
+    XQueryBestStipple($!d, $v1, $v2, $v3, $v4, $v5);
   }
 
-  method QueryBestTile (Drawable $var1, gint $var2, gint $var3, gint $var4 is rw, gint $var5 is rw) {
-    XQueryBestTile($!d, $var1, $var2, $var3, $var4 is rw, $var5 is rw);
+  method QueryBestTile (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+          $var4 is rw,
+          $var5 is rw
+  ) {
+    my Drawable $v1                  = $var1;
+    my gint     ($v2, $v3, $v4, $v5) = ($var2, $var3, 0, 0);
+
+    XQueryBestTile($!d, $v1, $v2, $v3, $v4, $v5);
   }
 
-  method QueryColor (Colormap $var1, XColor $var2) {
-    XQueryColor($!d, $var1, $var2);
+  method QueryColor (Int() $var1, XColor() $var2) {
+    my Colormap $v1 = $var1;
+
+    XQueryColor($!d, $v1, $var2);
   }
 
-  method QueryColors (Colormap $var1, XColor $var2, gint $var3) {
-    XQueryColors($!d, $var1, $var2, $var3);
+  method QueryColors (Int() $var1, XColor() $var2, Int() $var3) {
+    my Colormap $v1 = $var1;
+    my gint     $v3 = $var3;
+
+    XQueryColors($!d, $v1, $var2, $v3);
   }
 
-  method QueryExtension (Str $var1, gint $var2 is rw, gint $var3 is rw, gint $var4 is rw) {
-    XQueryExtension($!d, $var1, $var2 is rw, $var3 is rw, $var4 is rw);
+  method QueryExtension (
+    Str() $var1,
+          $var2 is rw,
+          $var3 is rw,
+          $var4 is rw
+  ) {
+    my gint ($v2, $v3, $v4) = 0 xx 3;
+
+    XQueryExtension($!d, $var1, $v2, $v3, $v4);
+    ($var2, $var3, $var4) = ($v2, $v3, $v4);
   }
 
-  method QueryFont (XID $var1) {
-    XQueryFont($!d, $var1);
+  method QueryFont (Int() $var1) {
+    my XID $v1 = $var1;
+
+    XQueryFont($!d, $v1);
   }
 
-  method QueryKeymap (Str $var1) {
+  method QueryKeymap (Str() $var1) {
     XQueryKeymap($!d, $var1);
   }
 
-  method QueryPointer (Window $var1, Window $var2, Window $var3, gint $var4 is rw, gint $var5 is rw, gint $var6 is rw, gint $var7 is rw, gint $var8 is rw) {
-    XQueryPointer($!d, $var1, $var2, $var3, $var4 is rw, $var5 is rw, $var6 is rw, $var7 is rw, $var8 is rw);
-  }
-
-  method QueryTextExtents (XID $var1, Str $var2, gint $var3, gint $var4 is rw, gint $var5 is rw, gint $var6 is rw, XCharStruct $var7) {
-    XQueryTextExtents($!d, $var1, $var2, $var3, $var4 is rw, $var5 is rw, $var6 is rw, $var7);
-  }
-
-  method QueryTextExtents16 (XID $var1, XChar2b $var2, gint $var3, gint $var4 is rw, gint $var5 is rw, gint $var6 is rw, XCharStruct $var7) {
-    XQueryTextExtents16($!d, $var1, $var2, $var3, $var4 is rw, $var5 is rw, $var6 is rw, $var7);
-  }
-
-  method QueryTree (
-    Pointer[Pointer[Window]] $var1,
-    Window                   $var2,
-    Window                   $var3,
-    Window                   $var4,
-    gint                     $var5 is rw
+  method QueryPointer (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+          $var4  is rw,
+          $var5  is rw,
+          $var6  is rw,
+          $var7  is rw,
+          $var8  is rw
   ) {
-    XQueryTree($!d, $var1, $var2, $var3, $var4, $var5 is rw);
+    my Window ($v1, $v2, $v3) = ($var, $var2, $var3);
+    my gint   ($var4, $var5, $var6, $var7, $var8) = 0 xx 5;
+
+    XQueryPointer($!d, $var1, $var2, $var3, $v4, $v5, $v6, $v7, $v8);
+    ($var4, $var5, $var6, $var7, $var8) = ($v4, $v5, $v6, $v7, $v8);
   }
 
-  method RaiseWindow (Window $var1) {
-    XRaiseWindow($!d, $var1);
+  proto method QueryTextExtents (|)
+  { * }
+
+  multi method QueryTextExtents (
+    Int()         $var1,
+    Str()         $var2,
+    Int()         $var3
+  ) {
+    my XCharStruct $var7 .= new;
+
+    samewith($var1, $var2, $var3, $, $, $, $var7);
+  }
+  multi method QueryTextExtents (
+    Int()         $var1,
+    Str()         $var2,
+    Int()         $var3,
+                  $var4  is rw,
+                  $var5  is rw,
+                  $var6  is rw,
+    XCharStruct() $var7
+  ) {
+    my XID  $v1                          = $var1;
+    my gint ($var3, $var4, $var5, $var6) = ($v3, 0, 0, 0);
+
+    XQueryTextExtents($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
+    ($var4, $var5, $var6) = ($v4, $v5, $v6);
   }
 
-  method ReadBitmapFile (Drawable $var1, Str $var2, gint $var3 is rw, gint $var4 is rw, Pixmap $var5, gint $var6 is rw, gint $var7 is rw) {
-    XReadBitmapFile($!d, $var1, $var2, $var3 is rw, $var4 is rw, $var5, $var6 is rw, $var7 is rw);
+  proto method QueryTextExtents16 (|)
+  { * }
+
+  multi method QueryTextExtents16 (
+    Int()     $var1,
+    XChar2b() $var2,
+    Int()     $var3
+  ) {
+    my XCharStruct $var7 .= new;
+
+    samewith($var1, $var2, $var3, $, $, $, $var7);
+  }
+  multi method QueryTextExtents16 (
+    Int()         $var1,
+    XChar2b()     $var2,
+    Int()         $var3,
+                  $var4 is rw,
+                  $var5 is rw,
+                  $var6 is rw,
+    XCharStruct() $var7
+  ) {
+    my XID $v1 = $var1;
+    my gint ($v3, $v4, $v5, $v6) = ($var3, 0, 0, 0);
+
+    XQueryTextExtents16($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7);
+    ($var4, $var5, $var6) = ($v4, $v5, $v6);
   }
 
-  method RebindKeysym (KeySym $var1, KeySym $var2, gint $var3, Str $var4, gint $var5) {
-    XRebindKeysym($!d, $var1, $var2, $var3, $var4, $var5);
+  proto method QueryTree (|)
+  { * }
+
+  multi method QueryTree (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+  ) {
+    samewith( cast(Pointer[Pointer[Window]], $var1), $var2, $var3, $var4);
+  }
+  multi method QueryTree (
+    Pointer[Pointer[Window]] $var1,
+    Int()                    $var2,
+    Int()                    $var3,
+    Int()                    $var4,
+                             $var5 is rw
+  ) {
+    my Window ($v2, $v3, $v4) = ($var2, $var3, $var4);
+    my gint   $v5             = 0;
+
+    XQueryTree($!d, $var1, $v2, $v3, $v4, $v5);
+    $var5 = $v5;
   }
 
-  method RecolorCursor (Cursor $var1, XColor $var2, XColor $var3) {
-    XRecolorCursor($!d, $var1, $var2, $var3);
+  method RaiseWindow (Window() $var1) {
+    my Window $var1 = $v1;
+
+    XRaiseWindow($!d, $v1);
   }
 
-  method ReconfigureWMWindow (Window $var1, gint $var2, gint $var3, XWindowChanges $var4) {
+  proto method ReadBitmapFile (|)
+  { * }
+
+  multi method ReadBitmapFile (
+    Drawable $var1,
+    Str      $var2
+  ) {
+    samewith($var1, $var2, $, $, $, $, $);
+  }
+  multi method ReadBitmapFile (
+    Int() $var1,
+    Str() $var2,
+          $var3 is rw,
+          $var4 is rw,
+          $var5 is rw, # Pixmap
+          $var6 is rw,
+          $var7 is rw
+  ) {
+    my Drawable $v1 = $var1;
+    my gint ($v3, $v4, $v5, $v6, $v7) = ($var3, $var4, $var5, $var6, $var7);
+
+    XReadBitmapFile($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7);
+    ($var3, $var4, $var5, $var6, $var7) = ($v3, $v4, $v5, $v6, $v7);
+  }
+
+  method RebindKeysym (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Str() $var4,
+    Int() $var5
+  ) {
+    my KeySym ($v1, $v2) = ($var1, $var2);
+    my gint   ($v3, $v5) = ($var3, $var5);
+
+    XRebindKeysym($!d, $v1, $v2, $v3, $var4, $v5);
+  }
+
+  method RecolorCursor (Cursor $var1, XColor() $var2, XColor() $var3) {
+    my Cursor $v1 = $var1;
+
+    XRecolorCursor($!d, $v1, $var2, $var3);
+  }
+
+  method ReconfigureWMWindow (
+    Int()          $var1,
+    Int()          $var2,
+    Int()          $var3,
+    XWindowChanges $var4 = XWindowChanges.new
+  ) {
+    my Window $v1        = $var1;
+    my gint   ($v2, $v4) = ($var2, $var3);
+
     XReconfigureWMWindow($!d, $var1, $var2, $var3, $var4);
   }
 
-  method RegisterIMInstantiateCallback (_XrmHashBucketRec $var1, Str $var2, Str $var3, XIDProc $var4, XPointer $var5) {
-    XRegisterIMInstantiateCallback($!d, $var1, $var2, $var3, $var4, $var5);
+  method RegisterIMInstantiateCallback (
+    XrmHashBucket() $var1,
+    Str()           $var2,
+    Str()           $var3,
+                    &var4,
+    XPointer        $var5  = XPointer
+  ) {
+    XRegisterIMInstantiateCallback($!d, $var1, $var2, $var3, &var4, $var5);
   }
 
-  method RemoveConnectionWatch (XConnectionWatchProc $var1, XPointer $var2) {
-    XRemoveConnectionWatch($!d, $var1, $var2);
+  method RemoveConnectionWatch (&var1, XPointer $var2 = XPointer) {
+    XRemoveConnectionWatch($!d, &var1, $var2);
   }
 
-  method RemoveFromSaveSet (Window $var1) {
-    XRemoveFromSaveSet($!d, $var1);
+  method RemoveFromSaveSet (Int() $var1) {
+    my Window $v1 = $var1;
+
+    XRemoveFromSaveSet($!d, $v1);
   }
 
-  method RemoveHost (XHostAddress $var1) {
+  method RemoveHost (XHostAddress() $var1) {
     XRemoveHost($!d, $var1);
   }
 
-  method RemoveHosts (XHostAddress $var1, gint $var2) {
+
+  proto method RemoveHosts (|)
+  { * }
+
+  multi method RemoveHosts (@hosts) {
+    samewith(
+      X11::Roles::TypedBuffer[XHostAddress].new(@hosts).p,
+      @hosts.elems
+    );
+  }
+  multi method RemoveHosts (Pointer $var1, Int() $var2) {
+    my gint $v2 = $var2;
+
     XRemoveHosts($!d, $var1, $var2);
   }
 
-  method ReparentWindow (Window $var1, Window $var2, gint $var3, gint $var4) {
-    XReparentWindow($!d, $var1, $var2, $var3, $var4);
+  method ReparentWindow (Int() $var1, Int() $var2, Int() $var3, Int() $var4) {
+    my Window ($v1, $v2) = ($var1, $var2);
+    my gint   ($v3, $v4) = ($var3, $var4);
+
+    XReparentWindow($!d, $v1, $v2, $v3, $v4);
   }
 
   method ResetScreenSaver {
     XResetScreenSaver($!d);
   }
 
-  method ResizeWindow (Window $var1, gint $var2, gint $var3) {
-    XResizeWindow($!d, $var1, $var2, $var3);
+  method ResizeWindow (Int() $var1, Int() $var2, Int() $var3) {
+    my Window $v1        = $var1;
+    my gint   ($v2, $v3) = ($var2, $var3);
+
+    XResizeWindow($!d, $v1, $v2, $v3);
   }
 
   method ResourceManagerString {
     XResourceManagerString($!d);
   }
 
-  method RestackWindows (Window $var1, gint $var2) {
-    XRestackWindows($!d, $var1, $var2);
+  proto method RestackWindows(|)
+  { * }
+
+  multi method RestackWindows (@windows) {
+    samewith( ArrayToCArray(Window, @windows), @windows.elems );
+  }
+  multi method RestackWindows (CArray[Window] $var1, Int() $var2) {
+    my Window $v1 = $var1;
+    my gint   $v2 = $var2;
+
+    XRestackWindows($!d, $v1, $v2);
   }
 
-  method RootWindow (gint $var1) {
-    XRootWindow($!d, $var1);
+  method RootWindow (Int() $var1) {
+    my gint $v1 = $var1;
+
+    XRootWindow($!d, $v1);
   }
 
-  method RotateBuffers (gint $var1) {
+  method RotateBuffers (Int() $var1) {
+    my gint $v1 = $var1;
+
     XRotateBuffers($!d, $var1);
   }
 
-  method RotateWindowProperties (Window $var1, Atom $var2, gint $var3, gint $var4) {
-    XRotateWindowProperties($!d, $var1, $var2, $var3, $var4);
+  method RotateWindowProperties (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4
+  ) {
+    my Window $v1        = $var1;
+    my Atom   $v2        = $var2;
+    my gint   ($v3, $v4) = ($var3, $var4);
+
+    XRotateWindowProperties($!d, $v1, $v2, $v3, $v4);
   }
 
   method ScreenCount {
     XScreenCount($!d);
   }
 
-  # 3 / 6
+  # 4 / 8
 
   method ScreenOfDisplay (gint $var1) {
     XScreenOfDisplay($!d, $var1);
@@ -2167,6 +2429,8 @@ class X11::Display {
     XSetDashes($!d, $var1, $var2, $var3, $var4);
   }
 
+  # 9 / 16
+
   method SetFillRule (GC $var1, gint $var2) {
     XSetFillRule($!d, $var1, $var2);
   }
@@ -2214,6 +2478,8 @@ class X11::Display {
   method SetModifierMapping (XModifierKeymap $var1) {
     XSetModifierMapping($!d, $var1);
   }
+
+  # 5 / 8
 
   method SetPlaneMask (GC $var1, long $var2) {
     XSetPlaneMask($!d, $var1, $var2);
@@ -2263,7 +2529,8 @@ class X11::Display {
     XSetWMProtocols($!d, $var1, $var2, $var3);
   }
 
-  # 4 / 5
+  # 11 / 16
+
   method SetWindowBackground (Window $var1, long $var2) {
     XSetWindowBackground($!d, $var1, $var2);
   }
@@ -2312,6 +2579,8 @@ class X11::Display {
     XStoreNamedColor($!d, $var1, $var2, $var3, $var4);
   }
 
+  # 6 / 8
+
   method Sync (Bool $var1) {
     XSync($!d, $var1);
   }
@@ -2359,6 +2628,8 @@ class X11::Display {
   method UnlockDisplay {
     XUnlockDisplay($!d);
   }
+
+  # (14 - 1) / 16
 
   method UnmapSubwindows (Window $var1) {
     XUnmapSubwindows($!d, $var1);
@@ -2411,6 +2682,8 @@ class X11::Display {
   method utf8DrawImageString (Drawable $var1, XFontSet $var2, GC $var3, gint $var4, gint $var5, Str $var6, gint $var7) {
     Xutf8DrawImageString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
   }
+
+  # 7 / 8
 
   method utf8DrawString (Drawable $var1, XFontSet $var2, GC $var3, gint $var4, gint $var5, Str $var6, gint $var7) {
     Xutf8DrawString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
