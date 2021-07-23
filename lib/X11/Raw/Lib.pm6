@@ -1766,7 +1766,7 @@ sub XRaiseWindow (Display $var0, Window $var1)
   is export
 { * }
 
-sub XReadBitmapFile (Display $var0, Drawable $var1, Str $var2, realInt $var3 is rw, realInt $var4 is rw, Pixmap $var5, realInt $var6 is rw, realInt $var7 is rw)
+sub XReadBitmapFile (Display $var0, Drawable $var1, Str $var2, realInt $var3 is rw, realInt $var4 is rw, Pixmap $var5 is rw, realInt $var6 is rw, realInt $var7 is rw)
   returns realInt
   is native(x11)
   is export
@@ -1855,7 +1855,7 @@ sub XResourceManagerString (Display $var0)
   is export
 { * }
 
-sub XRestackWindows (Display $var0, Window $var1, realInt $var2)
+sub XRestackWindows (Display $var0, CArray[Window] $var1, realInt $var2)
   returns realInt
   is native(x11)
   is export
