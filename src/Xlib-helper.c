@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include "X11/Xlib.h"
+#include "Xtrans/Xtransint.h"
 
 // cw: No longer necessary, since Window is a typedef'd long int.
 /*
@@ -14,4 +16,9 @@ Bool XQueryPointer_helper (
   int     *var8
 ) {
   XQueryPointer(var0, *var1, var2, var3, var4, var5, var6, var7, var8);
+}
+*/
+
+void main (int argc, char **argv) {
+	printf ("Xtransport: %ld\n", sizeof(Xtransport));
 }
