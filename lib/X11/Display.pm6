@@ -2358,17 +2358,26 @@ class X11::Display {
     XRotateBuffers($!d, $var1);
   }
 
-  method RotateWindowProperties (
-    Int() $var1,
-    Int() $var2,
-    Int() $var3,
-    Int() $var4
+  proto method RotateWindowProperties (|)
+  { * }
+
+  multi method RotateWindowProperties (
+    Int()        $var1,
+                 @properties,
+    Int()        $var4
+  ) {
+    samewith($var1, ArrayToCArray(Atom, @properties), @properties.elems, $var4);
+  }
+  multi method RotateWindowProperties (
+    Int()        $var1,
+    CArray[Atom] $var2,
+    Int()        $var3,
+    Int()        $var4
   ) {
     my Window $v1        = $var1;
-    my Atom   $v2        = $var2;
     my gint   ($v3, $v4) = ($var3, $var4);
 
-    XRotateWindowProperties($!d, $v1, $v2, $v3, $v4);
+    XRotateWindowProperties($!d, $v1, $var2, $v3, $v4);
   }
 
   method ScreenCount {

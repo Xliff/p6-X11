@@ -1879,7 +1879,13 @@ sub XRotateBuffers (Display $var0, realInt $var1)
   is export
 { * }
 
-sub XRotateWindowProperties (Display $var0, Window $var1, Atom $var2, realInt $var3, realInt $var4)
+sub XRotateWindowProperties (
+  Display      $var0,
+  Window       $var1,
+  CArray[Atom] $var2,
+  realInt      $var3,
+  realInt      $var4
+)
   returns realInt
   is native(x11)
   is export
