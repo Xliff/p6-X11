@@ -14,7 +14,6 @@ unit package X11::Raw::Structs;
 class TranslationData       is repr<CStruct> is export { ... } # L2306
 class ATranslationData      is repr<CStruct> is export { ... } # L13
 class TMComplexBindProcsRec is repr<CStruct> is export { ... } # L2039
-class XtAppContext          is repr<CStruct> is export { ... } # L?
 
 class TMTypeMatchRec        is repr<CStruct> is export { ... } # L48
 class TMModifierMatchRec    is repr<CStruct> is export { ... } # L42
@@ -99,20 +98,21 @@ class ATranslationData {
 	has TMComplexBindProcsRec $!bindTbl    ;
 }
 
-class ActionHookRec is repr<CStruct> is export {
-	has ActionHookRec $!next   ;
+class ActionHook is repr<CStruct> is export {
+	has ActionHook    $!next   ;
 	has XtAppContext  $!app    ;
 	has Pointer       $!proc   ; #= fp:XtActionHookProc
 	has XtPointer     $!closure;
 }
+constant ActionHookRec is export := ActionHook;
 
-class ActionsRec is repr<CStruct> is export {
+class Actions is repr<CStruct> is export {
 	has int        $!idx       ;
 	has String     $!params    ;
 	has Cardinal   $!num_params;
-	has ActionsRec $!next      ;
+	has Actions    $!next      ;
 }
-constant Action is export := ActionsRec;
+constant ActionsRec is export := Actions;
 
 class AppleWMAttachTransient is repr<CStruct> is export {
 	has CARD8  $.reqType      is rw;
@@ -516,12 +516,13 @@ class AsciiTextClassRec is repr<CStruct> is export {
 	has AsciiClassPart  $!ascii_class ;
 }
 
-class BlockHookRec is repr<CStruct> is export {
-	has BlockHookRec    $!next   ;
+class BlockHook is repr<CStruct> is export {
+	has BlockHook       $!next   ;
 	has XtAppContext    $!app    ;
 	has XtBlockHookProc $!proc   ;
 	has XtPointer       $!closure;
 }
+constant BlockHookRec is export := BlockHook;
 
 class BoxClassPart is repr<CStruct> is export { ... }
 
@@ -731,7 +732,7 @@ class XtStateRec is repr<CStruct> is export {
   has uint64        $.isCycleEnd   is rw; #= b:1;
   has TMShortCard   $.typeIndex;
   has TMShortCard   $.modIndex;
-  has Action        $.actions;            #= rhs list of actions to perform
+  has Actions       $.actions;            #= rhs list of actions to perform
   has XtStateRec    $.nextLevel;
 }
 constant State is export := XtStateRec;
@@ -1052,7 +1053,7 @@ class EventSeq is repr<CStruct> is export {
 	has Event    $!event  ;
 	has State    $!state  ;
 	has EventSeq $!next   ;
-	has Action   $!actions;
+	has Actions  $!actions;
 }
 
 class ExtensionSelectorRec is repr<CStruct> is export {
@@ -1383,10 +1384,11 @@ class LabelRec is repr<CStruct> is export {
 	has LabelPart  $!label ;
 }
 
-class LangProcRec is repr<CStruct> is export {
+class LangProc is repr<CStruct> is export {
 	has Pointer   $!proc   ; #= XtLanguageProc
 	has XtPointer $!closure;
 }
+constant LangProcRec is export := LangProc;
 
 class LbxAllowMotion is repr<CStruct> is export {
 	has CARD8  $!reqType   ;
@@ -2352,8 +2354,8 @@ class Heap is repr<CStruct> is export {
 
 class XtPerDisplayStruct is repr<CStruct> is export { ... }
 constant XtPerDisplay         is export := XtPerDisplayStruct;
-constant XtPerDisplayInputRec is export := XtPerDisplayStruct;
-constant XtPerDisplayInput    is export := XtPerDisplayStruct;
+
+class XtPerDisplayInput is repr<CStruct> is export  { ... } #= L6119
 
 class XtPerDisplayStruct {
   has InternalCallbackList     $.destroy_callbacks;
@@ -2385,7 +2387,7 @@ class XtPerDisplayStruct {
   has int                      $.multi_click_time;         #= for XtSetMultiClickTime
   has TMKeyContextRec          $.tm_context;               #= for XtGetActionKeysym
   has InternalCallbackList     $.mapping_callbacks;        #= special case for TM
-  has XtPerDisplayInputRec     $.pdi;                      #= state for modal grabs & kbd focus
+  has XtPerDisplayInput        $.pdi;                      #= state for modal grabs & kbd focus
   has Pointer                  $!WWtable;                  #= os:WWTable -  window to widget table
   has CArray[Pointer]          $.per_screen_db;            #= os:XrmHashBucketRec/XrmDatabase - per screen resource databases
   has Pointer                  $.cmd_db;                   #= os:XrmHashBucketRec/XrmDatabase - db from command line, if needed
@@ -2426,13 +2428,11 @@ class PortholeRec is repr<CStruct> is export {
 	has PortholePart  $!porthole ;
 }
 
-constant ConverterTable is export := CArray[Pointer];
-
-class ProcessContextRec is repr<CStruct> is export {
+class ProcessContext is repr<CStruct> is export {
 	has XtAppContext   $!defaultAppContext   ;
 	has XtAppContext   $!appContextList      ;
 	has ConverterTable $!globalConverterTable;
-	has LangProcRec    $!globalLangProcRec   ;
+	has LangProc       $!globalLangProcRec   ;
 }
 
 class PutImageReq is repr<CStruct> is export {
@@ -3062,13 +3062,14 @@ class ShmQueryVersion is repr<CStruct> is export {
 	has CARD16 $!length    ;
 }
 
-class SignalEventRec is repr<CStruct> is export {
+class SignalEvent is repr<CStruct> is export {
 	has Pointer         $!se_proc   ; #= fp:XtSignalCallbackProc
 	has XtPointer       $!se_closure;
-	has SignalEventRec  $!se_next   ;
+	has SignalEvent     $!se_next   ;
 	has XtAppContext    $!app       ;
 	has Boolean         $!se_notice ;
 }
+constant SignalEventRec is export := SignalEvent;
 
 class SimpleClassRec is repr<CStruct> is export {
 	has CoreClassPart   $!core_class  ;
@@ -3596,13 +3597,14 @@ class timeval is repr<CStruct> is export {
   has long $.tv_usec is rw; #= and microseconds
 }
 
-class TimerEventRec is repr<CStruct> is export {
+class TimerEvent is repr<CStruct> is export {
 	HAS timeval             $!te_timer_value;
-	has TimerEventRec       $!te_next       ;
+	has TimerEvent          $!te_next       ;
 	has Pointer             $!te_proc       ; #= fp:XtTimerCallbackProc
 	has XtAppContext        $!app           ;
 	has XtPointer           $!te_closure    ;
 }
+constant TimerEventRec is export := TimerEvent;
 
 class TipClassRec is repr<CStruct> is export {
 	has CoreClassPart $!core_class;
@@ -3819,12 +3821,13 @@ class WidgetInfo is repr<CStruct> is export {
 	has Widget $!real_widget;
 }
 
-class WorkProcRec is repr<CStruct> is export {
+class WorkProc is repr<CStruct> is export {
 	has Pointer      $!proc   ; #= fp:XtWorkProc
 	has XtPointer    $!closure;
-	has WorkProcRec  $!next   ;
+	has WorkProc     $!next   ;
 	has XtAppContext $!app    ;
 }
+constant WorkProcRec is export := WorkProc;
 
 class XAnimCursor is repr<CStruct> is export {
 	has Cursor $!cursor;
@@ -6003,1762 +6006,1804 @@ class XtGrabExt is repr<CStruct> is export {
 	has Cursor $.cursor         is rw;
 }
 
+sub howmany ($x, $y) { ( ($x + $y - 1) / $y ).Int }
+
+class fd_set is repr<CStruct> is export {
+  HAS long @.fds_bits[ howmany(FD_SETSIZE, NFDBITS) ] is CArray;
+}
+
+class FdStruct is repr<CStruct> is export {
+  HAS fd_set  $.rmask;
+  HAS fd_set  $.wmask;
+  HAS fd_set  $.emask;
+  has realInt $.nfds;
+}
+
+class XtAppStruct is repr<CStruct> is export {
+	has XtAppContext                 $!next              ;
+	has ProcessContext               $!process           ;
+	has InternalCallbackList         $!destroy_callbacks ;
+	has CArray[Pointer[Display]]     $!list              ;
+	has TimerEvent                   $!timerQueue        ;
+	has WorkProc                     $!workQueue         ;
+	has CArray[Pointer[InputEvent]]  $!input_list        ;
+	has InputEvent                   $!outstandingQueue  ;
+	has SignalEvent                  $!signalQueue       ;
+	has XrmDatabase                  $!errorDB           ;
+
+  # cw: Will &!handler ever be a thing?
+	has Pointer                      $!errorMsgHandler   ; #= fp:XtErrorMsgHandler
+	has Pointer                      $!warningMsgHandler ; #= fp:XtErrorMsgHandler
+	has Pointer                      $!errorHandler      ; #= fp:XtErrorHandler
+	has Pointer                      $!warningHandler    ; #= fp:XtErrorHandler
+	has ActionList                   $!action_table      ;
+	has ConverterTable               $!converterTable    ;
+	has ulong                        $!selectionTimeout  ;
+	HAS FdStruct                     $!fds               ;
+	has short                        $!count             ;
+	has short                        $!max               ;
+	has short                        $!last              ;
+	has short                        $!input_count       ;
+	has short                        $!input_max         ;
+	has Boolean                      $!sync              ;
+	has Boolean                      $!being_destroyed   ;
+	has Boolean                      $!error_inited      ;
+	has Boolean                      $!identify_windows  ;
+	has Heap                         $!heap              ;
+	has String                       $!fallback_resources;
+	has ActionHook                   $!action_hook_list  ;
+	has BlockHook                    $!block_hook_list   ;
+	has realInt                      $!destroy_list_size ;
+	has realInt                      $!destroy_count     ;
+	has realInt                      $!dispatch_level    ;
+	has DestroyRec                   $!destroy_list      ;
+	has Widget                       $!in_phase2_destroy ;
+	has LangProc                     $!langProcRec       ;
+	has TMBindCacheRec               $!free_bindings     ;
+	has XtString                     $!display_name_tried;
+	has Display                      $!dpy_destroy_list  ;
+	has realInt                      $!dpy_destroy_count ;
+	has Boolean                      $!exit_flag         ;
+	has Boolean                      $!rebuild_fdlist    ;
+	has LockPtr                      $!lock_info         ;
+	has Pointer                      $!lock              ; #= fp:ThreadAppProc
+	has Pointer                      $!unlock            ; #= fp:ThreadAppProc
+	has Pointer                      $!yield_lock        ; #= fp:ThreadAppYieldLockProc
+	has Pointer                      $!restore_lock      ; #= fp:ThreadAppRestoreLockProc
+	has Pointer                      $!free_lock         ; #= fp:ThreadAppProc
+}
+
+class XtCheckpointToken is repr<CStruct> is export {
+	has realInt $!save_type           ;
+	has realInt $!interact_style      ;
+	has Boolean $!shutdown            ;
+	has Boolean $!fast                ;
+	has Boolean $!cancel_shutdown     ;
+	has realInt $!phase               ;
+	has realInt $!interact_dialog_type;
+	has Boolean $!request_cancel      ;
+	has Boolean $!request_next_phase  ;
+	has Boolean $!save_success        ;
+	has realInt $!type                ;
+	has Widget  $!widget              ;
+}
+
+class XtServerGrab is repr<CStruct> is export {
+  has XtServerGrab     $.next;
+  has Widget           $.widget;
+  has uint             $.ownerEvents;          #= b:1;
+  has uint             $.pointerMode;          #= b:1;
+  has uint             $.keyboardMode;         #= b:1;
+  has uint             $.hasExt;               #= b:1;
+  has uint             $.confineToIsWidgetWin; #= b:1;
+  has KeyCode          $.keybut;
+  has ushort           $.modifiers;
+  has ushort           $.eventMask;
+}
+
+class XtDevice is repr<CStruct> is export {
+	HAS XtServerGrab     $!grab     ;
+	has XtServerGrabType $.grabType  is rw;
+
+  method grabTypeEnum is rw {
+    Proxy.new:
+      FETCH => -> $           { XtServerGrabTypeEnum($!grabType) },
+      STORE => -> $, Int() \v { $!grabType = v                   };
+  }
+}
+constant XtDeviceRec is export := XtDevice;
+
+class XtPerDisplayInput {
+	has XtGrabList  $!grabList     ;
+	has XtDevice    $!keyboard     ;
+	has XtDevice    $!pointer      ;
+	has KeyCode     $!activatingKey;
+	has Widget      $!trace        ;
+	has realInt     $!traceDepth   ;
+	has realInt     $!traceMax     ;
+	has Widget      $!focusWidget  ;
+}
+constant XtPerDisplayInputRec is export := XtPerDisplayInput;
+
+
+class XtransConnFd is repr<CStruct> is export {
+	has XtransConnFd  $!next    ;
+	has realInt       $!fd      ;
+	has realInt       $!do_close;
+}
+
+class Xtransport is repr<CStruct> is export {
+  has Str     $!TransName             ;
+  has realInt $.flags            is rw;
+  has Pointer $.SetOption             ; #= fp:SetOption
+  has Pointer $.BytesReadable         ; #= fp:BytesReadable
+  has Pointer $.Read                  ; #= fp:Read
+  has Pointer $.Write                 ; #= fp:Write
+  has Pointer $.Ready                 ; #= fp:Ready
+  has Pointer $.Writev                ; #= fp:Writev
+  has Pointer $.Disconnect            ; #= fp:Disconnect
+  has Pointer $.Close                 ; #= fp:Close
+  has Pointer $.CloseForCloning       ; #= fp:CloseForCloning
+}
+
+class XtransConnInfo {
+	has Xtransport    $!transptr   ;
+	has realInt       $!index      ;
+	has Str           $!priv       ;
+	has realInt       $!flags      ;
+	has realInt       $!fd         ;
+	has Str           $!port       ;
+	has realInt       $!family     ;
+	has Str           $!addr       ;
+	has realInt       $!addrlen    ;
+	has Str           $!peeraddr   ;
+	has realInt       $!peeraddrlen;
+	has Pointer       $!recv_fds   ; #= tb:XtransConnFd
+	has Pointer       $!send_fds   ; #= tb:XtransConnFd
+}
+
+class Xtransport_table is repr<CStruct> is export {
+	has Xtransport  $!transport   ;
+	has realInt     $!transport_id;
+}
+
+class alternate is repr<CStruct> is export {
+	has Boolean $!subset; #= ot:Bool
+	has Str     $!name  ;
+}
+
+class contextDataRec is repr<CStruct> is export {
+	has Widget $!parent;
+	has Widget $!ve    ;
+}
+
+class contextErrDataRec is repr<CStruct> is export {
+	has Widget $!widget;
+	has XIM    $!xim   ;
+}
+
+class internalCallback is repr<CStruct> is export {
+	has short $!count     ;
+	has Str   $!is_padded ;
+	has Str   $!call_state;
+	has int   $!align_pad ;
+}
+constant internalCallbackRec is export := internalCallback;
+
 # cw: ... 7/19/2021
-#
-# class XtAppStruct is repr<CStruct> is export {
-# 	has XtAppContext             $!next              ;
-# 	has ProcessContext           $!process           ;
-# 	has InternalCallbackList     $!destroy_callbacks ;
-# 	has Display                  $!list              ;
-# 	has TimerEventRec            $!timerQueue        ;
-# 	has WorkProcRec              $!workQueue         ;
-# 	has InputEvent               $!input_list        ;
-# 	has InputEvent               $!outstandingQueue  ;
-# 	has SignalEventRec           $!signalQueue       ;
-# 	has XrmDatabase              $!errorDB           ;
-# 	has XtErrorMsgHandler        $!errorMsgHandler   ;
-# 	has XtErrorMsgHandler        $!warningMsgHandler ;
-# 	has XtErrorHandler           $!errorHandler      ;
-# 	has XtErrorHandler           $!warningHandler    ;
-# 	has _ActionListRec           $!action_table      ;
-# 	has ConverterTable           $!converterTable    ;
-# 	has long                     $!selectionTimeout  ;
-# 	has FdStruct                 $!fds               ;
-# 	has short                    $!count             ;
-# 	has short                    $!max               ;
-# 	has short                    $!last              ;
-# 	has short                    $!input_count       ;
-# 	has short                    $!input_max         ;
-# 	has Boolean                  $!sync              ;
-# 	has Boolean                  $!being_destroyed   ;
-# 	has Boolean                  $!error_inited      ;
-# 	has Boolean                  $!identify_windows  ;
-# 	has Heap                     $!heap              ;
-# 	has String                   $!fallback_resources;
-# 	has _ActionHookRec           $!action_hook_list  ;
-# 	has _BlockHookRec            $!block_hook_list   ;
-# 	has int                      $!destroy_list_size ;
-# 	has int                      $!destroy_count     ;
-# 	has int                      $!dispatch_level    ;
-# 	has DestroyRec               $!destroy_list      ;
-# 	has Widget                   $!in_phase2_destroy ;
-# 	has LangProcRec              $!langProcRec       ;
-# 	has _TMBindCacheRec          $!free_bindings     ;
-# 	has _XtString                $!display_name_tried;
-# 	has Display                  $!dpy_destroy_list  ;
-# 	has int                      $!dpy_destroy_count ;
-# 	has Boolean                  $!exit_flag         ;
-# 	has Boolean                  $!rebuild_fdlist    ;
-# 	has LockPtr                  $!lock_info         ;
-# 	has ThreadAppProc            $!lock              ;
-# 	has ThreadAppProc            $!unlock            ;
-# 	has ThreadAppYieldLockProc   $!yield_lock        ;
-# 	has ThreadAppRestoreLockProc $!restore_lock      ;
-# 	has ThreadAppProc            $!free_lock         ;
-# }
-#
-#
-# class XtCheckpointTokenRec is repr<CStruct> is export {
-# 	has int     $!save_type           ;
-# 	has int     $!interact_style      ;
-# 	has Boolean $!shutdown            ;
-# 	has Boolean $!fast                ;
-# 	has Boolean $!cancel_shutdown     ;
-# 	has int     $!phase               ;
-# 	has int     $!interact_dialog_type;
-# 	has Boolean $!request_cancel      ;
-# 	has Boolean $!request_next_phase  ;
-# 	has Boolean $!save_success        ;
-# 	has int     $!type                ;
-# 	has Widget  $!widget              ;
-# }
-#
-# class XtDeviceRec is repr<CStruct> is export {
-# 	has XtServerGrabRec  $!grab    ;
-# 	has XtServerGrabType $!grabType;
-# }
-#
-#
-# class XtPerDisplayInputRec is repr<CStruct> is export {
-# 	has XtGrabList  $!grabList     ;
-# 	has XtDeviceRec $!keyboard     ;
-# 	has XtDeviceRec $!pointer      ;
-# 	has KeyCode     $!activatingKey;
-# 	has Widget      $!trace        ;
-# 	has int         $!traceDepth   ;
-# 	has int         $!traceMax     ;
-# 	has Widget      $!focusWidget  ;
-# }
-#
-# class XtransConnFd is repr<CStruct> is export {
-# 	has _XtransConnFd $!next    ;
-# 	has int           $!fd      ;
-# 	has int           $!do_close;
-# }
-#
-# class XtransConnInfo {
-# 	has _Xtransport   $!transptr   ;
-# 	has int           $!index      ;
-# 	has Str           $!priv       ;
-# 	has int           $!flags      ;
-# 	has int           $!fd         ;
-# 	has Str           $!port       ;
-# 	has int           $!family     ;
-# 	has Str           $!addr       ;
-# 	has int           $!addrlen    ;
-# 	has Str           $!peeraddr   ;
-# 	has int           $!peeraddrlen;
-# 	has _XtransConnFd $!recv_fds   ;
-# 	has _XtransConnFd $!send_fds   ;
-# }
-#
-# class Xtransport_table is repr<CStruct> is export {
-# 	has Xtransport $!transport   ;
-# 	has int        $!transport_id;
-# }
-#
-# class alternate is repr<CStruct> is export {
-# 	has Bool $!subset;
-# 	has Str  $!name  ;
-# }
-#
-# class contextDataRec is repr<CStruct> is export {
-# 	has Widget $!parent;
-# 	has Widget $!ve    ;
-# }
-#
-# class contextErrDataRec is repr<CStruct> is export {
-# 	has Widget $!widget;
-# 	has XIM    $!xim   ;
-# }
-#
-# class internalCallbackRec is repr<CStruct> is export {
-# 	has short $!count     ;
-# 	has Str   $!is_padded ;
-# 	has Str   $!call_state;
-# 	has int   $!align_pad ;
-# }
-#
-# class iovec is repr<CStruct> is export {
-# 	has caddr_t $!iov_base;
-# 	has int     $!iov_len ;
-# }
-#
-# class tmask is repr<CStruct> is export {
-# 	has Mask $!mask;
-# 	has void $!dev ;
-# }
-#
-# class xAnyClassinfo is repr<CStruct> is export {
-# 	has CARD8 $!c_class;
-# 	has CARD8 $!class  ;
-# 	has CARD8 $!length ;
-# }
-#
-# class xArc is repr<CStruct> is export {
-# 	has INT16  $!x     ;
-# 	has INT16  $!y     ;
-# 	has CARD16 $!width ;
-# 	has CARD16 $!height;
-# 	has INT16  $!angle1;
-# 	has INT16  $!angle2;
-# }
-#
-#
-# class xButtonInfo is repr<CStruct> is export {
-# 	has CARD8  $!c_class    ;
-# 	has CARD8  $!class      ;
-# 	has CARD8  $!length     ;
-# 	has CARD16 $!num_buttons;
-# }
-#
-# class xDeviceInfo is repr<CStruct> is export {
-# 	has CARD32 $!type       ;
-# 	has CARD8  $!id         ;
-# 	has CARD8  $!num_classes;
-# 	has CARD8  $!use        ;
-# 	has CARD8  $!attached   ;
-# }
-#
-# class xExtendedVisualInfo is repr<CStruct> is export {
-# 	has VisualID $!core_visual_id        ;
-# 	has INT8     $!screen                ;
-# 	has INT8     $!level                 ;
-# 	has CARD8    $!transparency_type     ;
-# 	has CARD8    $!pad0                  ;
-# 	has CARD32   $!transparency_value    ;
-# 	has CARD8    $!min_hw_colormaps      ;
-# 	has CARD8    $!max_hw_colormaps      ;
-# 	has CARD16   $!num_colormap_conflicts;
-# }
-#
-# class xKeyInfo is repr<CStruct> is export {
-# 	has CARD8   $!c_class    ;
-# 	has CARD8   $!class      ;
-# 	has CARD8   $!length     ;
-# 	has KeyCode $!min_keycode;
-# 	has KeyCode $!max_keycode;
-# 	has CARD16  $!num_keys   ;
-# 	has CARD8   $!pad1       ;
-# 	has CARD8   $!pad2       ;
-# }
-#
-# class xMbufBufferInfo is repr<CStruct> is export {
-# 	has CARD32 $!visualID  ;
-# 	has CARD16 $!maxBuffers;
-# 	has CARD8  $!depth     ;
-# 	has CARD8  $!unused    ;
-# }
-#
-#
-# class xQueryFontReply is repr<CStruct> is export {
-# 	has BYTE      $!type          ;
-# 	has BYTE      $!pad1          ;
-# 	has CARD16    $!sequenceNumber;
-# 	has CARD32    $!length        ;
-# 	has xCharInfo $!minBounds     ;
-# 	has CARD32    $!walign1       ;
-# 	has xCharInfo $!maxBounds     ;
-# 	has CARD32    $!walign2       ;
-# 	has CARD16    $!minCharOrByte2;
-# 	has CARD16    $!maxCharOrByte2;
-# 	has CARD16    $!defaultChar   ;
-# 	has CARD16    $!nFontProps    ;
-# 	has CARD8     $!drawDirection ;
-# 	has CARD8     $!minByte1      ;
-# 	has CARD8     $!maxByte1      ;
-# 	has BOOL      $!allCharsExist ;
-# 	has INT16     $!fontAscent    ;
-# 	has INT16     $!fontDescent   ;
-# 	has CARD32    $!nCharInfos    ;
-# }
-#
-# class xRRModeInfo is repr<CStruct> is export {
-# 	has RRMode      $!id        ;
-# 	has CARD16      $!width     ;
-# 	has CARD16      $!height    ;
-# 	has CARD32      $!dotClock  ;
-# 	has CARD16      $!hSyncStart;
-# 	has CARD16      $!hSyncEnd  ;
-# 	has CARD16      $!hTotal    ;
-# 	has CARD16      $!hSkew     ;
-# 	has CARD16      $!vSyncStart;
-# 	has CARD16      $!vSyncEnd  ;
-# 	has CARD16      $!vTotal    ;
-# 	has CARD16      $!nameLength;
-# 	has RRModeFlags $!modeFlags ;
-# }
-#
-# class xReq is repr<CStruct> is export {
-# 	has CARD8  $!reqType;
-# 	has CARD8  $!data   ;
-# 	has CARD16 $!length ;
-# }
-#
-# class xSecurityAuthorizationRevokedEvent is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has BYTE   $!detail        ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!authId        ;
-# 	has CARD32 $!pad0          ;
-# 	has CARD32 $!pad1          ;
-# 	has CARD32 $!pad2          ;
-# 	has CARD32 $!pad3          ;
-# 	has CARD32 $!pad4          ;
-# 	has CARD32 $!pad5          ;
-# }
-#
-# class xSegment is repr<CStruct> is export {
-# 	has INT16 $!x1;
-# 	has INT16 $!y1;
-# 	has INT16 $!x2;
-# 	has INT16 $!y2;
-# }
-#
-# class xSyncAlarmNotifyEvent is repr<CStruct> is export {
-# 	has BYTE       $!type            ;
-# 	has BYTE       $!kind            ;
-# 	has CARD16     $!sequenceNumber  ;
-# 	has XSyncAlarm $!alarm           ;
-# 	has INT32      $!counter_value_hi;
-# 	has CARD32     $!counter_value_lo;
-# 	has INT32      $!alarm_value_hi  ;
-# 	has CARD32     $!alarm_value_lo  ;
-# 	has CARD32     $!time            ;
-# 	has CARD8      $!state           ;
-# 	has BYTE       $!pad0            ;
-# 	has BYTE       $!pad1            ;
-# 	has BYTE       $!pad2            ;
-# }
-#
-# class xSyncAwaitFenceReq is repr<CStruct> is export {
-# 	has CARD8  $!reqType    ;
-# 	has CARD8  $!syncReqType;
-# 	has CARD16 $!length     ;
-# }
-#
-# class xSyncAwaitReq is repr<CStruct> is export {
-# 	has CARD8  $!reqType    ;
-# 	has CARD8  $!syncReqType;
-# 	has CARD16 $!length     ;
-# }
-#
-# class xSyncChangeAlarmReq is repr<CStruct> is export {
-# 	has CARD8      $!reqType    ;
-# 	has CARD8      $!syncReqType;
-# 	has CARD16     $!length     ;
-# 	has XSyncAlarm $!alarm      ;
-# 	has CARD32     $!valueMask  ;
-# }
-#
-# class xSyncChangeCounterReq is repr<CStruct> is export {
-# 	has CARD8        $!reqType    ;
-# 	has CARD8        $!syncReqType;
-# 	has CARD16       $!length     ;
-# 	has XSyncCounter $!cid        ;
-# 	has INT32        $!value_hi   ;
-# 	has CARD32       $!value_lo   ;
-# }
-#
-# class xSyncCounterNotifyEvent is repr<CStruct> is export {
-# 	has BYTE         $!type            ;
-# 	has BYTE         $!kind            ;
-# 	has CARD16       $!sequenceNumber  ;
-# 	has XSyncCounter $!counter         ;
-# 	has INT32        $!wait_value_hi   ;
-# 	has CARD32       $!wait_value_lo   ;
-# 	has INT32        $!counter_value_hi;
-# 	has CARD32       $!counter_value_lo;
-# 	has CARD32       $!time            ;
-# 	has CARD16       $!count           ;
-# 	has BOOL         $!destroyed       ;
-# 	has BYTE         $!pad0            ;
-# }
-#
-# class xSyncCreateAlarmReq is repr<CStruct> is export {
-# 	has CARD8      $!reqType    ;
-# 	has CARD8      $!syncReqType;
-# 	has CARD16     $!length     ;
-# 	has XSyncAlarm $!id         ;
-# 	has CARD32     $!valueMask  ;
-# }
-#
-# class xSyncCreateCounterReq is repr<CStruct> is export {
-# 	has CARD8        $!reqType         ;
-# 	has CARD8        $!syncReqType     ;
-# 	has CARD16       $!length          ;
-# 	has XSyncCounter $!cid             ;
-# 	has INT32        $!initial_value_hi;
-# 	has CARD32       $!initial_value_lo;
-# }
-#
-# class xSyncCreateFenceReq is repr<CStruct> is export {
-# 	has CARD8      $!reqType            ;
-# 	has CARD8      $!syncReqType        ;
-# 	has CARD16     $!length             ;
-# 	has Drawable   $!d                  ;
-# 	has XSyncFence $!fid                ;
-# 	has BOOL       $!initially_triggered;
-# 	has CARD8      $!pad0               ;
-# 	has CARD16     $!pad1               ;
-# }
-#
-# class xSyncDestroyAlarmReq is repr<CStruct> is export {
-# 	has CARD8      $!reqType    ;
-# 	has CARD8      $!syncReqType;
-# 	has CARD16     $!length     ;
-# 	has XSyncAlarm $!alarm      ;
-# }
-#
-# class xSyncDestroyCounterReq is repr<CStruct> is export {
-# 	has CARD8        $!reqType    ;
-# 	has CARD8        $!syncReqType;
-# 	has CARD16       $!length     ;
-# 	has XSyncCounter $!counter    ;
-# }
-#
-# class xSyncDestroyFenceReq is repr<CStruct> is export {
-# 	has CARD8      $!reqType    ;
-# 	has CARD8      $!syncReqType;
-# 	has CARD16     $!length     ;
-# 	has XSyncFence $!fid        ;
-# }
-#
-# class xSyncGetPriority is repr<CStruct> is export {
-# 	has CARD8  $!reqType    ;
-# 	has CARD8  $!syncReqType;
-# 	has CARD16 $!length     ;
-# 	has CARD32 $!id         ;
-# }
-#
-# class xSyncInitialize is repr<CStruct> is export {
-# 	has CARD8  $!reqType     ;
-# 	has CARD8  $!syncReqType ;
-# 	has CARD16 $!length      ;
-# 	has CARD8  $!majorVersion;
-# 	has CARD8  $!minorVersion;
-# 	has CARD16 $!pad         ;
-# }
-#
-# class xSyncListSystemCounters is repr<CStruct> is export {
-# 	has CARD8  $!reqType    ;
-# 	has CARD8  $!syncReqType;
-# 	has CARD16 $!length     ;
-# }
-#
-# class xSyncQueryAlarmReq is repr<CStruct> is export {
-# 	has CARD8      $!reqType    ;
-# 	has CARD8      $!syncReqType;
-# 	has CARD16     $!length     ;
-# 	has XSyncAlarm $!alarm      ;
-# }
-#
-# class xSyncQueryCounterReq is repr<CStruct> is export {
-# 	has CARD8        $!reqType    ;
-# 	has CARD8        $!syncReqType;
-# 	has CARD16       $!length     ;
-# 	has XSyncCounter $!counter    ;
-# }
-#
-# class xSyncQueryFenceReq is repr<CStruct> is export {
-# 	has CARD8      $!reqType    ;
-# 	has CARD8      $!syncReqType;
-# 	has CARD16     $!length     ;
-# 	has XSyncFence $!fid        ;
-# }
-#
-# class xSyncResetFenceReq is repr<CStruct> is export {
-# 	has CARD8      $!reqType    ;
-# 	has CARD8      $!syncReqType;
-# 	has CARD16     $!length     ;
-# 	has XSyncFence $!fid        ;
-# }
-#
-# class xSyncSetCounterReq is repr<CStruct> is export {
-# 	has CARD8        $!reqType    ;
-# 	has CARD8        $!syncReqType;
-# 	has CARD16       $!length     ;
-# 	has XSyncCounter $!cid        ;
-# 	has INT32        $!value_hi   ;
-# 	has CARD32       $!value_lo   ;
-# }
-#
-# class xSyncSetPriority is repr<CStruct> is export {
-# 	has CARD8  $!reqType    ;
-# 	has CARD8  $!syncReqType;
-# 	has CARD16 $!length     ;
-# 	has CARD32 $!id         ;
-# 	has INT32  $!priority   ;
-# }
-#
-# class xSyncTriggerFenceReq is repr<CStruct> is export {
-# 	has CARD8      $!reqType    ;
-# 	has CARD8      $!syncReqType;
-# 	has CARD16     $!length     ;
-# 	has XSyncFence $!fid        ;
-# }
-#
-# class xSyncWaitCondition is repr<CStruct> is export {
-# 	has XSyncCounter $!counter           ;
-# 	has CARD32       $!value_type        ;
-# 	has INT32        $!wait_value_hi     ;
-# 	has CARD32       $!wait_value_lo     ;
-# 	has CARD32       $!test_type         ;
-# 	has INT32        $!event_threshold_hi;
-# 	has CARD32       $!event_threshold_lo;
-# }
-#
-# class xValuatorInfo is repr<CStruct> is export {
-# 	has CARD8  $!c_class           ;
-# 	has CARD8  $!class             ;
-# 	has CARD8  $!length            ;
-# 	has CARD8  $!num_axes          ;
-# 	has CARD8  $!mode              ;
-# 	has CARD32 $!motion_buffer_size;
-# }
-#
-# class xauth is repr<CStruct> is export {
-# 	has short $!family        ;
-# 	has short $!address_length;
-# 	has Str   $!address       ;
-# 	has short $!number_length ;
-# 	has Str   $!number        ;
-# 	has short $!name_length   ;
-# 	has Str   $!name          ;
-# 	has short $!data_length   ;
-# 	has Str   $!data          ;
-# }
-#
-# class xkbAccessXNotify is repr<CStruct> is export {
-# 	has BYTE    $!type          ;
-# 	has BYTE    $!xkbType       ;
-# 	has CARD16  $!sequenceNumber;
-# 	has Time    $!time          ;
-# 	has CARD8   $!deviceID      ;
-# 	has KeyCode $!keycode       ;
-# 	has CARD16  $!detail        ;
-# 	has CARD16  $!slowKeysDelay ;
-# 	has CARD16  $!debounceDelay ;
-# 	has CARD32  $!pad1          ;
-# 	has CARD32  $!pad2          ;
-# 	has CARD32  $!pad3          ;
-# 	has CARD32  $!pad4          ;
-# }
-#
-# class xkbActionMessage is repr<CStruct> is export {
-# 	has BYTE    $!type           ;
-# 	has BYTE    $!xkbType        ;
-# 	has CARD16  $!sequenceNumber ;
-# 	has Time    $!time           ;
-# 	has CARD8   $!deviceID       ;
-# 	has KeyCode $!keycode        ;
-# 	has BOOL    $!press          ;
-# 	has BOOL    $!keyEventFollows;
-# 	has CARD8   $!mods           ;
-# 	has CARD8   $!group          ;
-# 	has CARD8   $!message        ;
-# 	has CARD16  $!pad1           ;
-# 	has CARD32  $!pad2           ;
-# 	has CARD32  $!pad3           ;
-# }
-#
-# class xkbActionWireDesc is repr<CStruct> is export {
-# 	has CARD8 $!type;
-# 	has CARD8 $!data;
-# }
-#
-# class xkbAnyDoodadWireDesc is repr<CStruct> is export {
-# 	has Atom   $!name    ;
-# 	has CARD8  $!type    ;
-# 	has CARD8  $!priority;
-# 	has INT16  $!top     ;
-# 	has INT16  $!left    ;
-# 	has INT16  $!angle   ;
-# 	has CARD32 $!pad2    ;
-# 	has CARD32 $!pad3    ;
-# }
-#
-# class xkbAnyEvent is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has BYTE   $!xkbType       ;
-# 	has CARD16 $!sequenceNumber;
-# 	has Time   $!time          ;
-# 	has CARD8  $!deviceID      ;
-# 	has CARD8  $!pad1          ;
-# 	has CARD16 $!pad2          ;
-# 	has CARD32 $!pad3          ;
-# 	has CARD32 $!pad4          ;
-# 	has CARD32 $!pad5          ;
-# 	has CARD32 $!pad6          ;
-# 	has CARD32 $!pad7          ;
-# }
-#
-# class xkbBehaviorWireDesc is repr<CStruct> is export {
-# 	has CARD8 $!key ;
-# 	has CARD8 $!type;
-# 	has CARD8 $!data;
-# 	has CARD8 $!pad ;
-# }
-#
-# class xkbBell is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD16 $!bellClass ;
-# 	has CARD16 $!bellID    ;
-# 	has INT8   $!percent   ;
-# 	has BOOL   $!forceSound;
-# 	has BOOL   $!eventOnly ;
-# 	has CARD8  $!pad1      ;
-# 	has INT16  $!pitch     ;
-# 	has INT16  $!duration  ;
-# 	has CARD16 $!pad2      ;
-# 	has Atom   $!name      ;
-# 	has Window $!window    ;
-# }
-#
-# class xkbBellNotify is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has BYTE   $!xkbType       ;
-# 	has CARD16 $!sequenceNumber;
-# 	has Time   $!time          ;
-# 	has CARD8  $!deviceID      ;
-# 	has CARD8  $!bellClass     ;
-# 	has CARD8  $!bellID        ;
-# 	has CARD8  $!percent       ;
-# 	has CARD16 $!pitch         ;
-# 	has CARD16 $!duration      ;
-# 	has Atom   $!name          ;
-# 	has Window $!window        ;
-# 	has BOOL   $!eventOnly     ;
-# 	has CARD8  $!pad1          ;
-# 	has CARD16 $!pad2          ;
-# 	has CARD32 $!pad3          ;
-# }
-#
-# class xkbCompatMapNotify is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has BYTE   $!xkbType       ;
-# 	has CARD16 $!sequenceNumber;
-# 	has Time   $!time          ;
-# 	has CARD8  $!deviceID      ;
-# 	has CARD8  $!changedGroups ;
-# 	has CARD16 $!firstSI       ;
-# 	has CARD16 $!nSI           ;
-# 	has CARD16 $!nTotalSI      ;
-# 	has CARD32 $!pad1          ;
-# 	has CARD32 $!pad2          ;
-# 	has CARD32 $!pad3          ;
-# 	has CARD32 $!pad4          ;
-# }
-#
-# class xkbControlsNotify is repr<CStruct> is export {
-# 	has BYTE    $!type                 ;
-# 	has BYTE    $!xkbType              ;
-# 	has CARD16  $!sequenceNumber       ;
-# 	has Time    $!time                 ;
-# 	has CARD8   $!deviceID             ;
-# 	has CARD8   $!numGroups            ;
-# 	has CARD16  $!pad1                 ;
-# 	has CARD32  $!changedControls      ;
-# 	has CARD32  $!enabledControls      ;
-# 	has CARD32  $!enabledControlChanges;
-# 	has KeyCode $!keycode              ;
-# 	has CARD8   $!eventType            ;
-# 	has CARD8   $!requestMajor         ;
-# 	has CARD8   $!requestMinor         ;
-# 	has CARD32  $!pad2                 ;
-# }
-#
-# class xkbDeviceLedsWireDesc is repr<CStruct> is export {
-# 	has CARD16 $!ledClass      ;
-# 	has CARD16 $!ledID         ;
-# 	has CARD32 $!namesPresent  ;
-# 	has CARD32 $!mapsPresent   ;
-# 	has CARD32 $!physIndicators;
-# 	has CARD32 $!state         ;
-# }
-#
-# class xkbExtensionDeviceNotify is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has BYTE   $!xkbType       ;
-# 	has CARD16 $!sequenceNumber;
-# 	has Time   $!time          ;
-# 	has CARD8  $!deviceID      ;
-# 	has CARD8  $!pad1          ;
-# 	has CARD16 $!reason        ;
-# 	has CARD16 $!ledClass      ;
-# 	has CARD16 $!ledID         ;
-# 	has CARD32 $!ledsDefined   ;
-# 	has CARD32 $!ledState      ;
-# 	has CARD8  $!firstBtn      ;
-# 	has CARD8  $!nBtns         ;
-# 	has CARD16 $!supported     ;
-# 	has CARD16 $!unsupported   ;
-# 	has CARD16 $!pad3          ;
-# }
-#
-# class xkbGetCompatMap is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD8  $!groups    ;
-# 	has BOOL   $!getAllSI  ;
-# 	has CARD16 $!firstSI   ;
-# 	has CARD16 $!nSI       ;
-# }
-#
-# class xkbGetCompatMapReply is repr<CStruct> is export {
-# 	has CARD8  $!type          ;
-# 	has CARD8  $!deviceID      ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has CARD8  $!groups        ;
-# 	has CARD8  $!pad1          ;
-# 	has CARD16 $!firstSI       ;
-# 	has CARD16 $!nSI           ;
-# 	has CARD16 $!nTotalSI      ;
-# 	has CARD32 $!pad2          ;
-# 	has CARD32 $!pad3          ;
-# 	has CARD32 $!pad4          ;
-# 	has CARD32 $!pad5          ;
-# }
-#
-# class xkbGetControls is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD16 $!pad       ;
-# }
-#
-# class xkbGetDeviceInfo is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD16 $!wanted    ;
-# 	has BOOL   $!allBtns   ;
-# 	has CARD8  $!firstBtn  ;
-# 	has CARD8  $!nBtns     ;
-# 	has CARD8  $!pad       ;
-# 	has CARD16 $!ledClass  ;
-# 	has CARD16 $!ledID     ;
-# }
-#
-# class xkbGetDeviceInfoReply is repr<CStruct> is export {
-# 	has CARD8  $!type          ;
-# 	has CARD8  $!deviceID      ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has CARD16 $!present       ;
-# 	has CARD16 $!supported     ;
-# 	has CARD16 $!unsupported   ;
-# 	has CARD16 $!nDeviceLedFBs ;
-# 	has CARD8  $!firstBtnWanted;
-# 	has CARD8  $!nBtnsWanted   ;
-# 	has CARD8  $!firstBtnRtrn  ;
-# 	has CARD8  $!nBtnsRtrn     ;
-# 	has CARD8  $!totalBtns     ;
-# 	has BOOL   $!hasOwnState   ;
-# 	has CARD16 $!dfltKbdFB     ;
-# 	has CARD16 $!dfltLedFB     ;
-# 	has CARD16 $!pad           ;
-# 	has Atom   $!devType       ;
-# }
-#
-# class xkbGetGeometry is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD16 $!pad       ;
-# 	has Atom   $!name      ;
-# }
-#
-# class xkbGetGeometryReply is repr<CStruct> is export {
-# 	has CARD8  $!type          ;
-# 	has CARD8  $!deviceID      ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has Atom   $!name          ;
-# 	has BOOL   $!found         ;
-# 	has CARD8  $!pad           ;
-# 	has CARD16 $!widthMM       ;
-# 	has CARD16 $!heightMM      ;
-# 	has CARD16 $!nProperties   ;
-# 	has CARD16 $!nColors       ;
-# 	has CARD16 $!nShapes       ;
-# 	has CARD16 $!nSections     ;
-# 	has CARD16 $!nDoodads      ;
-# 	has CARD16 $!nKeyAliases   ;
-# 	has CARD8  $!baseColorNdx  ;
-# 	has CARD8  $!labelColorNdx ;
-# }
-#
-# class xkbGetIndicatorMap is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD16 $!pad       ;
-# 	has CARD32 $!which     ;
-# }
-#
-# class xkbGetIndicatorMapReply is repr<CStruct> is export {
-# 	has CARD8  $!type          ;
-# 	has CARD8  $!deviceID      ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has CARD32 $!which         ;
-# 	has CARD32 $!realIndicators;
-# 	has CARD8  $!nIndicators   ;
-# 	has CARD8  $!pad1          ;
-# 	has CARD16 $!pad2          ;
-# 	has CARD32 $!pad3          ;
-# 	has CARD32 $!pad4          ;
-# 	has CARD32 $!pad5          ;
-# }
-#
-# class xkbGetIndicatorState is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD16 $!pad1      ;
-# }
-#
-# class xkbGetIndicatorStateReply is repr<CStruct> is export {
-# 	has CARD8  $!type          ;
-# 	has CARD8  $!deviceID      ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has CARD32 $!state         ;
-# 	has CARD32 $!pad1          ;
-# 	has CARD32 $!pad2          ;
-# 	has CARD32 $!pad3          ;
-# 	has CARD32 $!pad4          ;
-# 	has CARD32 $!pad5          ;
-# }
-#
-# class xkbGetKbdByName is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD16 $!need      ;
-# 	has CARD16 $!want      ;
-# 	has BOOL   $!load      ;
-# 	has CARD8  $!pad       ;
-# }
-#
-# class xkbGetKbdByNameReply is repr<CStruct> is export {
-# 	has CARD8   $!type          ;
-# 	has CARD8   $!deviceID      ;
-# 	has CARD16  $!sequenceNumber;
-# 	has CARD32  $!length        ;
-# 	has KeyCode $!minKeyCode    ;
-# 	has KeyCode $!maxKeyCode    ;
-# 	has BOOL    $!loaded        ;
-# 	has BOOL    $!newKeyboard   ;
-# 	has CARD16  $!found         ;
-# 	has CARD16  $!reported      ;
-# 	has CARD32  $!pad1          ;
-# 	has CARD32  $!pad2          ;
-# 	has CARD32  $!pad3          ;
-# 	has CARD32  $!pad4          ;
-# }
-#
-# class xkbGetMap is repr<CStruct> is export {
-# 	has CARD8   $!reqType         ;
-# 	has CARD8   $!xkbReqType      ;
-# 	has CARD16  $!length          ;
-# 	has CARD16  $!deviceSpec      ;
-# 	has CARD16  $!full            ;
-# 	has CARD16  $!partial         ;
-# 	has CARD8   $!firstType       ;
-# 	has CARD8   $!nTypes          ;
-# 	has KeyCode $!firstKeySym     ;
-# 	has CARD8   $!nKeySyms        ;
-# 	has KeyCode $!firstKeyAct     ;
-# 	has CARD8   $!nKeyActs        ;
-# 	has KeyCode $!firstKeyBehavior;
-# 	has CARD8   $!nKeyBehaviors   ;
-# 	has CARD16  $!virtualMods     ;
-# 	has KeyCode $!firstKeyExplicit;
-# 	has CARD8   $!nKeyExplicit    ;
-# 	has KeyCode $!firstModMapKey  ;
-# 	has CARD8   $!nModMapKeys     ;
-# 	has KeyCode $!firstVModMapKey ;
-# 	has CARD8   $!nVModMapKeys    ;
-# 	has CARD16  $!pad1            ;
-# }
-#
-# class xkbGetMapReply is repr<CStruct> is export {
-# 	has CARD8   $!type             ;
-# 	has CARD8   $!deviceID         ;
-# 	has CARD16  $!sequenceNumber   ;
-# 	has CARD32  $!length           ;
-# 	has CARD16  $!pad1             ;
-# 	has KeyCode $!minKeyCode       ;
-# 	has KeyCode $!maxKeyCode       ;
-# 	has CARD16  $!present          ;
-# 	has CARD8   $!firstType        ;
-# 	has CARD8   $!nTypes           ;
-# 	has CARD8   $!totalTypes       ;
-# 	has KeyCode $!firstKeySym      ;
-# 	has CARD16  $!totalSyms        ;
-# 	has CARD8   $!nKeySyms         ;
-# 	has KeyCode $!firstKeyAct      ;
-# 	has CARD16  $!totalActs        ;
-# 	has CARD8   $!nKeyActs         ;
-# 	has KeyCode $!firstKeyBehavior ;
-# 	has CARD8   $!nKeyBehaviors    ;
-# 	has CARD8   $!totalKeyBehaviors;
-# 	has KeyCode $!firstKeyExplicit ;
-# 	has CARD8   $!nKeyExplicit     ;
-# 	has CARD8   $!totalKeyExplicit ;
-# 	has KeyCode $!firstModMapKey   ;
-# 	has CARD8   $!nModMapKeys      ;
-# 	has CARD8   $!totalModMapKeys  ;
-# 	has KeyCode $!firstVModMapKey  ;
-# 	has CARD8   $!nVModMapKeys     ;
-# 	has CARD8   $!totalVModMapKeys ;
-# 	has CARD8   $!pad2             ;
-# 	has CARD16  $!virtualMods      ;
-# }
-#
-# class xkbGetNamedIndicator is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD16 $!ledClass  ;
-# 	has CARD16 $!ledID     ;
-# 	has CARD16 $!pad1      ;
-# 	has Atom   $!indicator ;
-# }
-#
-# class xkbGetNamedIndicatorReply is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has BYTE   $!deviceID      ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has Atom   $!indicator     ;
-# 	has BOOL   $!found         ;
-# 	has BOOL   $!on            ;
-# 	has BOOL   $!realIndicator ;
-# 	has CARD8  $!ndx           ;
-# 	has CARD8  $!flags         ;
-# 	has CARD8  $!whichGroups   ;
-# 	has CARD8  $!groups        ;
-# 	has CARD8  $!whichMods     ;
-# 	has CARD8  $!mods          ;
-# 	has CARD8  $!realMods      ;
-# 	has CARD16 $!virtualMods   ;
-# 	has CARD32 $!ctrls         ;
-# 	has BOOL   $!supported     ;
-# 	has CARD8  $!pad1          ;
-# 	has CARD16 $!pad2          ;
-# }
-#
-# class xkbGetNames is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD16 $!pad       ;
-# 	has CARD32 $!which     ;
-# }
-#
-# class xkbGetNamesReply is repr<CStruct> is export {
-# 	has BYTE    $!type          ;
-# 	has BYTE    $!deviceID      ;
-# 	has CARD16  $!sequenceNumber;
-# 	has CARD32  $!length        ;
-# 	has CARD32  $!which         ;
-# 	has KeyCode $!minKeyCode    ;
-# 	has KeyCode $!maxKeyCode    ;
-# 	has CARD8   $!nTypes        ;
-# 	has CARD8   $!groupNames    ;
-# 	has CARD16  $!virtualMods   ;
-# 	has KeyCode $!firstKey      ;
-# 	has CARD8   $!nKeys         ;
-# 	has CARD32  $!indicators    ;
-# 	has CARD8   $!nRadioGroups  ;
-# 	has CARD8   $!nKeyAliases   ;
-# 	has CARD16  $!nKTLevels     ;
-# 	has CARD32  $!pad3          ;
-# }
-#
-# class xkbGetState is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD16 $!pad       ;
-# }
-#
-# class xkbGetStateReply is repr<CStruct> is export {
-# 	has BYTE   $!type            ;
-# 	has BYTE   $!deviceID        ;
-# 	has CARD16 $!sequenceNumber  ;
-# 	has CARD32 $!length          ;
-# 	has CARD8  $!mods            ;
-# 	has CARD8  $!baseMods        ;
-# 	has CARD8  $!latchedMods     ;
-# 	has CARD8  $!lockedMods      ;
-# 	has CARD8  $!group           ;
-# 	has CARD8  $!lockedGroup     ;
-# 	has INT16  $!baseGroup       ;
-# 	has INT16  $!latchedGroup    ;
-# 	has CARD8  $!compatState     ;
-# 	has CARD8  $!grabMods        ;
-# 	has CARD8  $!compatGrabMods  ;
-# 	has CARD8  $!lookupMods      ;
-# 	has CARD8  $!compatLookupMods;
-# 	has CARD8  $!pad1            ;
-# 	has CARD16 $!ptrBtnState     ;
-# 	has CARD16 $!pad2            ;
-# 	has CARD32 $!pad3            ;
-# }
-#
-# class xkbIndicatorDoodadWireDesc is repr<CStruct> is export {
-# 	has Atom   $!name       ;
-# 	has CARD8  $!type       ;
-# 	has CARD8  $!priority   ;
-# 	has INT16  $!top        ;
-# 	has INT16  $!left       ;
-# 	has INT16  $!angle      ;
-# 	has CARD8  $!shapeNdx   ;
-# 	has CARD8  $!onColorNdx ;
-# 	has CARD8  $!offColorNdx;
-# 	has CARD8  $!pad1       ;
-# 	has CARD32 $!pad2       ;
-# }
-#
-# class xkbIndicatorMapWireDesc is repr<CStruct> is export {
-# 	has CARD8  $!flags      ;
-# 	has CARD8  $!whichGroups;
-# 	has CARD8  $!groups     ;
-# 	has CARD8  $!whichMods  ;
-# 	has CARD8  $!mods       ;
-# 	has CARD8  $!realMods   ;
-# 	has CARD16 $!virtualMods;
-# 	has CARD32 $!ctrls      ;
-# }
-#
-# class xkbIndicatorNotify is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has BYTE   $!xkbType       ;
-# 	has CARD16 $!sequenceNumber;
-# 	has Time   $!time          ;
-# 	has CARD8  $!deviceID      ;
-# 	has CARD8  $!pad1          ;
-# 	has CARD16 $!pad2          ;
-# 	has CARD32 $!state         ;
-# 	has CARD32 $!changed       ;
-# 	has CARD32 $!pad3          ;
-# 	has CARD32 $!pad4          ;
-# 	has CARD32 $!pad5          ;
-# }
-#
-# class xkbKTMapEntryWireDesc is repr<CStruct> is export {
-# 	has BOOL   $!active     ;
-# 	has CARD8  $!mask       ;
-# 	has CARD8  $!level      ;
-# 	has CARD8  $!realMods   ;
-# 	has CARD16 $!virtualMods;
-# 	has CARD16 $!pad        ;
-# }
-#
-# class xkbKTSetMapEntryWireDesc is repr<CStruct> is export {
-# 	has CARD8  $!level      ;
-# 	has CARD8  $!realMods   ;
-# 	has CARD16 $!virtualMods;
-# }
-#
-# class xkbKeyTypeWireDesc is repr<CStruct> is export {
-# 	has CARD8  $!mask       ;
-# 	has CARD8  $!realMods   ;
-# 	has CARD16 $!virtualMods;
-# 	has CARD8  $!numLevels  ;
-# 	has CARD8  $!nMapEntries;
-# 	has BOOL   $!preserve   ;
-# 	has CARD8  $!pad        ;
-# }
-#
-# class xkbLatchLockState is repr<CStruct> is export {
-# 	has CARD8  $!reqType         ;
-# 	has CARD8  $!xkbReqType      ;
-# 	has CARD16 $!length          ;
-# 	has CARD16 $!deviceSpec      ;
-# 	has CARD8  $!affectModLocks  ;
-# 	has CARD8  $!modLocks        ;
-# 	has BOOL   $!lockGroup       ;
-# 	has CARD8  $!groupLock       ;
-# 	has CARD8  $!affectModLatches;
-# 	has CARD8  $!modLatches      ;
-# 	has CARD8  $!pad             ;
-# 	has BOOL   $!latchGroup      ;
-# 	has INT16  $!groupLatch      ;
-# }
-#
-# class xkbListComponents is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD16 $!maxNames  ;
-# }
-#
-# class xkbListComponentsReply is repr<CStruct> is export {
-# 	has CARD8  $!type          ;
-# 	has CARD8  $!deviceID      ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has CARD16 $!nKeymaps      ;
-# 	has CARD16 $!nKeycodes     ;
-# 	has CARD16 $!nTypes        ;
-# 	has CARD16 $!nCompatMaps   ;
-# 	has CARD16 $!nSymbols      ;
-# 	has CARD16 $!nGeometries   ;
-# 	has CARD16 $!extra         ;
-# 	has CARD16 $!pad1          ;
-# 	has CARD32 $!pad2          ;
-# 	has CARD32 $!pad3          ;
-# }
-#
-# class xkbLogoDoodadWireDesc is repr<CStruct> is export {
-# 	has Atom   $!name    ;
-# 	has CARD8  $!type    ;
-# 	has CARD8  $!priority;
-# 	has INT16  $!top     ;
-# 	has INT16  $!left    ;
-# 	has INT16  $!angle   ;
-# 	has CARD8  $!colorNdx;
-# 	has CARD8  $!shapeNdx;
-# 	has CARD16 $!pad1    ;
-# 	has CARD32 $!pad2    ;
-# }
-#
-# class xkbMapNotify is repr<CStruct> is export {
-# 	has BYTE    $!type            ;
-# 	has BYTE    $!xkbType         ;
-# 	has CARD16  $!sequenceNumber  ;
-# 	has Time    $!time            ;
-# 	has CARD8   $!deviceID        ;
-# 	has CARD8   $!ptrBtnActions   ;
-# 	has CARD16  $!changed         ;
-# 	has KeyCode $!minKeyCode      ;
-# 	has KeyCode $!maxKeyCode      ;
-# 	has CARD8   $!firstType       ;
-# 	has CARD8   $!nTypes          ;
-# 	has KeyCode $!firstKeySym     ;
-# 	has CARD8   $!nKeySyms        ;
-# 	has KeyCode $!firstKeyAct     ;
-# 	has CARD8   $!nKeyActs        ;
-# 	has KeyCode $!firstKeyBehavior;
-# 	has CARD8   $!nKeyBehaviors   ;
-# 	has KeyCode $!firstKeyExplicit;
-# 	has CARD8   $!nKeyExplicit    ;
-# 	has KeyCode $!firstModMapKey  ;
-# 	has CARD8   $!nModMapKeys     ;
-# 	has KeyCode $!firstVModMapKey ;
-# 	has CARD8   $!nVModMapKeys    ;
-# 	has CARD16  $!virtualMods     ;
-# 	has CARD16  $!pad1            ;
-# }
-#
-# class xkbModsWireDesc is repr<CStruct> is export {
-# 	has CARD8  $!mask       ;
-# 	has CARD8  $!realMods   ;
-# 	has CARD16 $!virtualMods;
-# }
-#
-# class xkbNamesNotify is repr<CStruct> is export {
-# 	has BYTE   $!type              ;
-# 	has BYTE   $!xkbType           ;
-# 	has CARD16 $!sequenceNumber    ;
-# 	has Time   $!time              ;
-# 	has CARD8  $!deviceID          ;
-# 	has CARD8  $!pad1              ;
-# 	has CARD16 $!changed           ;
-# 	has CARD8  $!firstType         ;
-# 	has CARD8  $!nTypes            ;
-# 	has CARD8  $!firstLevelName    ;
-# 	has CARD8  $!nLevelNames       ;
-# 	has CARD8  $!pad2              ;
-# 	has CARD8  $!nRadioGroups      ;
-# 	has CARD8  $!nAliases          ;
-# 	has CARD8  $!changedGroupNames ;
-# 	has CARD16 $!changedVirtualMods;
-# 	has CARD8  $!firstKey          ;
-# 	has CARD8  $!nKeys             ;
-# 	has CARD32 $!changedIndicators ;
-# 	has CARD32 $!pad3              ;
-# }
-#
-# class xkbNewKeyboardNotify is repr<CStruct> is export {
-# 	has BYTE    $!type          ;
-# 	has BYTE    $!xkbType       ;
-# 	has CARD16  $!sequenceNumber;
-# 	has Time    $!time          ;
-# 	has CARD8   $!deviceID      ;
-# 	has CARD8   $!oldDeviceID   ;
-# 	has KeyCode $!minKeyCode    ;
-# 	has KeyCode $!maxKeyCode    ;
-# 	has KeyCode $!oldMinKeyCode ;
-# 	has KeyCode $!oldMaxKeyCode ;
-# 	has CARD8   $!requestMajor  ;
-# 	has CARD8   $!requestMinor  ;
-# 	has CARD16  $!changed       ;
-# 	has CARD8   $!detail        ;
-# 	has CARD8   $!pad1          ;
-# 	has CARD32  $!pad2          ;
-# 	has CARD32  $!pad3          ;
-# 	has CARD32  $!pad4          ;
-# }
-#
-# class xkbOutlineWireDesc is repr<CStruct> is export {
-# 	has CARD8  $!nPoints     ;
-# 	has CARD8  $!cornerRadius;
-# 	has CARD16 $!pad         ;
-# }
-#
-# class xkbOverlayRowWireDesc is repr<CStruct> is export {
-# 	has CARD8  $!rowUnder;
-# 	has CARD8  $!nKeys   ;
-# 	has CARD16 $!pad1    ;
-# }
-#
-# class xkbOverlayWireDesc is repr<CStruct> is export {
-# 	has Atom   $!name ;
-# 	has CARD8  $!nRows;
-# 	has CARD8  $!pad1 ;
-# 	has CARD16 $!pad2 ;
-# }
-#
-# class xkbPerClientFlags is repr<CStruct> is export {
-# 	has CARD8  $!reqType       ;
-# 	has CARD8  $!xkbReqType    ;
-# 	has CARD16 $!length        ;
-# 	has CARD16 $!deviceSpec    ;
-# 	has CARD16 $!pad1          ;
-# 	has CARD32 $!change        ;
-# 	has CARD32 $!value         ;
-# 	has CARD32 $!ctrlsToChange ;
-# 	has CARD32 $!autoCtrls     ;
-# 	has CARD32 $!autoCtrlValues;
-# }
-#
-# class xkbPerClientFlagsReply is repr<CStruct> is export {
-# 	has CARD8  $!type          ;
-# 	has CARD8  $!deviceID      ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has CARD32 $!supported     ;
-# 	has CARD32 $!value         ;
-# 	has CARD32 $!autoCtrls     ;
-# 	has CARD32 $!autoCtrlValues;
-# 	has CARD32 $!pad1          ;
-# 	has CARD32 $!pad2          ;
-# }
-#
-# class xkbPointWireDesc is repr<CStruct> is export {
-# 	has INT16 $!x;
-# 	has INT16 $!y;
-# }
-#
-# class xkbRowWireDesc is repr<CStruct> is export {
-# 	has INT16  $!top     ;
-# 	has INT16  $!left    ;
-# 	has CARD8  $!nKeys   ;
-# 	has BOOL   $!vertical;
-# 	has CARD16 $!pad     ;
-# }
-#
-# class xkbSectionWireDesc is repr<CStruct> is export {
-# 	has Atom   $!name     ;
-# 	has INT16  $!top      ;
-# 	has INT16  $!left     ;
-# 	has CARD16 $!width    ;
-# 	has CARD16 $!height   ;
-# 	has INT16  $!angle    ;
-# 	has CARD8  $!priority ;
-# 	has CARD8  $!nRows    ;
-# 	has CARD8  $!nDoodads ;
-# 	has CARD8  $!nOverlays;
-# 	has CARD16 $!pad      ;
-# }
-#
-# class xkbSelectEvents is repr<CStruct> is export {
-# 	has CARD8  $!reqType    ;
-# 	has CARD8  $!xkbReqType ;
-# 	has CARD16 $!length     ;
-# 	has CARD16 $!deviceSpec ;
-# 	has CARD16 $!affectWhich;
-# 	has CARD16 $!clear      ;
-# 	has CARD16 $!selectAll  ;
-# 	has CARD16 $!affectMap  ;
-# 	has CARD16 $!map        ;
-# }
-#
-# class xkbSetCompatMap is repr<CStruct> is export {
-# 	has CARD8  $!reqType         ;
-# 	has CARD8  $!xkbReqType      ;
-# 	has CARD16 $!length          ;
-# 	has CARD16 $!deviceSpec      ;
-# 	has CARD8  $!pad1            ;
-# 	has BOOL   $!recomputeActions;
-# 	has BOOL   $!truncateSI      ;
-# 	has CARD8  $!groups          ;
-# 	has CARD16 $!firstSI         ;
-# 	has CARD16 $!nSI             ;
-# 	has CARD16 $!pad2            ;
-# }
-#
-# class xkbSetDebuggingFlags is repr<CStruct> is export {
-# 	has CARD8  $!reqType    ;
-# 	has CARD8  $!xkbReqType ;
-# 	has CARD16 $!length     ;
-# 	has CARD16 $!msgLength  ;
-# 	has CARD16 $!pad        ;
-# 	has CARD32 $!affectFlags;
-# 	has CARD32 $!flags      ;
-# 	has CARD32 $!affectCtrls;
-# 	has CARD32 $!ctrls      ;
-# }
-#
-# class xkbSetDebuggingFlagsReply is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has CARD8  $!pad0          ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has CARD32 $!currentFlags  ;
-# 	has CARD32 $!currentCtrls  ;
-# 	has CARD32 $!supportedFlags;
-# 	has CARD32 $!supportedCtrls;
-# 	has CARD32 $!pad1          ;
-# 	has CARD32 $!pad2          ;
-# }
-#
-# class xkbSetDeviceInfo is repr<CStruct> is export {
-# 	has CARD8  $!reqType      ;
-# 	has CARD8  $!xkbReqType   ;
-# 	has CARD16 $!length       ;
-# 	has CARD16 $!deviceSpec   ;
-# 	has CARD8  $!firstBtn     ;
-# 	has CARD8  $!nBtns        ;
-# 	has CARD16 $!change       ;
-# 	has CARD16 $!nDeviceLedFBs;
-# }
-#
-# class xkbSetGeometry is repr<CStruct> is export {
-# 	has CARD8  $!reqType      ;
-# 	has CARD8  $!xkbReqType   ;
-# 	has CARD16 $!length       ;
-# 	has CARD16 $!deviceSpec   ;
-# 	has CARD8  $!nShapes      ;
-# 	has CARD8  $!nSections    ;
-# 	has Atom   $!name         ;
-# 	has CARD16 $!widthMM      ;
-# 	has CARD16 $!heightMM     ;
-# 	has CARD16 $!nProperties  ;
-# 	has CARD16 $!nColors      ;
-# 	has CARD16 $!nDoodads     ;
-# 	has CARD16 $!nKeyAliases  ;
-# 	has CARD8  $!baseColorNdx ;
-# 	has CARD8  $!labelColorNdx;
-# 	has CARD16 $!pad          ;
-# }
-#
-# class xkbSetIndicatorMap is repr<CStruct> is export {
-# 	has CARD8  $!reqType   ;
-# 	has CARD8  $!xkbReqType;
-# 	has CARD16 $!length    ;
-# 	has CARD16 $!deviceSpec;
-# 	has CARD16 $!pad1      ;
-# 	has CARD32 $!which     ;
-# }
-#
-# class xkbSetMap is repr<CStruct> is export {
-# 	has CARD8   $!reqType          ;
-# 	has CARD8   $!xkbReqType       ;
-# 	has CARD16  $!length           ;
-# 	has CARD16  $!deviceSpec       ;
-# 	has CARD16  $!present          ;
-# 	has CARD16  $!flags            ;
-# 	has KeyCode $!minKeyCode       ;
-# 	has KeyCode $!maxKeyCode       ;
-# 	has CARD8   $!firstType        ;
-# 	has CARD8   $!nTypes           ;
-# 	has KeyCode $!firstKeySym      ;
-# 	has CARD8   $!nKeySyms         ;
-# 	has CARD16  $!totalSyms        ;
-# 	has KeyCode $!firstKeyAct      ;
-# 	has CARD8   $!nKeyActs         ;
-# 	has CARD16  $!totalActs        ;
-# 	has KeyCode $!firstKeyBehavior ;
-# 	has CARD8   $!nKeyBehaviors    ;
-# 	has CARD8   $!totalKeyBehaviors;
-# 	has KeyCode $!firstKeyExplicit ;
-# 	has CARD8   $!nKeyExplicit     ;
-# 	has CARD8   $!totalKeyExplicit ;
-# 	has KeyCode $!firstModMapKey   ;
-# 	has CARD8   $!nModMapKeys      ;
-# 	has CARD8   $!totalModMapKeys  ;
-# 	has KeyCode $!firstVModMapKey  ;
-# 	has CARD8   $!nVModMapKeys     ;
-# 	has CARD8   $!totalVModMapKeys ;
-# 	has CARD16  $!virtualMods      ;
-# }
-#
-# class xkbSetNamedIndicator is repr<CStruct> is export {
-# 	has CARD8  $!reqType    ;
-# 	has CARD8  $!xkbReqType ;
-# 	has CARD16 $!length     ;
-# 	has CARD16 $!deviceSpec ;
-# 	has CARD16 $!ledClass   ;
-# 	has CARD16 $!ledID      ;
-# 	has CARD16 $!pad1       ;
-# 	has Atom   $!indicator  ;
-# 	has BOOL   $!setState   ;
-# 	has BOOL   $!on         ;
-# 	has BOOL   $!setMap     ;
-# 	has BOOL   $!createMap  ;
-# 	has CARD8  $!pad2       ;
-# 	has CARD8  $!flags      ;
-# 	has CARD8  $!whichGroups;
-# 	has CARD8  $!groups     ;
-# 	has CARD8  $!whichMods  ;
-# 	has CARD8  $!realMods   ;
-# 	has CARD16 $!virtualMods;
-# 	has CARD32 $!ctrls      ;
-# }
-#
-# class xkbSetNames is repr<CStruct> is export {
-# 	has CARD8   $!reqType          ;
-# 	has CARD8   $!xkbReqType       ;
-# 	has CARD16  $!length           ;
-# 	has CARD16  $!deviceSpec       ;
-# 	has CARD16  $!virtualMods      ;
-# 	has CARD32  $!which            ;
-# 	has CARD8   $!firstType        ;
-# 	has CARD8   $!nTypes           ;
-# 	has CARD8   $!firstKTLevel     ;
-# 	has CARD8   $!nKTLevels        ;
-# 	has CARD32  $!indicators       ;
-# 	has CARD8   $!groupNames       ;
-# 	has CARD8   $!nRadioGroups     ;
-# 	has KeyCode $!firstKey         ;
-# 	has CARD8   $!nKeys            ;
-# 	has CARD8   $!nKeyAliases      ;
-# 	has CARD8   $!pad1             ;
-# 	has CARD16  $!totalKTLevelNames;
-# }
-#
-# class xkbShapeDoodadWireDesc is repr<CStruct> is export {
-# 	has Atom   $!name    ;
-# 	has CARD8  $!type    ;
-# 	has CARD8  $!priority;
-# 	has INT16  $!top     ;
-# 	has INT16  $!left    ;
-# 	has INT16  $!angle   ;
-# 	has CARD8  $!colorNdx;
-# 	has CARD8  $!shapeNdx;
-# 	has CARD16 $!pad1    ;
-# 	has CARD32 $!pad2    ;
-# }
-#
-# class xkbShapeWireDesc is repr<CStruct> is export {
-# 	has Atom  $!name      ;
-# 	has CARD8 $!nOutlines ;
-# 	has CARD8 $!primaryNdx;
-# 	has CARD8 $!approxNdx ;
-# 	has CARD8 $!pad       ;
-# }
-#
-# class xkbStateNotify is repr<CStruct> is export {
-# 	has BYTE    $!type            ;
-# 	has BYTE    $!xkbType         ;
-# 	has CARD16  $!sequenceNumber  ;
-# 	has Time    $!time            ;
-# 	has CARD8   $!deviceID        ;
-# 	has CARD8   $!mods            ;
-# 	has CARD8   $!baseMods        ;
-# 	has CARD8   $!latchedMods     ;
-# 	has CARD8   $!lockedMods      ;
-# 	has CARD8   $!group           ;
-# 	has INT16   $!baseGroup       ;
-# 	has INT16   $!latchedGroup    ;
-# 	has CARD8   $!lockedGroup     ;
-# 	has CARD8   $!compatState     ;
-# 	has CARD8   $!grabMods        ;
-# 	has CARD8   $!compatGrabMods  ;
-# 	has CARD8   $!lookupMods      ;
-# 	has CARD8   $!compatLookupMods;
-# 	has CARD16  $!ptrBtnState     ;
-# 	has CARD16  $!changed         ;
-# 	has KeyCode $!keycode         ;
-# 	has CARD8   $!eventType       ;
-# 	has CARD8   $!requestMajor    ;
-# 	has CARD8   $!requestMinor    ;
-# }
-#
-# class xkbSymInterpretWireDesc is repr<CStruct> is export {
-# 	has CARD32            $!sym       ;
-# 	has CARD8             $!mods      ;
-# 	has CARD8             $!match     ;
-# 	has CARD8             $!virtualMod;
-# 	has CARD8             $!flags     ;
-# 	has xkbActionWireDesc $!act       ;
-# }
-#
-# class xkbTextDoodadWireDesc is repr<CStruct> is export {
-# 	has Atom   $!name    ;
-# 	has CARD8  $!type    ;
-# 	has CARD8  $!priority;
-# 	has INT16  $!top     ;
-# 	has INT16  $!left    ;
-# 	has INT16  $!angle   ;
-# 	has CARD16 $!width   ;
-# 	has CARD16 $!height  ;
-# 	has CARD8  $!colorNdx;
-# 	has CARD8  $!pad1    ;
-# 	has CARD16 $!pad2    ;
-# }
-#
-# class xkbUseExtension is repr<CStruct> is export {
-# 	has CARD8  $!reqType    ;
-# 	has CARD8  $!xkbReqType ;
-# 	has CARD16 $!length     ;
-# 	has CARD16 $!wantedMajor;
-# 	has CARD16 $!wantedMinor;
-# }
-#
-# class xkbUseExtensionReply is repr<CStruct> is export {
-# 	has BYTE   $!type          ;
-# 	has BOOL   $!supported     ;
-# 	has CARD16 $!sequenceNumber;
-# 	has CARD32 $!length        ;
-# 	has CARD16 $!serverMajor   ;
-# 	has CARD16 $!serverMinor   ;
-# 	has CARD32 $!pad1          ;
-# 	has CARD32 $!pad2          ;
-# 	has CARD32 $!pad3          ;
-# 	has CARD32 $!pad4          ;
-# 	has CARD32 $!pad5          ;
-# }
-#
-# class xkbVModMapWireDesc is repr<CStruct> is export {
-# 	has KeyCode $!key  ;
-# 	has CARD8   $!pad  ;
-# 	has CARD16  $!vmods;
-# }
-#
-# class xkmActionDesc is repr<CStruct> is export {
-# 	has CARD8 $!type;
-# 	has CARD8 $!data;
-# }
-#
-# class xkmAnyDoodadDesc is repr<CStruct> is export {
-# 	has CARD8  $!type    ;
-# 	has CARD8  $!priority;
-# 	has INT16  $!top     ;
-# 	has INT16  $!left    ;
-# 	has CARD16 $!pad1    ;
-# 	has CARD32 $!pad2    ;
-# 	has CARD32 $!pad3    ;
-# }
-#
-# class xkmBehaviorDesc is repr<CStruct> is export {
-# 	has CARD8  $!type;
-# 	has CARD8  $!data;
-# 	has CARD16 $!pad ;
-# }
-#
-# class xkmFileInfo is repr<CStruct> is export {
-# 	has CARD8  $!type   ;
-# 	has CARD8  $!min_kc ;
-# 	has CARD8  $!max_kc ;
-# 	has CARD8  $!num_toc;
-# 	has CARD16 $!present;
-# 	has CARD16 $!pad    ;
-# }
-#
-# class xkmGeometryDesc is repr<CStruct> is export {
-# 	has CARD16 $!width_mm       ;
-# 	has CARD16 $!height_mm      ;
-# 	has CARD8  $!base_color_ndx ;
-# 	has CARD8  $!label_color_ndx;
-# 	has CARD16 $!num_properties ;
-# 	has CARD16 $!num_colors     ;
-# 	has CARD16 $!num_shapes     ;
-# 	has CARD16 $!num_sections   ;
-# 	has CARD16 $!num_doodads    ;
-# 	has CARD16 $!num_key_aliases;
-# 	has CARD16 $!pad1           ;
-# }
-#
-# class xkmIndicatorDoodadDesc is repr<CStruct> is export {
-# 	has CARD8  $!type         ;
-# 	has CARD8  $!priority     ;
-# 	has INT16  $!top          ;
-# 	has INT16  $!left         ;
-# 	has CARD8  $!shape_ndx    ;
-# 	has CARD8  $!on_color_ndx ;
-# 	has CARD8  $!off_color_ndx;
-# 	has CARD8  $!pad1         ;
-# 	has CARD16 $!pad2         ;
-# 	has CARD32 $!pad3         ;
-# }
-#
-# class xkmIndicatorMapDesc is repr<CStruct> is export {
-# 	has CARD8  $!indicator   ;
-# 	has CARD8  $!flags       ;
-# 	has CARD8  $!which_mods  ;
-# 	has CARD8  $!real_mods   ;
-# 	has CARD16 $!vmods       ;
-# 	has CARD8  $!which_groups;
-# 	has CARD8  $!groups      ;
-# 	has CARD32 $!ctrls       ;
-# }
-#
-# class xkmKTMapEntryDesc is repr<CStruct> is export {
-# 	has CARD8  $!level      ;
-# 	has CARD8  $!realMods   ;
-# 	has CARD16 $!virtualMods;
-# }
-#
-# class xkmKeySymMapDesc is repr<CStruct> is export {
-# 	has CARD8 $!width       ;
-# 	has CARD8 $!num_groups  ;
-# 	has CARD8 $!modifier_map;
-# 	has CARD8 $!flags       ;
-# }
-#
-# class xkmKeyTypeDesc is repr<CStruct> is export {
-# 	has CARD8  $!realMods   ;
-# 	has CARD8  $!numLevels  ;
-# 	has CARD16 $!virtualMods;
-# 	has CARD8  $!nMapEntries;
-# 	has CARD8  $!nLevelNames;
-# 	has CARD8  $!preserve   ;
-# 	has CARD8  $!pad        ;
-# }
-#
-# class xkmLogoDoodadDesc is repr<CStruct> is export {
-# 	has CARD8  $!type     ;
-# 	has CARD8  $!priority ;
-# 	has INT16  $!top      ;
-# 	has INT16  $!left     ;
-# 	has INT16  $!angle    ;
-# 	has CARD8  $!color_ndx;
-# 	has CARD8  $!shape_ndx;
-# 	has CARD16 $!pad      ;
-# 	has CARD32 $!pad1     ;
-# }
-#
-# class xkmModsDesc is repr<CStruct> is export {
-# 	has CARD8  $!realMods   ;
-# 	has CARD8  $!pad        ;
-# 	has CARD16 $!virtualMods;
-# }
-#
-# class xkmOutlineDesc is repr<CStruct> is export {
-# 	has CARD8  $!num_points   ;
-# 	has CARD8  $!corner_radius;
-# 	has CARD16 $!pad          ;
-# }
-#
-# class xkmOverlayDesc is repr<CStruct> is export {
-# 	has CARD8  $!num_rows;
-# 	has CARD8  $!pad1    ;
-# 	has CARD16 $!pad2    ;
-# }
-#
-# class xkmOverlayRowDesc is repr<CStruct> is export {
-# 	has CARD8  $!row_under;
-# 	has CARD8  $!num_keys ;
-# 	has CARD16 $!pad      ;
-# }
-#
-# class xkmPointDesc is repr<CStruct> is export {
-# 	has INT16 $!x;
-# 	has INT16 $!y;
-# }
-#
-# class xkmRowDesc is repr<CStruct> is export {
-# 	has INT16  $!top     ;
-# 	has INT16  $!left    ;
-# 	has CARD8  $!num_keys;
-# 	has BOOL   $!vertical;
-# 	has CARD16 $!pad     ;
-# }
-#
-# class xkmSectionDesc is repr<CStruct> is export {
-# 	has INT16  $!top         ;
-# 	has INT16  $!left        ;
-# 	has CARD16 $!width       ;
-# 	has CARD16 $!height      ;
-# 	has INT16  $!angle       ;
-# 	has CARD8  $!priority    ;
-# 	has CARD8  $!num_rows    ;
-# 	has CARD8  $!num_doodads ;
-# 	has CARD8  $!num_overlays;
-# 	has CARD16 $!pad2        ;
-# }
-#
-# class xkmSectionInfo is repr<CStruct> is export {
-# 	has CARD16 $!type  ;
-# 	has CARD16 $!format;
-# 	has CARD16 $!size  ;
-# 	has CARD16 $!offset;
-# }
-#
-# class xkmShapeDesc is repr<CStruct> is export {
-# 	has CARD8 $!num_outlines;
-# 	has CARD8 $!primary_ndx ;
-# 	has CARD8 $!approx_ndx  ;
-# 	has CARD8 $!pad         ;
-# }
-#
-# class xkmShapeDoodadDesc is repr<CStruct> is export {
-# 	has CARD8  $!type     ;
-# 	has CARD8  $!priority ;
-# 	has INT16  $!top      ;
-# 	has INT16  $!left     ;
-# 	has INT16  $!angle    ;
-# 	has CARD8  $!color_ndx;
-# 	has CARD8  $!shape_ndx;
-# 	has CARD16 $!pad      ;
-# 	has CARD32 $!pad1     ;
-# }
-#
-# class xkmSymInterpretDesc is repr<CStruct> is export {
-# 	has CARD32 $!sym       ;
-# 	has CARD8  $!mods      ;
-# 	has CARD8  $!match     ;
-# 	has CARD8  $!virtualMod;
-# 	has CARD8  $!flags     ;
-# 	has CARD8  $!actionType;
-# 	has CARD8  $!actionData;
-# }
-#
-# class xkmTextDoodadDesc is repr<CStruct> is export {
-# 	has CARD8  $!type     ;
-# 	has CARD8  $!priority ;
-# 	has INT16  $!top      ;
-# 	has INT16  $!left     ;
-# 	has INT16  $!angle    ;
-# 	has CARD16 $!width    ;
-# 	has CARD16 $!height   ;
-# 	has CARD8  $!color_ndx;
-# 	has CARD8  $!pad1     ;
-# 	has CARD16 $!pad2     ;
-# }
-#
-# class xkmVModMapDesc is repr<CStruct> is export {
-# 	has CARD8  $!key  ;
-# 	has CARD8  $!pad  ;
-# 	has CARD16 $!vmods;
-# }
-#
-# class xthread_waiter is repr<CStruct> is export {
-# 	has HANDLE          $!sem ;
-# 	has _xthread_waiter $!next;
-# }
-#
-# class xwd_file_header is repr<CStruct> is export {
-# 	has CARD32 $!header_size     ;
-# 	has CARD32 $!file_version    ;
-# 	has CARD32 $!pixmap_format   ;
-# 	has CARD32 $!pixmap_depth    ;
-# 	has CARD32 $!pixmap_width    ;
-# 	has CARD32 $!pixmap_height   ;
-# 	has CARD32 $!xoffset         ;
-# 	has CARD32 $!byte_order      ;
-# 	has CARD32 $!bitmap_unit     ;
-# 	has CARD32 $!bitmap_bit_order;
-# 	has CARD32 $!bitmap_pad      ;
-# 	has CARD32 $!bits_per_pixel  ;
-# 	has CARD32 $!bytes_per_line  ;
-# 	has CARD32 $!visual_class    ;
-# 	has CARD32 $!red_mask        ;
-# 	has CARD32 $!green_mask      ;
-# 	has CARD32 $!blue_mask       ;
-# 	has CARD32 $!bits_per_rgb    ;
-# 	has CARD32 $!colormap_entries;
-# 	has CARD32 $!ncolors         ;
-# 	has CARD32 $!window_width    ;
-# 	has CARD32 $!window_height   ;
-# 	has CARD32 $!window_x        ;
-# 	has CARD32 $!window_y        ;
-# 	has CARD32 $!window_bdrwidth ;
-# }
+class iovec is repr<CStruct> is export {
+	has caddr_t  $!iov_base;
+	has realInt  $!iov_len ;
+}
+
+class tmask is repr<CStruct> is export {
+	has Mask    $!mask;
+	has Pointer $!dev ;
+}
+
+class xArc is repr<CStruct> is export {
+	has INT16  $!x     ;
+	has INT16  $!y     ;
+	has CARD16 $!width ;
+	has CARD16 $!height;
+	has INT16  $!angle1;
+	has INT16  $!angle2;
+}
+
+class xButtonInfo is repr<CStruct> is export {
+	has CARD8  $!c_class    ;
+	has CARD8  $!class      ;
+	has CARD8  $!length     ;
+	has CARD16 $!num_buttons;
+}
+
+class xDeviceInfo is repr<CStruct> is export {
+	has CARD32 $!type       ;
+	has CARD8  $!id         ;
+	has CARD8  $!num_classes;
+	has CARD8  $!use        ;
+	has CARD8  $!attached   ;
+}
+
+class xExtendedVisualInfo is repr<CStruct> is export {
+	has VisualID $!core_visual_id        ;
+	has INT8     $!screen                ;
+	has INT8     $!level                 ;
+	has CARD8    $!transparency_type     ;
+	has CARD8    $!pad0                  ;
+	has CARD32   $!transparency_value    ;
+	has CARD8    $!min_hw_colormaps      ;
+	has CARD8    $!max_hw_colormaps      ;
+	has CARD16   $!num_colormap_conflicts;
+}
+
+class xKeyInfo is repr<CStruct> is export {
+	has CARD8   $!c_class    ;
+	has CARD8   $!class      ;
+	has CARD8   $!length     ;
+	has KeyCode $!min_keycode;
+	has KeyCode $!max_keycode;
+	has CARD16  $!num_keys   ;
+	has CARD8   $!pad1       ;
+	has CARD8   $!pad2       ;
+}
+
+class xMbufBufferInfo is repr<CStruct> is export {
+	has CARD32 $!visualID  ;
+	has CARD16 $!maxBuffers;
+	has CARD8  $!depth     ;
+	has CARD8  $!unused    ;
+}
+
+
+class xQueryFontReply is repr<CStruct> is export {
+	has BYTE      $!type          ;
+	has BYTE      $!pad1          ;
+	has CARD16    $!sequenceNumber;
+	has CARD32    $!length        ;
+	has xCharInfo $!minBounds     ;
+	has CARD32    $!walign1       ;
+	has xCharInfo $!maxBounds     ;
+	has CARD32    $!walign2       ;
+	has CARD16    $!minCharOrByte2;
+	has CARD16    $!maxCharOrByte2;
+	has CARD16    $!defaultChar   ;
+	has CARD16    $!nFontProps    ;
+	has CARD8     $!drawDirection ;
+	has CARD8     $!minByte1      ;
+	has CARD8     $!maxByte1      ;
+	has BOOL      $!allCharsExist ;
+	has INT16     $!fontAscent    ;
+	has INT16     $!fontDescent   ;
+	has CARD32    $!nCharInfos    ;
+}
+
+class xRRModeInfo is repr<CStruct> is export {
+	has RRMode      $!id        ;
+	has CARD16      $!width     ;
+	has CARD16      $!height    ;
+	has CARD32      $!dotClock  ;
+	has CARD16      $!hSyncStart;
+	has CARD16      $!hSyncEnd  ;
+	has CARD16      $!hTotal    ;
+	has CARD16      $!hSkew     ;
+	has CARD16      $!vSyncStart;
+	has CARD16      $!vSyncEnd  ;
+	has CARD16      $!vTotal    ;
+	has CARD16      $!nameLength;
+	has RRModeFlags $!modeFlags ;
+}
+
+class xReq is repr<CStruct> is export {
+	has CARD8  $!reqType;
+	has CARD8  $!data   ;
+	has CARD16 $!length ;
+}
+
+class xSecurityAuthorizationRevokedEvent is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has BYTE   $!detail        ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!authId        ;
+	has CARD32 $!pad0          ;
+	has CARD32 $!pad1          ;
+	has CARD32 $!pad2          ;
+	has CARD32 $!pad3          ;
+	has CARD32 $!pad4          ;
+	has CARD32 $!pad5          ;
+}
+
+class xSegment is repr<CStruct> is export {
+	has INT16 $!x1;
+	has INT16 $!y1;
+	has INT16 $!x2;
+	has INT16 $!y2;
+}
+
+class xSyncAlarmNotifyEvent is repr<CStruct> is export {
+	has BYTE       $!type            ;
+	has BYTE       $!kind            ;
+	has CARD16     $!sequenceNumber  ;
+	has XSyncAlarm $!alarm           ;
+	has INT32      $!counter_value_hi;
+	has CARD32     $!counter_value_lo;
+	has INT32      $!alarm_value_hi  ;
+	has CARD32     $!alarm_value_lo  ;
+	has CARD32     $!time            ;
+	has CARD8      $!state           ;
+	has BYTE       $!pad0            ;
+	has BYTE       $!pad1            ;
+	has BYTE       $!pad2            ;
+}
+
+class xSyncAwaitFenceReq is repr<CStruct> is export {
+	has CARD8  $!reqType    ;
+	has CARD8  $!syncReqType;
+	has CARD16 $!length     ;
+}
+
+class xSyncAwaitReq is repr<CStruct> is export {
+	has CARD8  $!reqType    ;
+	has CARD8  $!syncReqType;
+	has CARD16 $!length     ;
+}
+
+class xSyncChangeAlarmReq is repr<CStruct> is export {
+	has CARD8      $!reqType    ;
+	has CARD8      $!syncReqType;
+	has CARD16     $!length     ;
+	has XSyncAlarm $!alarm      ;
+	has CARD32     $!valueMask  ;
+}
+
+class xSyncChangeCounterReq is repr<CStruct> is export {
+	has CARD8        $!reqType    ;
+	has CARD8        $!syncReqType;
+	has CARD16       $!length     ;
+	has XSyncCounter $!cid        ;
+	has INT32        $!value_hi   ;
+	has CARD32       $!value_lo   ;
+}
+
+class xSyncCounterNotifyEvent is repr<CStruct> is export {
+	has BYTE         $!type            ;
+	has BYTE         $!kind            ;
+	has CARD16       $!sequenceNumber  ;
+	has XSyncCounter $!counter         ;
+	has INT32        $!wait_value_hi   ;
+	has CARD32       $!wait_value_lo   ;
+	has INT32        $!counter_value_hi;
+	has CARD32       $!counter_value_lo;
+	has CARD32       $!time            ;
+	has CARD16       $!count           ;
+	has BOOL         $!destroyed       ;
+	has BYTE         $!pad0            ;
+}
+
+class xSyncCreateAlarmReq is repr<CStruct> is export {
+	has CARD8      $!reqType    ;
+	has CARD8      $!syncReqType;
+	has CARD16     $!length     ;
+	has XSyncAlarm $!id         ;
+	has CARD32     $!valueMask  ;
+}
+
+class xSyncCreateCounterReq is repr<CStruct> is export {
+	has CARD8        $!reqType         ;
+	has CARD8        $!syncReqType     ;
+	has CARD16       $!length          ;
+	has XSyncCounter $!cid             ;
+	has INT32        $!initial_value_hi;
+	has CARD32       $!initial_value_lo;
+}
+
+class xSyncCreateFenceReq is repr<CStruct> is export {
+	has CARD8      $!reqType            ;
+	has CARD8      $!syncReqType        ;
+	has CARD16     $!length             ;
+	has Drawable   $!d                  ;
+	has XSyncFence $!fid                ;
+	has BOOL       $!initially_triggered;
+	has CARD8      $!pad0               ;
+	has CARD16     $!pad1               ;
+}
+
+class xSyncDestroyAlarmReq is repr<CStruct> is export {
+	has CARD8      $!reqType    ;
+	has CARD8      $!syncReqType;
+	has CARD16     $!length     ;
+	has XSyncAlarm $!alarm      ;
+}
+
+class xSyncDestroyCounterReq is repr<CStruct> is export {
+	has CARD8        $!reqType    ;
+	has CARD8        $!syncReqType;
+	has CARD16       $!length     ;
+	has XSyncCounter $!counter    ;
+}
+
+class xSyncDestroyFenceReq is repr<CStruct> is export {
+	has CARD8      $!reqType    ;
+	has CARD8      $!syncReqType;
+	has CARD16     $!length     ;
+	has XSyncFence $!fid        ;
+}
+
+class xSyncGetPriority is repr<CStruct> is export {
+	has CARD8  $!reqType    ;
+	has CARD8  $!syncReqType;
+	has CARD16 $!length     ;
+	has CARD32 $!id         ;
+}
+
+class xSyncInitialize is repr<CStruct> is export {
+	has CARD8  $!reqType     ;
+	has CARD8  $!syncReqType ;
+	has CARD16 $!length      ;
+	has CARD8  $!majorVersion;
+	has CARD8  $!minorVersion;
+	has CARD16 $!pad         ;
+}
+
+class xSyncListSystemCounters is repr<CStruct> is export {
+	has CARD8  $!reqType    ;
+	has CARD8  $!syncReqType;
+	has CARD16 $!length     ;
+}
+
+class xSyncQueryAlarmReq is repr<CStruct> is export {
+	has CARD8      $!reqType    ;
+	has CARD8      $!syncReqType;
+	has CARD16     $!length     ;
+	has XSyncAlarm $!alarm      ;
+}
+
+class xSyncQueryCounterReq is repr<CStruct> is export {
+	has CARD8        $!reqType    ;
+	has CARD8        $!syncReqType;
+	has CARD16       $!length     ;
+	has XSyncCounter $!counter    ;
+}
+
+class xSyncQueryFenceReq is repr<CStruct> is export {
+	has CARD8      $!reqType    ;
+	has CARD8      $!syncReqType;
+	has CARD16     $!length     ;
+	has XSyncFence $!fid        ;
+}
+
+class xSyncResetFenceReq is repr<CStruct> is export {
+	has CARD8      $!reqType    ;
+	has CARD8      $!syncReqType;
+	has CARD16     $!length     ;
+	has XSyncFence $!fid        ;
+}
+
+class xSyncSetCounterReq is repr<CStruct> is export {
+	has CARD8        $!reqType    ;
+	has CARD8        $!syncReqType;
+	has CARD16       $!length     ;
+	has XSyncCounter $!cid        ;
+	has INT32        $!value_hi   ;
+	has CARD32       $!value_lo   ;
+}
+
+class xSyncSetPriority is repr<CStruct> is export {
+	has CARD8  $!reqType    ;
+	has CARD8  $!syncReqType;
+	has CARD16 $!length     ;
+	has CARD32 $!id         ;
+	has INT32  $!priority   ;
+}
+
+class xSyncTriggerFenceReq is repr<CStruct> is export {
+	has CARD8      $!reqType    ;
+	has CARD8      $!syncReqType;
+	has CARD16     $!length     ;
+	has XSyncFence $!fid        ;
+}
+
+class xSyncWaitCondition is repr<CStruct> is export {
+	has XSyncCounter $!counter           ;
+	has CARD32       $!value_type        ;
+	has INT32        $!wait_value_hi     ;
+	has CARD32       $!wait_value_lo     ;
+	has CARD32       $!test_type         ;
+	has INT32        $!event_threshold_hi;
+	has CARD32       $!event_threshold_lo;
+}
+
+class xValuatorInfo is repr<CStruct> is export {
+	has CARD8  $!c_class           ;
+	has CARD8  $!class             ;
+	has CARD8  $!length            ;
+	has CARD8  $!num_axes          ;
+	has CARD8  $!mode              ;
+	has CARD32 $!motion_buffer_size;
+}
+
+class xauth is repr<CStruct> is export {
+	has short $!family        ;
+	has short $!address_length;
+	has Str   $!address       ;
+	has short $!number_length ;
+	has Str   $!number        ;
+	has short $!name_length   ;
+	has Str   $!name          ;
+	has short $!data_length   ;
+	has Str   $!data          ;
+}
+
+class xkbAccessXNotify is repr<CStruct> is export {
+	has BYTE    $!type          ;
+	has BYTE    $!xkbType       ;
+	has CARD16  $!sequenceNumber;
+	has Time    $!time          ;
+	has CARD8   $!deviceID      ;
+	has KeyCode $!keycode       ;
+	has CARD16  $!detail        ;
+	has CARD16  $!slowKeysDelay ;
+	has CARD16  $!debounceDelay ;
+	has CARD32  $!pad1          ;
+	has CARD32  $!pad2          ;
+	has CARD32  $!pad3          ;
+	has CARD32  $!pad4          ;
+}
+
+class xkbActionMessage is repr<CStruct> is export {
+	has BYTE    $!type           ;
+	has BYTE    $!xkbType        ;
+	has CARD16  $!sequenceNumber ;
+	has Time    $!time           ;
+	has CARD8   $!deviceID       ;
+	has KeyCode $!keycode        ;
+	has BOOL    $!press          ;
+	has BOOL    $!keyEventFollows;
+	has CARD8   $!mods           ;
+	has CARD8   $!group          ;
+	has CARD8   $!message        ;
+	has CARD16  $!pad1           ;
+	has CARD32  $!pad2           ;
+	has CARD32  $!pad3           ;
+}
+
+class xkbActionWireDesc is repr<CStruct> is export {
+	has CARD8 $!type;
+	has CARD8 $!data;
+}
+
+class xkbAnyDoodadWireDesc is repr<CStruct> is export {
+	has Atom   $!name    ;
+	has CARD8  $!type    ;
+	has CARD8  $!priority;
+	has INT16  $!top     ;
+	has INT16  $!left    ;
+	has INT16  $!angle   ;
+	has CARD32 $!pad2    ;
+	has CARD32 $!pad3    ;
+}
+
+class xkbAnyEvent is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has BYTE   $!xkbType       ;
+	has CARD16 $!sequenceNumber;
+	has Time   $!time          ;
+	has CARD8  $!deviceID      ;
+	has CARD8  $!pad1          ;
+	has CARD16 $!pad2          ;
+	has CARD32 $!pad3          ;
+	has CARD32 $!pad4          ;
+	has CARD32 $!pad5          ;
+	has CARD32 $!pad6          ;
+	has CARD32 $!pad7          ;
+}
+
+class xkbBehaviorWireDesc is repr<CStruct> is export {
+	has CARD8 $!key ;
+	has CARD8 $!type;
+	has CARD8 $!data;
+	has CARD8 $!pad ;
+}
+
+class xkbBell is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD16 $!bellClass ;
+	has CARD16 $!bellID    ;
+	has INT8   $!percent   ;
+	has BOOL   $!forceSound;
+	has BOOL   $!eventOnly ;
+	has CARD8  $!pad1      ;
+	has INT16  $!pitch     ;
+	has INT16  $!duration  ;
+	has CARD16 $!pad2      ;
+	has Atom   $!name      ;
+	has Window $!window    ;
+}
+
+class xkbBellNotify is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has BYTE   $!xkbType       ;
+	has CARD16 $!sequenceNumber;
+	has Time   $!time          ;
+	has CARD8  $!deviceID      ;
+	has CARD8  $!bellClass     ;
+	has CARD8  $!bellID        ;
+	has CARD8  $!percent       ;
+	has CARD16 $!pitch         ;
+	has CARD16 $!duration      ;
+	has Atom   $!name          ;
+	has Window $!window        ;
+	has BOOL   $!eventOnly     ;
+	has CARD8  $!pad1          ;
+	has CARD16 $!pad2          ;
+	has CARD32 $!pad3          ;
+}
+
+class xkbCompatMapNotify is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has BYTE   $!xkbType       ;
+	has CARD16 $!sequenceNumber;
+	has Time   $!time          ;
+	has CARD8  $!deviceID      ;
+	has CARD8  $!changedGroups ;
+	has CARD16 $!firstSI       ;
+	has CARD16 $!nSI           ;
+	has CARD16 $!nTotalSI      ;
+	has CARD32 $!pad1          ;
+	has CARD32 $!pad2          ;
+	has CARD32 $!pad3          ;
+	has CARD32 $!pad4          ;
+}
+
+class xkbControlsNotify is repr<CStruct> is export {
+	has BYTE    $!type                 ;
+	has BYTE    $!xkbType              ;
+	has CARD16  $!sequenceNumber       ;
+	has Time    $!time                 ;
+	has CARD8   $!deviceID             ;
+	has CARD8   $!numGroups            ;
+	has CARD16  $!pad1                 ;
+	has CARD32  $!changedControls      ;
+	has CARD32  $!enabledControls      ;
+	has CARD32  $!enabledControlChanges;
+	has KeyCode $!keycode              ;
+	has CARD8   $!eventType            ;
+	has CARD8   $!requestMajor         ;
+	has CARD8   $!requestMinor         ;
+	has CARD32  $!pad2                 ;
+}
+
+class xkbDeviceLedsWireDesc is repr<CStruct> is export {
+	has CARD16 $!ledClass      ;
+	has CARD16 $!ledID         ;
+	has CARD32 $!namesPresent  ;
+	has CARD32 $!mapsPresent   ;
+	has CARD32 $!physIndicators;
+	has CARD32 $!state         ;
+}
+
+class xkbExtensionDeviceNotify is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has BYTE   $!xkbType       ;
+	has CARD16 $!sequenceNumber;
+	has Time   $!time          ;
+	has CARD8  $!deviceID      ;
+	has CARD8  $!pad1          ;
+	has CARD16 $!reason        ;
+	has CARD16 $!ledClass      ;
+	has CARD16 $!ledID         ;
+	has CARD32 $!ledsDefined   ;
+	has CARD32 $!ledState      ;
+	has CARD8  $!firstBtn      ;
+	has CARD8  $!nBtns         ;
+	has CARD16 $!supported     ;
+	has CARD16 $!unsupported   ;
+	has CARD16 $!pad3          ;
+}
+
+class xkbGetCompatMap is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD8  $!groups    ;
+	has BOOL   $!getAllSI  ;
+	has CARD16 $!firstSI   ;
+	has CARD16 $!nSI       ;
+}
+
+class xkbGetCompatMapReply is repr<CStruct> is export {
+	has CARD8  $!type          ;
+	has CARD8  $!deviceID      ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has CARD8  $!groups        ;
+	has CARD8  $!pad1          ;
+	has CARD16 $!firstSI       ;
+	has CARD16 $!nSI           ;
+	has CARD16 $!nTotalSI      ;
+	has CARD32 $!pad2          ;
+	has CARD32 $!pad3          ;
+	has CARD32 $!pad4          ;
+	has CARD32 $!pad5          ;
+}
+
+class xkbGetControls is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD16 $!pad       ;
+}
+
+class xkbGetDeviceInfo is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD16 $!wanted    ;
+	has BOOL   $!allBtns   ;
+	has CARD8  $!firstBtn  ;
+	has CARD8  $!nBtns     ;
+	has CARD8  $!pad       ;
+	has CARD16 $!ledClass  ;
+	has CARD16 $!ledID     ;
+}
+
+class xkbGetDeviceInfoReply is repr<CStruct> is export {
+	has CARD8  $!type          ;
+	has CARD8  $!deviceID      ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has CARD16 $!present       ;
+	has CARD16 $!supported     ;
+	has CARD16 $!unsupported   ;
+	has CARD16 $!nDeviceLedFBs ;
+	has CARD8  $!firstBtnWanted;
+	has CARD8  $!nBtnsWanted   ;
+	has CARD8  $!firstBtnRtrn  ;
+	has CARD8  $!nBtnsRtrn     ;
+	has CARD8  $!totalBtns     ;
+	has BOOL   $!hasOwnState   ;
+	has CARD16 $!dfltKbdFB     ;
+	has CARD16 $!dfltLedFB     ;
+	has CARD16 $!pad           ;
+	has Atom   $!devType       ;
+}
+
+class xkbGetGeometry is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD16 $!pad       ;
+	has Atom   $!name      ;
+}
+
+class xkbGetGeometryReply is repr<CStruct> is export {
+	has CARD8  $!type          ;
+	has CARD8  $!deviceID      ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has Atom   $!name          ;
+	has BOOL   $!found         ;
+	has CARD8  $!pad           ;
+	has CARD16 $!widthMM       ;
+	has CARD16 $!heightMM      ;
+	has CARD16 $!nProperties   ;
+	has CARD16 $!nColors       ;
+	has CARD16 $!nShapes       ;
+	has CARD16 $!nSections     ;
+	has CARD16 $!nDoodads      ;
+	has CARD16 $!nKeyAliases   ;
+	has CARD8  $!baseColorNdx  ;
+	has CARD8  $!labelColorNdx ;
+}
+
+class xkbGetIndicatorMap is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD16 $!pad       ;
+	has CARD32 $!which     ;
+}
+
+class xkbGetIndicatorMapReply is repr<CStruct> is export {
+	has CARD8  $!type          ;
+	has CARD8  $!deviceID      ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has CARD32 $!which         ;
+	has CARD32 $!realIndicators;
+	has CARD8  $!nIndicators   ;
+	has CARD8  $!pad1          ;
+	has CARD16 $!pad2          ;
+	has CARD32 $!pad3          ;
+	has CARD32 $!pad4          ;
+	has CARD32 $!pad5          ;
+}
+
+class xkbGetIndicatorState is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD16 $!pad1      ;
+}
+
+class xkbGetIndicatorStateReply is repr<CStruct> is export {
+	has CARD8  $!type          ;
+	has CARD8  $!deviceID      ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has CARD32 $!state         ;
+	has CARD32 $!pad1          ;
+	has CARD32 $!pad2          ;
+	has CARD32 $!pad3          ;
+	has CARD32 $!pad4          ;
+	has CARD32 $!pad5          ;
+}
+
+class xkbGetKbdByName is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD16 $!need      ;
+	has CARD16 $!want      ;
+	has BOOL   $!load      ;
+	has CARD8  $!pad       ;
+}
+
+class xkbGetKbdByNameReply is repr<CStruct> is export {
+	has CARD8   $!type          ;
+	has CARD8   $!deviceID      ;
+	has CARD16  $!sequenceNumber;
+	has CARD32  $!length        ;
+	has KeyCode $!minKeyCode    ;
+	has KeyCode $!maxKeyCode    ;
+	has BOOL    $!loaded        ;
+	has BOOL    $!newKeyboard   ;
+	has CARD16  $!found         ;
+	has CARD16  $!reported      ;
+	has CARD32  $!pad1          ;
+	has CARD32  $!pad2          ;
+	has CARD32  $!pad3          ;
+	has CARD32  $!pad4          ;
+}
+
+class xkbGetMap is repr<CStruct> is export {
+	has CARD8   $!reqType         ;
+	has CARD8   $!xkbReqType      ;
+	has CARD16  $!length          ;
+	has CARD16  $!deviceSpec      ;
+	has CARD16  $!full            ;
+	has CARD16  $!partial         ;
+	has CARD8   $!firstType       ;
+	has CARD8   $!nTypes          ;
+	has KeyCode $!firstKeySym     ;
+	has CARD8   $!nKeySyms        ;
+	has KeyCode $!firstKeyAct     ;
+	has CARD8   $!nKeyActs        ;
+	has KeyCode $!firstKeyBehavior;
+	has CARD8   $!nKeyBehaviors   ;
+	has CARD16  $!virtualMods     ;
+	has KeyCode $!firstKeyExplicit;
+	has CARD8   $!nKeyExplicit    ;
+	has KeyCode $!firstModMapKey  ;
+	has CARD8   $!nModMapKeys     ;
+	has KeyCode $!firstVModMapKey ;
+	has CARD8   $!nVModMapKeys    ;
+	has CARD16  $!pad1            ;
+}
+
+class xkbGetMapReply is repr<CStruct> is export {
+	has CARD8   $!type             ;
+	has CARD8   $!deviceID         ;
+	has CARD16  $!sequenceNumber   ;
+	has CARD32  $!length           ;
+	has CARD16  $!pad1             ;
+	has KeyCode $!minKeyCode       ;
+	has KeyCode $!maxKeyCode       ;
+	has CARD16  $!present          ;
+	has CARD8   $!firstType        ;
+	has CARD8   $!nTypes           ;
+	has CARD8   $!totalTypes       ;
+	has KeyCode $!firstKeySym      ;
+	has CARD16  $!totalSyms        ;
+	has CARD8   $!nKeySyms         ;
+	has KeyCode $!firstKeyAct      ;
+	has CARD16  $!totalActs        ;
+	has CARD8   $!nKeyActs         ;
+	has KeyCode $!firstKeyBehavior ;
+	has CARD8   $!nKeyBehaviors    ;
+	has CARD8   $!totalKeyBehaviors;
+	has KeyCode $!firstKeyExplicit ;
+	has CARD8   $!nKeyExplicit     ;
+	has CARD8   $!totalKeyExplicit ;
+	has KeyCode $!firstModMapKey   ;
+	has CARD8   $!nModMapKeys      ;
+	has CARD8   $!totalModMapKeys  ;
+	has KeyCode $!firstVModMapKey  ;
+	has CARD8   $!nVModMapKeys     ;
+	has CARD8   $!totalVModMapKeys ;
+	has CARD8   $!pad2             ;
+	has CARD16  $!virtualMods      ;
+}
+
+class xkbGetNamedIndicator is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD16 $!ledClass  ;
+	has CARD16 $!ledID     ;
+	has CARD16 $!pad1      ;
+	has Atom   $!indicator ;
+}
+
+class xkbGetNamedIndicatorReply is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has BYTE   $!deviceID      ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has Atom   $!indicator     ;
+	has BOOL   $!found         ;
+	has BOOL   $!on            ;
+	has BOOL   $!realIndicator ;
+	has CARD8  $!ndx           ;
+	has CARD8  $!flags         ;
+	has CARD8  $!whichGroups   ;
+	has CARD8  $!groups        ;
+	has CARD8  $!whichMods     ;
+	has CARD8  $!mods          ;
+	has CARD8  $!realMods      ;
+	has CARD16 $!virtualMods   ;
+	has CARD32 $!ctrls         ;
+	has BOOL   $!supported     ;
+	has CARD8  $!pad1          ;
+	has CARD16 $!pad2          ;
+}
+
+class xkbGetNames is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD16 $!pad       ;
+	has CARD32 $!which     ;
+}
+
+class xkbGetNamesReply is repr<CStruct> is export {
+	has BYTE    $!type          ;
+	has BYTE    $!deviceID      ;
+	has CARD16  $!sequenceNumber;
+	has CARD32  $!length        ;
+	has CARD32  $!which         ;
+	has KeyCode $!minKeyCode    ;
+	has KeyCode $!maxKeyCode    ;
+	has CARD8   $!nTypes        ;
+	has CARD8   $!groupNames    ;
+	has CARD16  $!virtualMods   ;
+	has KeyCode $!firstKey      ;
+	has CARD8   $!nKeys         ;
+	has CARD32  $!indicators    ;
+	has CARD8   $!nRadioGroups  ;
+	has CARD8   $!nKeyAliases   ;
+	has CARD16  $!nKTLevels     ;
+	has CARD32  $!pad3          ;
+}
+
+class xkbGetState is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD16 $!pad       ;
+}
+
+class xkbGetStateReply is repr<CStruct> is export {
+	has BYTE   $!type            ;
+	has BYTE   $!deviceID        ;
+	has CARD16 $!sequenceNumber  ;
+	has CARD32 $!length          ;
+	has CARD8  $!mods            ;
+	has CARD8  $!baseMods        ;
+	has CARD8  $!latchedMods     ;
+	has CARD8  $!lockedMods      ;
+	has CARD8  $!group           ;
+	has CARD8  $!lockedGroup     ;
+	has INT16  $!baseGroup       ;
+	has INT16  $!latchedGroup    ;
+	has CARD8  $!compatState     ;
+	has CARD8  $!grabMods        ;
+	has CARD8  $!compatGrabMods  ;
+	has CARD8  $!lookupMods      ;
+	has CARD8  $!compatLookupMods;
+	has CARD8  $!pad1            ;
+	has CARD16 $!ptrBtnState     ;
+	has CARD16 $!pad2            ;
+	has CARD32 $!pad3            ;
+}
+
+class xkbIndicatorDoodadWireDesc is repr<CStruct> is export {
+	has Atom   $!name       ;
+	has CARD8  $!type       ;
+	has CARD8  $!priority   ;
+	has INT16  $!top        ;
+	has INT16  $!left       ;
+	has INT16  $!angle      ;
+	has CARD8  $!shapeNdx   ;
+	has CARD8  $!onColorNdx ;
+	has CARD8  $!offColorNdx;
+	has CARD8  $!pad1       ;
+	has CARD32 $!pad2       ;
+}
+
+class xkbIndicatorMapWireDesc is repr<CStruct> is export {
+	has CARD8  $!flags      ;
+	has CARD8  $!whichGroups;
+	has CARD8  $!groups     ;
+	has CARD8  $!whichMods  ;
+	has CARD8  $!mods       ;
+	has CARD8  $!realMods   ;
+	has CARD16 $!virtualMods;
+	has CARD32 $!ctrls      ;
+}
+
+class xkbIndicatorNotify is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has BYTE   $!xkbType       ;
+	has CARD16 $!sequenceNumber;
+	has Time   $!time          ;
+	has CARD8  $!deviceID      ;
+	has CARD8  $!pad1          ;
+	has CARD16 $!pad2          ;
+	has CARD32 $!state         ;
+	has CARD32 $!changed       ;
+	has CARD32 $!pad3          ;
+	has CARD32 $!pad4          ;
+	has CARD32 $!pad5          ;
+}
+
+class xkbKTMapEntryWireDesc is repr<CStruct> is export {
+	has BOOL   $!active     ;
+	has CARD8  $!mask       ;
+	has CARD8  $!level      ;
+	has CARD8  $!realMods   ;
+	has CARD16 $!virtualMods;
+	has CARD16 $!pad        ;
+}
+
+class xkbKTSetMapEntryWireDesc is repr<CStruct> is export {
+	has CARD8  $!level      ;
+	has CARD8  $!realMods   ;
+	has CARD16 $!virtualMods;
+}
+
+class xkbKeyTypeWireDesc is repr<CStruct> is export {
+	has CARD8  $!mask       ;
+	has CARD8  $!realMods   ;
+	has CARD16 $!virtualMods;
+	has CARD8  $!numLevels  ;
+	has CARD8  $!nMapEntries;
+	has BOOL   $!preserve   ;
+	has CARD8  $!pad        ;
+}
+
+class xkbLatchLockState is repr<CStruct> is export {
+	has CARD8  $!reqType         ;
+	has CARD8  $!xkbReqType      ;
+	has CARD16 $!length          ;
+	has CARD16 $!deviceSpec      ;
+	has CARD8  $!affectModLocks  ;
+	has CARD8  $!modLocks        ;
+	has BOOL   $!lockGroup       ;
+	has CARD8  $!groupLock       ;
+	has CARD8  $!affectModLatches;
+	has CARD8  $!modLatches      ;
+	has CARD8  $!pad             ;
+	has BOOL   $!latchGroup      ;
+	has INT16  $!groupLatch      ;
+}
+
+class xkbListComponents is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD16 $!maxNames  ;
+}
+
+class xkbListComponentsReply is repr<CStruct> is export {
+	has CARD8  $!type          ;
+	has CARD8  $!deviceID      ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has CARD16 $!nKeymaps      ;
+	has CARD16 $!nKeycodes     ;
+	has CARD16 $!nTypes        ;
+	has CARD16 $!nCompatMaps   ;
+	has CARD16 $!nSymbols      ;
+	has CARD16 $!nGeometries   ;
+	has CARD16 $!extra         ;
+	has CARD16 $!pad1          ;
+	has CARD32 $!pad2          ;
+	has CARD32 $!pad3          ;
+}
+
+class xkbLogoDoodadWireDesc is repr<CStruct> is export {
+	has Atom   $!name    ;
+	has CARD8  $!type    ;
+	has CARD8  $!priority;
+	has INT16  $!top     ;
+	has INT16  $!left    ;
+	has INT16  $!angle   ;
+	has CARD8  $!colorNdx;
+	has CARD8  $!shapeNdx;
+	has CARD16 $!pad1    ;
+	has CARD32 $!pad2    ;
+}
+
+class xkbMapNotify is repr<CStruct> is export {
+	has BYTE    $!type            ;
+	has BYTE    $!xkbType         ;
+	has CARD16  $!sequenceNumber  ;
+	has Time    $!time            ;
+	has CARD8   $!deviceID        ;
+	has CARD8   $!ptrBtnActions   ;
+	has CARD16  $!changed         ;
+	has KeyCode $!minKeyCode      ;
+	has KeyCode $!maxKeyCode      ;
+	has CARD8   $!firstType       ;
+	has CARD8   $!nTypes          ;
+	has KeyCode $!firstKeySym     ;
+	has CARD8   $!nKeySyms        ;
+	has KeyCode $!firstKeyAct     ;
+	has CARD8   $!nKeyActs        ;
+	has KeyCode $!firstKeyBehavior;
+	has CARD8   $!nKeyBehaviors   ;
+	has KeyCode $!firstKeyExplicit;
+	has CARD8   $!nKeyExplicit    ;
+	has KeyCode $!firstModMapKey  ;
+	has CARD8   $!nModMapKeys     ;
+	has KeyCode $!firstVModMapKey ;
+	has CARD8   $!nVModMapKeys    ;
+	has CARD16  $!virtualMods     ;
+	has CARD16  $!pad1            ;
+}
+
+class xkbModsWireDesc is repr<CStruct> is export {
+	has CARD8  $!mask       ;
+	has CARD8  $!realMods   ;
+	has CARD16 $!virtualMods;
+}
+
+class xkbNamesNotify is repr<CStruct> is export {
+	has BYTE   $!type              ;
+	has BYTE   $!xkbType           ;
+	has CARD16 $!sequenceNumber    ;
+	has Time   $!time              ;
+	has CARD8  $!deviceID          ;
+	has CARD8  $!pad1              ;
+	has CARD16 $!changed           ;
+	has CARD8  $!firstType         ;
+	has CARD8  $!nTypes            ;
+	has CARD8  $!firstLevelName    ;
+	has CARD8  $!nLevelNames       ;
+	has CARD8  $!pad2              ;
+	has CARD8  $!nRadioGroups      ;
+	has CARD8  $!nAliases          ;
+	has CARD8  $!changedGroupNames ;
+	has CARD16 $!changedVirtualMods;
+	has CARD8  $!firstKey          ;
+	has CARD8  $!nKeys             ;
+	has CARD32 $!changedIndicators ;
+	has CARD32 $!pad3              ;
+}
+
+class xkbNewKeyboardNotify is repr<CStruct> is export {
+	has BYTE    $!type          ;
+	has BYTE    $!xkbType       ;
+	has CARD16  $!sequenceNumber;
+	has Time    $!time          ;
+	has CARD8   $!deviceID      ;
+	has CARD8   $!oldDeviceID   ;
+	has KeyCode $!minKeyCode    ;
+	has KeyCode $!maxKeyCode    ;
+	has KeyCode $!oldMinKeyCode ;
+	has KeyCode $!oldMaxKeyCode ;
+	has CARD8   $!requestMajor  ;
+	has CARD8   $!requestMinor  ;
+	has CARD16  $!changed       ;
+	has CARD8   $!detail        ;
+	has CARD8   $!pad1          ;
+	has CARD32  $!pad2          ;
+	has CARD32  $!pad3          ;
+	has CARD32  $!pad4          ;
+}
+
+class xkbOutlineWireDesc is repr<CStruct> is export {
+	has CARD8  $!nPoints     ;
+	has CARD8  $!cornerRadius;
+	has CARD16 $!pad         ;
+}
+
+class xkbOverlayRowWireDesc is repr<CStruct> is export {
+	has CARD8  $!rowUnder;
+	has CARD8  $!nKeys   ;
+	has CARD16 $!pad1    ;
+}
+
+class xkbOverlayWireDesc is repr<CStruct> is export {
+	has Atom   $!name ;
+	has CARD8  $!nRows;
+	has CARD8  $!pad1 ;
+	has CARD16 $!pad2 ;
+}
+
+class xkbPerClientFlags is repr<CStruct> is export {
+	has CARD8  $!reqType       ;
+	has CARD8  $!xkbReqType    ;
+	has CARD16 $!length        ;
+	has CARD16 $!deviceSpec    ;
+	has CARD16 $!pad1          ;
+	has CARD32 $!change        ;
+	has CARD32 $!value         ;
+	has CARD32 $!ctrlsToChange ;
+	has CARD32 $!autoCtrls     ;
+	has CARD32 $!autoCtrlValues;
+}
+
+class xkbPerClientFlagsReply is repr<CStruct> is export {
+	has CARD8  $!type          ;
+	has CARD8  $!deviceID      ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has CARD32 $!supported     ;
+	has CARD32 $!value         ;
+	has CARD32 $!autoCtrls     ;
+	has CARD32 $!autoCtrlValues;
+	has CARD32 $!pad1          ;
+	has CARD32 $!pad2          ;
+}
+
+class xkbPointWireDesc is repr<CStruct> is export {
+	has INT16 $!x;
+	has INT16 $!y;
+}
+
+class xkbRowWireDesc is repr<CStruct> is export {
+	has INT16  $!top     ;
+	has INT16  $!left    ;
+	has CARD8  $!nKeys   ;
+	has BOOL   $!vertical;
+	has CARD16 $!pad     ;
+}
+
+class xkbSectionWireDesc is repr<CStruct> is export {
+	has Atom   $!name     ;
+	has INT16  $!top      ;
+	has INT16  $!left     ;
+	has CARD16 $!width    ;
+	has CARD16 $!height   ;
+	has INT16  $!angle    ;
+	has CARD8  $!priority ;
+	has CARD8  $!nRows    ;
+	has CARD8  $!nDoodads ;
+	has CARD8  $!nOverlays;
+	has CARD16 $!pad      ;
+}
+
+class xkbSelectEvents is repr<CStruct> is export {
+	has CARD8  $!reqType    ;
+	has CARD8  $!xkbReqType ;
+	has CARD16 $!length     ;
+	has CARD16 $!deviceSpec ;
+	has CARD16 $!affectWhich;
+	has CARD16 $!clear      ;
+	has CARD16 $!selectAll  ;
+	has CARD16 $!affectMap  ;
+	has CARD16 $!map        ;
+}
+
+class xkbSetCompatMap is repr<CStruct> is export {
+	has CARD8  $!reqType         ;
+	has CARD8  $!xkbReqType      ;
+	has CARD16 $!length          ;
+	has CARD16 $!deviceSpec      ;
+	has CARD8  $!pad1            ;
+	has BOOL   $!recomputeActions;
+	has BOOL   $!truncateSI      ;
+	has CARD8  $!groups          ;
+	has CARD16 $!firstSI         ;
+	has CARD16 $!nSI             ;
+	has CARD16 $!pad2            ;
+}
+
+class xkbSetDebuggingFlags is repr<CStruct> is export {
+	has CARD8  $!reqType    ;
+	has CARD8  $!xkbReqType ;
+	has CARD16 $!length     ;
+	has CARD16 $!msgLength  ;
+	has CARD16 $!pad        ;
+	has CARD32 $!affectFlags;
+	has CARD32 $!flags      ;
+	has CARD32 $!affectCtrls;
+	has CARD32 $!ctrls      ;
+}
+
+class xkbSetDebuggingFlagsReply is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has CARD8  $!pad0          ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has CARD32 $!currentFlags  ;
+	has CARD32 $!currentCtrls  ;
+	has CARD32 $!supportedFlags;
+	has CARD32 $!supportedCtrls;
+	has CARD32 $!pad1          ;
+	has CARD32 $!pad2          ;
+}
+
+class xkbSetDeviceInfo is repr<CStruct> is export {
+	has CARD8  $!reqType      ;
+	has CARD8  $!xkbReqType   ;
+	has CARD16 $!length       ;
+	has CARD16 $!deviceSpec   ;
+	has CARD8  $!firstBtn     ;
+	has CARD8  $!nBtns        ;
+	has CARD16 $!change       ;
+	has CARD16 $!nDeviceLedFBs;
+}
+
+class xkbSetGeometry is repr<CStruct> is export {
+	has CARD8  $!reqType      ;
+	has CARD8  $!xkbReqType   ;
+	has CARD16 $!length       ;
+	has CARD16 $!deviceSpec   ;
+	has CARD8  $!nShapes      ;
+	has CARD8  $!nSections    ;
+	has Atom   $!name         ;
+	has CARD16 $!widthMM      ;
+	has CARD16 $!heightMM     ;
+	has CARD16 $!nProperties  ;
+	has CARD16 $!nColors      ;
+	has CARD16 $!nDoodads     ;
+	has CARD16 $!nKeyAliases  ;
+	has CARD8  $!baseColorNdx ;
+	has CARD8  $!labelColorNdx;
+	has CARD16 $!pad          ;
+}
+
+class xkbSetIndicatorMap is repr<CStruct> is export {
+	has CARD8  $!reqType   ;
+	has CARD8  $!xkbReqType;
+	has CARD16 $!length    ;
+	has CARD16 $!deviceSpec;
+	has CARD16 $!pad1      ;
+	has CARD32 $!which     ;
+}
+
+class xkbSetMap is repr<CStruct> is export {
+	has CARD8   $!reqType          ;
+	has CARD8   $!xkbReqType       ;
+	has CARD16  $!length           ;
+	has CARD16  $!deviceSpec       ;
+	has CARD16  $!present          ;
+	has CARD16  $!flags            ;
+	has KeyCode $!minKeyCode       ;
+	has KeyCode $!maxKeyCode       ;
+	has CARD8   $!firstType        ;
+	has CARD8   $!nTypes           ;
+	has KeyCode $!firstKeySym      ;
+	has CARD8   $!nKeySyms         ;
+	has CARD16  $!totalSyms        ;
+	has KeyCode $!firstKeyAct      ;
+	has CARD8   $!nKeyActs         ;
+	has CARD16  $!totalActs        ;
+	has KeyCode $!firstKeyBehavior ;
+	has CARD8   $!nKeyBehaviors    ;
+	has CARD8   $!totalKeyBehaviors;
+	has KeyCode $!firstKeyExplicit ;
+	has CARD8   $!nKeyExplicit     ;
+	has CARD8   $!totalKeyExplicit ;
+	has KeyCode $!firstModMapKey   ;
+	has CARD8   $!nModMapKeys      ;
+	has CARD8   $!totalModMapKeys  ;
+	has KeyCode $!firstVModMapKey  ;
+	has CARD8   $!nVModMapKeys     ;
+	has CARD8   $!totalVModMapKeys ;
+	has CARD16  $!virtualMods      ;
+}
+
+class xkbSetNamedIndicator is repr<CStruct> is export {
+	has CARD8  $!reqType    ;
+	has CARD8  $!xkbReqType ;
+	has CARD16 $!length     ;
+	has CARD16 $!deviceSpec ;
+	has CARD16 $!ledClass   ;
+	has CARD16 $!ledID      ;
+	has CARD16 $!pad1       ;
+	has Atom   $!indicator  ;
+	has BOOL   $!setState   ;
+	has BOOL   $!on         ;
+	has BOOL   $!setMap     ;
+	has BOOL   $!createMap  ;
+	has CARD8  $!pad2       ;
+	has CARD8  $!flags      ;
+	has CARD8  $!whichGroups;
+	has CARD8  $!groups     ;
+	has CARD8  $!whichMods  ;
+	has CARD8  $!realMods   ;
+	has CARD16 $!virtualMods;
+	has CARD32 $!ctrls      ;
+}
+
+class xkbSetNames is repr<CStruct> is export {
+	has CARD8   $!reqType          ;
+	has CARD8   $!xkbReqType       ;
+	has CARD16  $!length           ;
+	has CARD16  $!deviceSpec       ;
+	has CARD16  $!virtualMods      ;
+	has CARD32  $!which            ;
+	has CARD8   $!firstType        ;
+	has CARD8   $!nTypes           ;
+	has CARD8   $!firstKTLevel     ;
+	has CARD8   $!nKTLevels        ;
+	has CARD32  $!indicators       ;
+	has CARD8   $!groupNames       ;
+	has CARD8   $!nRadioGroups     ;
+	has KeyCode $!firstKey         ;
+	has CARD8   $!nKeys            ;
+	has CARD8   $!nKeyAliases      ;
+	has CARD8   $!pad1             ;
+	has CARD16  $!totalKTLevelNames;
+}
+
+class xkbShapeDoodadWireDesc is repr<CStruct> is export {
+	has Atom   $!name    ;
+	has CARD8  $!type    ;
+	has CARD8  $!priority;
+	has INT16  $!top     ;
+	has INT16  $!left    ;
+	has INT16  $!angle   ;
+	has CARD8  $!colorNdx;
+	has CARD8  $!shapeNdx;
+	has CARD16 $!pad1    ;
+	has CARD32 $!pad2    ;
+}
+
+class xkbShapeWireDesc is repr<CStruct> is export {
+	has Atom  $!name      ;
+	has CARD8 $!nOutlines ;
+	has CARD8 $!primaryNdx;
+	has CARD8 $!approxNdx ;
+	has CARD8 $!pad       ;
+}
+
+class xkbStateNotify is repr<CStruct> is export {
+	has BYTE    $!type            ;
+	has BYTE    $!xkbType         ;
+	has CARD16  $!sequenceNumber  ;
+	has Time    $!time            ;
+	has CARD8   $!deviceID        ;
+	has CARD8   $!mods            ;
+	has CARD8   $!baseMods        ;
+	has CARD8   $!latchedMods     ;
+	has CARD8   $!lockedMods      ;
+	has CARD8   $!group           ;
+	has INT16   $!baseGroup       ;
+	has INT16   $!latchedGroup    ;
+	has CARD8   $!lockedGroup     ;
+	has CARD8   $!compatState     ;
+	has CARD8   $!grabMods        ;
+	has CARD8   $!compatGrabMods  ;
+	has CARD8   $!lookupMods      ;
+	has CARD8   $!compatLookupMods;
+	has CARD16  $!ptrBtnState     ;
+	has CARD16  $!changed         ;
+	has KeyCode $!keycode         ;
+	has CARD8   $!eventType       ;
+	has CARD8   $!requestMajor    ;
+	has CARD8   $!requestMinor    ;
+}
+
+class xkbSymInterpretWireDesc is repr<CStruct> is export {
+	has CARD32            $!sym       ;
+	has CARD8             $!mods      ;
+	has CARD8             $!match     ;
+	has CARD8             $!virtualMod;
+	has CARD8             $!flags     ;
+	has xkbActionWireDesc $!act       ;
+}
+
+class xkbTextDoodadWireDesc is repr<CStruct> is export {
+	has Atom   $!name    ;
+	has CARD8  $!type    ;
+	has CARD8  $!priority;
+	has INT16  $!top     ;
+	has INT16  $!left    ;
+	has INT16  $!angle   ;
+	has CARD16 $!width   ;
+	has CARD16 $!height  ;
+	has CARD8  $!colorNdx;
+	has CARD8  $!pad1    ;
+	has CARD16 $!pad2    ;
+}
+
+class xkbUseExtension is repr<CStruct> is export {
+	has CARD8  $!reqType    ;
+	has CARD8  $!xkbReqType ;
+	has CARD16 $!length     ;
+	has CARD16 $!wantedMajor;
+	has CARD16 $!wantedMinor;
+}
+
+class xkbUseExtensionReply is repr<CStruct> is export {
+	has BYTE   $!type          ;
+	has BOOL   $!supported     ;
+	has CARD16 $!sequenceNumber;
+	has CARD32 $!length        ;
+	has CARD16 $!serverMajor   ;
+	has CARD16 $!serverMinor   ;
+	has CARD32 $!pad1          ;
+	has CARD32 $!pad2          ;
+	has CARD32 $!pad3          ;
+	has CARD32 $!pad4          ;
+	has CARD32 $!pad5          ;
+}
+
+class xkbVModMapWireDesc is repr<CStruct> is export {
+	has KeyCode $!key  ;
+	has CARD8   $!pad  ;
+	has CARD16  $!vmods;
+}
+
+class xkmActionDesc is repr<CStruct> is export {
+	has CARD8 $!type;
+	has CARD8 $!data;
+}
+
+class xkmAnyDoodadDesc is repr<CStruct> is export {
+	has CARD8  $!type    ;
+	has CARD8  $!priority;
+	has INT16  $!top     ;
+	has INT16  $!left    ;
+	has CARD16 $!pad1    ;
+	has CARD32 $!pad2    ;
+	has CARD32 $!pad3    ;
+}
+
+class xkmBehaviorDesc is repr<CStruct> is export {
+	has CARD8  $!type;
+	has CARD8  $!data;
+	has CARD16 $!pad ;
+}
+
+class xkmFileInfo is repr<CStruct> is export {
+	has CARD8  $!type   ;
+	has CARD8  $!min_kc ;
+	has CARD8  $!max_kc ;
+	has CARD8  $!num_toc;
+	has CARD16 $!present;
+	has CARD16 $!pad    ;
+}
+
+class xkmGeometryDesc is repr<CStruct> is export {
+	has CARD16 $!width_mm       ;
+	has CARD16 $!height_mm      ;
+	has CARD8  $!base_color_ndx ;
+	has CARD8  $!label_color_ndx;
+	has CARD16 $!num_properties ;
+	has CARD16 $!num_colors     ;
+	has CARD16 $!num_shapes     ;
+	has CARD16 $!num_sections   ;
+	has CARD16 $!num_doodads    ;
+	has CARD16 $!num_key_aliases;
+	has CARD16 $!pad1           ;
+}
+
+class xkmIndicatorDoodadDesc is repr<CStruct> is export {
+	has CARD8  $!type         ;
+	has CARD8  $!priority     ;
+	has INT16  $!top          ;
+	has INT16  $!left         ;
+	has CARD8  $!shape_ndx    ;
+	has CARD8  $!on_color_ndx ;
+	has CARD8  $!off_color_ndx;
+	has CARD8  $!pad1         ;
+	has CARD16 $!pad2         ;
+	has CARD32 $!pad3         ;
+}
+
+class xkmIndicatorMapDesc is repr<CStruct> is export {
+	has CARD8  $!indicator   ;
+	has CARD8  $!flags       ;
+	has CARD8  $!which_mods  ;
+	has CARD8  $!real_mods   ;
+	has CARD16 $!vmods       ;
+	has CARD8  $!which_groups;
+	has CARD8  $!groups      ;
+	has CARD32 $!ctrls       ;
+}
+
+class xkmKTMapEntryDesc is repr<CStruct> is export {
+	has CARD8  $!level      ;
+	has CARD8  $!realMods   ;
+	has CARD16 $!virtualMods;
+}
+
+class xkmKeySymMapDesc is repr<CStruct> is export {
+	has CARD8 $!width       ;
+	has CARD8 $!num_groups  ;
+	has CARD8 $!modifier_map;
+	has CARD8 $!flags       ;
+}
+
+class xkmKeyTypeDesc is repr<CStruct> is export {
+	has CARD8  $!realMods   ;
+	has CARD8  $!numLevels  ;
+	has CARD16 $!virtualMods;
+	has CARD8  $!nMapEntries;
+	has CARD8  $!nLevelNames;
+	has CARD8  $!preserve   ;
+	has CARD8  $!pad        ;
+}
+
+class xkmLogoDoodadDesc is repr<CStruct> is export {
+	has CARD8  $!type     ;
+	has CARD8  $!priority ;
+	has INT16  $!top      ;
+	has INT16  $!left     ;
+	has INT16  $!angle    ;
+	has CARD8  $!color_ndx;
+	has CARD8  $!shape_ndx;
+	has CARD16 $!pad      ;
+	has CARD32 $!pad1     ;
+}
+
+class xkmModsDesc is repr<CStruct> is export {
+	has CARD8  $!realMods   ;
+	has CARD8  $!pad        ;
+	has CARD16 $!virtualMods;
+}
+
+class xkmOutlineDesc is repr<CStruct> is export {
+	has CARD8  $!num_points   ;
+	has CARD8  $!corner_radius;
+	has CARD16 $!pad          ;
+}
+
+class xkmOverlayDesc is repr<CStruct> is export {
+	has CARD8  $!num_rows;
+	has CARD8  $!pad1    ;
+	has CARD16 $!pad2    ;
+}
+
+class xkmOverlayRowDesc is repr<CStruct> is export {
+	has CARD8  $!row_under;
+	has CARD8  $!num_keys ;
+	has CARD16 $!pad      ;
+}
+
+class xkmPointDesc is repr<CStruct> is export {
+	has INT16 $!x;
+	has INT16 $!y;
+}
+
+class xkmRowDesc is repr<CStruct> is export {
+	has INT16  $!top     ;
+	has INT16  $!left    ;
+	has CARD8  $!num_keys;
+	has BOOL   $!vertical;
+	has CARD16 $!pad     ;
+}
+
+class xkmSectionDesc is repr<CStruct> is export {
+	has INT16  $!top         ;
+	has INT16  $!left        ;
+	has CARD16 $!width       ;
+	has CARD16 $!height      ;
+	has INT16  $!angle       ;
+	has CARD8  $!priority    ;
+	has CARD8  $!num_rows    ;
+	has CARD8  $!num_doodads ;
+	has CARD8  $!num_overlays;
+	has CARD16 $!pad2        ;
+}
+
+class xkmSectionInfo is repr<CStruct> is export {
+	has CARD16 $!type  ;
+	has CARD16 $!format;
+	has CARD16 $!size  ;
+	has CARD16 $!offset;
+}
+
+class xkmShapeDesc is repr<CStruct> is export {
+	has CARD8 $!num_outlines;
+	has CARD8 $!primary_ndx ;
+	has CARD8 $!approx_ndx  ;
+	has CARD8 $!pad         ;
+}
+
+class xkmShapeDoodadDesc is repr<CStruct> is export {
+	has CARD8  $!type     ;
+	has CARD8  $!priority ;
+	has INT16  $!top      ;
+	has INT16  $!left     ;
+	has INT16  $!angle    ;
+	has CARD8  $!color_ndx;
+	has CARD8  $!shape_ndx;
+	has CARD16 $!pad      ;
+	has CARD32 $!pad1     ;
+}
+
+class xkmSymInterpretDesc is repr<CStruct> is export {
+	has CARD32 $!sym       ;
+	has CARD8  $!mods      ;
+	has CARD8  $!match     ;
+	has CARD8  $!virtualMod;
+	has CARD8  $!flags     ;
+	has CARD8  $!actionType;
+	has CARD8  $!actionData;
+}
+
+class xkmTextDoodadDesc is repr<CStruct> is export {
+	has CARD8  $!type     ;
+	has CARD8  $!priority ;
+	has INT16  $!top      ;
+	has INT16  $!left     ;
+	has INT16  $!angle    ;
+	has CARD16 $!width    ;
+	has CARD16 $!height   ;
+	has CARD8  $!color_ndx;
+	has CARD8  $!pad1     ;
+	has CARD16 $!pad2     ;
+}
+
+class xkmVModMapDesc is repr<CStruct> is export {
+	has CARD8  $!key  ;
+	has CARD8  $!pad  ;
+	has CARD16 $!vmods;
+}
+
+class xthread_waiter is repr<CStruct> is export {
+	has HANDLE          $!sem ;
+	has xthread_waiter  $!next;
+}
+
+class xwd_file_header is repr<CStruct> is export {
+	has CARD32 $!header_size     ;
+	has CARD32 $!file_version    ;
+	has CARD32 $!pixmap_format   ;
+	has CARD32 $!pixmap_depth    ;
+	has CARD32 $!pixmap_width    ;
+	has CARD32 $!pixmap_height   ;
+	has CARD32 $!xoffset         ;
+	has CARD32 $!byte_order      ;
+	has CARD32 $!bitmap_unit     ;
+	has CARD32 $!bitmap_bit_order;
+	has CARD32 $!bitmap_pad      ;
+	has CARD32 $!bits_per_pixel  ;
+	has CARD32 $!bytes_per_line  ;
+	has CARD32 $!visual_class    ;
+	has CARD32 $!red_mask        ;
+	has CARD32 $!green_mask      ;
+	has CARD32 $!blue_mask       ;
+	has CARD32 $!bits_per_rgb    ;
+	has CARD32 $!colormap_entries;
+	has CARD32 $!ncolors         ;
+	has CARD32 $!window_width    ;
+	has CARD32 $!window_height   ;
+	has CARD32 $!window_x        ;
+	has CARD32 $!window_y        ;
+	has CARD32 $!window_bdrwidth ;
+}
 
 # struct {
 #   XExtData *ext_data;     /* hook for extension to hang data */
