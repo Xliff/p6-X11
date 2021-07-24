@@ -331,7 +331,7 @@ sub buildAccessors (\O) is export {
   # cw: The proxy block is the only thing that needs to change, so this
   # can and should be simplified!
 	my $proxy-maker = sub ($typedBuffer = False, $typeStr = Nil, $size-attribute = '') {
-    $typeBuffer ??
+    $typedBuffer ??
       sub ($n, \attr) {
         my $m = method :: is rw {
           Proxy.new(
@@ -376,7 +376,7 @@ sub buildAccessors (\O) is export {
       my ($ops, $desc) = $t.split(' - ');
       for $ops.split(' ') {
         my ($op, $params) = .split(':');
-        $params .= split(/\,/;
+        $params .= split( /\,/ );
         say "O: { $op} } / P: { $params }";
 
         given $op {
@@ -390,11 +390,12 @@ sub buildAccessors (\O) is export {
     }
 
 		print "  Adding { $attr-name } to { O.^name }..." if $DEBUG;
-    my $proxy = $proxy-maker(
-		O.^add_method(
-			$attr-name,
-			$proxy($attr-name, a)    #= $proxy() returns Method
-		);
+    $proxy = $proxy-maker(
+  		O.^add_method(
+  			$attr-name,
+  			$proxy($attr-name, a)    #= $proxy() returns Method
+  		)
+    );
 		say 'done' if $DEBUG;
 	}
 }
