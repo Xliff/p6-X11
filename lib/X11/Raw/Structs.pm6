@@ -69,7 +69,33 @@ class EventRec is repr<CStruct> is export {
 }
 constant Event is export := EventRec;
 
-class XEvent is repr<CStruct> is export { ... }
+class XAnyEvent is repr<CStruct> is export {
+  has realInt $.type       is rw;
+  has ulong   $.serial     is rw; #= - # of last request processed by server
+  has Boolean $.send_event is rw; #= - true if this came from a SendEvent request
+  has Display $.display         ; #= - Display the event was read from
+  has Window  $.window     is rw; #= - window on which event was requested in event mask
+}
+
+class XGenericEvent is repr<CStruct> is export {
+  has realInt  $.type       is rw; #=         - of event. Always GenericEvent
+  has ulong    $.serial     is rw; #=         - # of last request processed
+  has Boolean  $.send_event is rw; #= ot:Bool - true if from SendEvent request
+  has Display  $.display         ; #=         - Display the event was read from
+  has realInt  $.extension  is rw; #=         - major opcode of extension that caused the event
+  has realInt  $.evtype     is rw; #=         - actual event type.
+}
+
+
+class XEventPadding is repr<CStruct> {
+  HAS long @.pad[24] is CArray;
+}
+
+# cw: Add missing CStrucgs as they are created.
+class XEvent is repr<CUnion> is export {
+  has realInt $.type;
+  HAS XEventPadding $!padding;
+}
 
 class TMEventRec is repr<CStruct> is export {
   has XEvent $!xev;
@@ -731,22 +757,22 @@ class CommandClassRec is repr<CStruct> is export {
 }
 
 class CommandPart is repr<CStruct> is export {
-    # resources
-    has Dimension           $.highlight_thickness is rw;
-    has XtCallbackList      $.callbacks;
+  # resources
+  has Dimension           $.highlight_thickness is rw;
+  has XtCallbackList      $.callbacks;
 
-    # private state
-    has Pixmap              $.gray_pixmap         is rw;
-    has GC                  $.normal_GC           is rw;
-    has GC                  $.inverse_GC          is rw;
-    has Boolean             $.set                 is rw;
-    has XtCommandHighlight  $.highlighted         is rw;
+  # private state
+  has Pixmap              $.gray_pixmap         is rw;
+  has GC                  $.normal_GC           is rw;
+  has GC                  $.inverse_GC          is rw;
+  has Boolean             $.set                 is rw;
+  has XtCommandHighlight  $.highlighted         is rw;
 
-    # more resources
-    has int                 $.shape_style;
-    has Dimension           $.corner_round;
+  # more resources
+  has int                 $.shape_style;
+  has Dimension           $.corner_round;
 
-    HAS XtPointer           @.pad[4]              is CArray;
+  HAS XtPointer           @.pad[4]              is CArray;
 }
 
 class LabelPart is repr<CStruct> {
