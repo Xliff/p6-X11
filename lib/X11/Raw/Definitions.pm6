@@ -50,6 +50,7 @@ constant XIMPreeditState              is export := ulong;
 constant XIMStringConversionOperation is export := ushort;
 constant XIMStringConversionPosition  is export := ushort;
 constant XawTextPosition              is export :=  long;
+constant XawTextUndo                  is export := Pointer;
 constant XcmsFloat                    is export := num64;
 constant XcmsColorFormat              is export := ulong;
 constant XcursorUInt                  is export := uint;
