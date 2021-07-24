@@ -1611,13 +1611,13 @@ sub XOpenDisplay (Str $var0)
   is export
 { * }
 
-sub XOpenIM (Display $var0, _XrmHashBucketRec $var1, Str $var2, Str $var3)
+sub XOpenIM (Display $var0, XrmHashBucket $var1, Str $var2, Str $var3)
   returns XIM
   is native(x11)
   is export
 { * }
 
-sub XOpenOM (Display $var0, _XrmHashBucketRec $var1, Str $var2, Str $var3)
+sub XOpenOM (Display $var0, XrmHashBucket $var1, Str $var2, Str $var3)
   returns XOM
   is native(x11)
   is export
@@ -1641,7 +1641,8 @@ sub XPeekEvent (Display $var0, XEvent $var1)
   is export
 { * }
 
-sub XPeekIfEvent (Display $(*) (               Display*         ,                XEvent*                ,                XPointer                             ))
+# cw: wtf - Display $(*) (               Display*         ,                XEvent*                ,                XPointer                             )
+sub XPeekIfEvent (Pointer)
   returns realInt
   is native(x11)
   is export
@@ -1814,7 +1815,7 @@ sub XRefreshKeyboardMapping (XMappingEvent $var0)
   is export
 { * }
 
-sub XRegisterIMInstantiateCallback (Display $var0, _XrmHashBucketRec $var1, Str $var2, Str $var3, XIDProc $var4, XPointer $var5)
+sub XRegisterIMInstantiateCallback (Display $var0, XrmHashBucket $var1, Str $var2, Str $var3, XIDProc $var4, XPointer $var5)
   returns Bool
   is native(x11)
   is export
@@ -1951,7 +1952,8 @@ sub XSetAccessControl (Display $var0, realInt $var1)
   is export
 { * }
 
-sub XSetAfterFunction (Display $(*) (        Display*                ))
+# cw: wtf? - Display $(*) (        Display*                )
+sub XSetAfterFunction (Pointer)
   returns realInt
   is native(x11)
   is export
@@ -2391,7 +2393,7 @@ sub XUnmapWindow (Display $var0, Window $var1)
   is export
 { * }
 
-sub XUnregisterIMInstantiateCallback (Display $var0, _XrmHashBucketRec $var1, Str $var2, Str $var3, XIDProc $var4, XPointer $var5)
+sub XUnregisterIMInstantiateCallback (Display $var0, XrmHashBucket $var1, Str $var2, Str $var3, XIDProc $var4, XPointer $var5)
   returns Bool
   is native(x11)
   is export
