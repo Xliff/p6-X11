@@ -2,7 +2,9 @@ use v6.c;
 
 use NativeCall;
 
+use X11::Compat::Definitions;
 use X11::Raw::Definitions;
+use X11::Raw::Structs;
 use X11::Raw::Enums;
 
 unit package X11::Raw::Lib;
@@ -437,12 +439,12 @@ sub XCopyPlane (
   is export
 { * }
 
-sub XCreateBitmapFromData (D
-  Display   $var0,
+sub XCreateBitmapFromData (
+  Display  $var0,
   Drawable $var1,
   Str      $var2,
-  realInt     $var3,
-  realInt     $var4
+  realInt  $var3,
+  realInt  $var4
 )
   returns Pixmap
   is native(x11)
@@ -483,8 +485,8 @@ sub XCreateGlyphCursor (
   Display $var0,
   Font    $var1,
   Font    $var2,
-  realInt    $var3,
-  realInt    $var4,
+  realInt $var3,
+  realInt $var4,
   XColor  $var5,
   XColor  $var6
 )
@@ -505,11 +507,11 @@ sub XCreateImage (Display $var0, Visual $var1, realInt $var2, realInt $var3, rea
   is export
 { * }
 
-sub XCreateOC (XOM $var0,  $var1, ...)
-  returns XOC
-  is native(x11)
-  is export
-{ * }
+# sub XCreateOC (XOM $var0,  $var1, ...)
+#   returns XOC
+#   is native(x11)
+#   is export
+# { * }
 
 sub XCreatePixmap (Display $var0, Drawable $var1, realInt $var2, realInt $var3, realInt $var4)
   returns Pixmap
@@ -947,9 +949,9 @@ sub XFlushGC (Display $var0, GC $var1)
 { * }
 
 sub XFontsOfFontSet (
-  XFontSet                           $var0,
-  CArray[CArray[Pointer[XFontStruct] $var1,
-  Str                                $var2
+  XFontSet                             $var0,
+  CArray[CArray[Pointer[XFontStruct]]] $var1,
+  Str                                  $var2
 )
   returns realInt
   is native(x11)
@@ -1127,17 +1129,17 @@ sub XGetGeometry (Display $var0, Drawable $var1, Window $var2, realInt $var3 is 
   is export
 { * }
 
-sub XGetICValues (XIC $var0,  $var1, ...)
-  returns Str
-  is native(x11)
-  is export
-{ * }
-
-sub XGetIMValues (XIM $var0,  $var1, ...)
-  returns Str
-  is native(x11)
-  is export
-{ * }
+# sub XGetICValues (XIC $var0,  $var1, ...)
+#   returns Str
+#   is native(x11)
+#   is export
+# { * }
+#
+# sub XGetIMValues (XIM $var0,  $var1, ...)
+#   returns Str
+#   is native(x11)
+#   is export
+# { * }
 
 sub XGetIconName (Display $var0, Window $var1, Str $var2)
   returns Status
