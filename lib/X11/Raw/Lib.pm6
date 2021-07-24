@@ -1192,17 +1192,17 @@ sub XGetMotionEvents (Display $var0, Window $var1, Time $var2, Time $var3, realI
   is export
 { * }
 
-sub XGetOCValues (XOC $var0,  $var1, ...)
-  returns Str
-  is native(x11)
-  is export
-{ * }
-
-sub XGetOMValues (XOM $var0,  $var1, ...)
-  returns Str
-  is native(x11)
-  is export
-{ * }
+# sub XGetOCValues (XOC $var0,  $var1, ...)
+#   returns Str
+#   is native(x11)
+#   is export
+# { * }
+#
+# sub XGetOMValues (XOM $var0,  $var1, ...)
+#   returns Str
+#   is native(x11)
+#   is export
+# { * }
 
 sub XGetPointerControl (Display $var0, realInt $var1 is rw, realInt $var2 is rw, realInt $var3 is rw)
   returns realInt
@@ -1331,7 +1331,8 @@ sub XIconifyWindow (Display $var0, Window $var1, realInt $var2)
   is export
 { * }
 
-sub XIfEvent (Display $(*) (           Display*                 ,                XEvent*                        ,                XPointer                                     ))
+# cw: wtf? -- Display $(*) (           Display*                 ,                XEvent*                        ,                XPointer                                     )
+sub XIfEvent (Pointer)
   returns realInt
   is native(x11)
   is export
@@ -2062,17 +2063,17 @@ sub XSetICFocus (XIC $var0)
   is export
 { * }
 
-sub XSetICValues (XIC $var0,  $var1, ...)
-  returns Str
-  is native(x11)
-  is export
-{ * }
-
-sub XSetIMValues (XIM $var0,  $var1, ...)
-  returns Str
-  is native(x11)
-  is export
-{ * }
+# sub XSetICValues (XIC $var0,  $var1, ...)
+#   returns Str
+#   is native(x11)
+#   is export
+# { * }
+#
+# sub XSetIMValues (XIM $var0,  $var1, ...)
+#   returns Str
+#   is native(x11)
+#   is export
+# { * }
 
 sub XSetIOErrorExitHandler (Display $var0, XIOErrorExitHandler $var1, Pointer $var2)
   is native(x11)
@@ -2115,17 +2116,17 @@ sub XSetModifierMapping (Display $var0, XModifierKeymap $var1)
   is export
 { * }
 
-sub XSetOCValues (XOC $var0,  $var1, ...)
-  returns Str
-  is native(x11)
-  is export
-{ * }
-
-sub XSetOMValues (XOM $var0,  $var1, ...)
-  returns Str
-  is native(x11)
-  is export
-{ * }
+# sub XSetOCValues (XOC $var0,  $var1, ...)
+#   returns Str
+#   is native(x11)
+#   is export
+# { * }
+#
+# sub XSetOMValues (XOM $var0,  $var1, ...)
+#   returns Str
+#   is native(x11)
+#   is export
+# { * }
 
 sub XSetPlaneMask (Display $var0, GC $var1, long $var2)
   returns realInt
@@ -2401,11 +2402,11 @@ sub XUnsetICFocus (XIC $var0)
   is export
 { * }
 
-sub XVaCreateNestedList (realInt $var0,  $var1, ...)
-  returns XVaNestedList
-  is native(x11)
-  is export
-{ * }
+# sub XVaCreateNestedList (realInt $var0,  $var1, ...)
+#   returns XVaNestedList
+#   is native(x11)
+#   is export
+# { * }
 
 sub XVendorRelease (Display $var0)
   returns realInt
