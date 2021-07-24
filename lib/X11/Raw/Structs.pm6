@@ -3,7 +3,7 @@ use v6.c;
 use Method::Also;
 use NativeCall;
 
-use Font::FreeType::Raw::Defs;
+#use Font::FreeType::Raw::Defs;
 
 use X11::Compat::Definitions;
 use X11::Raw::Definitions;
@@ -42,6 +42,75 @@ constant XtGeometryHandler is export := Pointer;
 
 #| ?
 constant XtWidgetProc      is export := Pointer;
+
+class XKeyboardControl is repr<CStruct> is export {
+  has realInt $.key_click_percent;
+  has realInt $.bell_percent     ;
+  has realInt $.bell_pitch       ;
+  has realInt $.bell_duration    ;
+  has realInt $.led              ;
+  has realInt $.led_mode         ;
+  has realInt $.key              ;
+  has realInt $.auto_repeat_mode ;  #= e?:<On Off Default>
+}
+
+class XSetWindowAttributes is repr<CStruct> is export {
+  has Pixmap   $.background_pixmap     is rw; #=         - background or None or ParentRelative
+  has ulong    $.background_pixel      is rw; #=         - background pixel
+  has Pixmap   $.border_pixmap         is rw; #=         - border of the window
+  has ulong    $.border_pixel          is rw; #=         - border pixel value
+  has int      $.bit_gravity           is rw; #=         - one of bit gravity values
+  has int      $.win_gravity           is rw; #=         - one of the window gravity values
+  has int      $.backing_store         is rw; #=         - NotUseful, WhenMapped, Always
+  has ulong    $.backing_planes        is rw; #=         - planes to be preserved if possible
+  has ulong    $.backing_pixel         is rw; #=         - value to use in restoring planes
+  has Boolean  $.save_under            is rw; #= ot:Bool - should bits under be saved? (popups) */
+  has long     $.event_mask            is rw; #=         - set of events that should be saved */
+  has long     $.do_not_propagate_mask is rw; #=         - set of events that should not propagate */
+  has Boolean  $.override_redirect     is rw; #= ot:Bool - boolean value for override-redirect */
+  has Colormap $.colormap              is rw; #=         - color map to be associated with window */
+  has Cursor   $.cursor                is rw; #=         - cursor to be displayed (or None) */
+}
+
+class XWindowChanges is repr<CStruct> is export {
+  has realInt $.x            is rw;
+  has realInt $.y            is rw;
+  has realInt $.width        is rw;
+  has realInt $.height       is rw;
+  has realInt $.border_width is rw;
+  has Window  $.sibling      is rw;
+  has realInt $.stack_mode   is rw;
+}
+
+class XImageFuncs is repr<CStruct> is export {
+  has Pointer $.create_image;  #= fp:(Display* ,Visual* ,uint ,realInt ,realInt ,Str ,uint ,uint ,realInt ,realInt --> XImage);
+  has Pointer $.destroy_image; #= fp:(XImage * --> int   );
+  has Pointer $.get_pixel;     #= fp:(XImage *, int, int --> ulong );
+  has Pointer $.put_pixel;     #= fp:(XImage *, int, int, unsigned long --> int   );
+  has Pointer $.sub_image;     #= fp:XImage *, int, int, unsigned int, unsigned int --> XImage);
+  has Pointer $.add_pixel;     #= fp:(XImage *, long --> int   );
+}
+
+class XImage is repr<CStruct> is export {
+  has int           $.width,
+  has int           $.height;            #= size of image
+  has int           $.xoffset;           #= number of pixels offset in X direction
+  has int           $.format;            #= XYBitmap, XYPixmap, ZPixmap
+  has CArray[uint8] $.data;              #= pointer to image data
+  has int           $.byte_order;        #= data byte order, LSBFirst, MSBFirst
+  has int           $.bitmap_unit;       #= quant. of scanline 8, 16, 32
+  has int           $.bitmap_bit_order;  #= LSBFirst, MSBFirst
+  has int           $.bitmap_pad;        #= 8, 16, 32 either XY or ZPixmap
+  has int           $.depth;             #= depth of image
+  has int           $.bytes_per_line;    #= accelarator to next line
+  has int           $.bits_per_pixel;    #= bits per pixel (ZPixmap)
+  has ulong         $.red_mask;          #= bits in z arrangement
+  has ulong         $.green_mask;
+  has ulong         $.blue_mask;
+  has XPointer      $.obdata;            # hook for the object routines to hang on
+  HAS XImageFuncs   $.f;
+}
+
 
 class LateBindings is repr<CStruct> is export {
   has uint   $.knot       is rw; #= b:1;
@@ -438,7 +507,7 @@ class AsciiSinkPart is repr<CStruct> is export {
   has XtPointer          $!pad2;
   has XtPointer          $!pad3;
   has XtPointer          $!pad4;
-} ;
+}
 
 class AsciiDiskRec is repr<CStruct> is export {
 	has CorePart      $!core      ;
@@ -762,6 +831,12 @@ class CaseConverterRec is repr<CStruct> is export {
 	has CaseConverterRec $!next ;
 }
 constant CaseConverter is export := CaseConverterRec;
+
+class XChar2b is repr<CStruct> is export {
+  # normal 16 bit characters are two bytes
+  has uint8 $.byte1 is rw;
+  has uint8 $.byte2 is rw;
+}
 
 class xCharInfo is repr<CStruct> is export {
   has INT16  $.leftSideBearing  is rw;
@@ -2401,6 +2476,22 @@ class xRectangle is repr<CStruct> is export {
 	has CARD16 $!height;
 }
 constant XRectangle is export := xRectangle;
+
+class XFontSetExtents is repr<CStruct> is export {
+  HAS XRectangle  $.max_ink_extent;
+  HAS XRectangle  $.max_logical_extent;
+}
+
+class XGenericEventCookie is repr<CStruct> is export {
+  has realInt    $.type;         #=         - of event. Always GenericEvent
+  has ulong      $.serial;       #=         - # of last requ/*est processed
+  has Boolean    $.send_event;   #= ot:Bool - true if from SendEvent request
+  has Display    $.display;      #=         - Display the event was read from
+  has realInt    $.extension;    #=         - major opcode of extension that caused the event
+  has realInt    $.evtype;       #=         - actual event type.
+  has realUInt   $.cookie;
+  has Pointer    $.data;
+}
 
 class PannerPart is repr<CStruct> is export {
   has XtCallbackList $!report_callbacks;             #= callback/Callback
@@ -6248,7 +6339,7 @@ class tmask is repr<CStruct> is export {
 	has Pointer $!dev ;
 }
 
-class xArc is repr<CStruct> is export {
+class XArc is repr<CStruct> is export {
 	has INT16  $!x     ;
 	has INT16  $!y     ;
 	has CARD16 $!width ;
@@ -6256,6 +6347,7 @@ class xArc is repr<CStruct> is export {
 	has INT16  $!angle1;
 	has INT16  $!angle2;
 }
+constant xArc is export := XArc;
 
 class xButtonInfo is repr<CStruct> is export {
 	has CARD8  $!c_class    ;
@@ -6360,11 +6452,35 @@ class xSecurityAuthorizationRevokedEvent is repr<CStruct> is export {
 	has CARD32 $!pad5          ;
 }
 
-class xSegment is repr<CStruct> is export {
+class XSegment is repr<CStruct> is export {
 	has INT16 $!x1;
 	has INT16 $!y1;
 	has INT16 $!x2;
 	has INT16 $!y2;
+}
+constant xSegment is export := XSegment;
+
+class XTextItem is repr<CStruct> is export {
+  has CArray[uint8] $.chars;   #= pointer to string
+  has realInt       $.nchars;  #= number of characters
+  has realInt       $.delta;   #= delta between strings
+  has Font          $.font;    #= font to print it in, None don't change
+}
+
+class XTextItem16 is repr<CStruct> is export {
+  has Pointer    $.chars;        #= tb:XChars2b,$!nchars - pointer to string
+  has realInt    $.nchars is rw; #=                      - number of characters
+  has realInt    $.delta  is rw; #=                      - delta between strings
+  has Font       $.font   is rw; #=                      - font to print it in, None don't change
+}
+
+class XEDataObject is repr<CUnion> is export {
+  has Display      $.display;
+  has GC           $.gc;
+  has Visual       $.visual;
+  has Screen       $.screen;
+  has ScreenFormat $.pixmap_format;
+  has XFontStruct  $.font;
 }
 
 class xSyncAlarmNotifyEvent is repr<CStruct> is export {
@@ -7928,153 +8044,153 @@ class XLockPtrs is repr<CStruct> is export {
 }
 
 class Display {
-  has XExtData                 $.ext_data;                   #=                                                 - hook for extension to hang data
-  has XFreeFuncs               $.free_funcs;                 #=                                                 - internal free functions
-  has int                      $.fd;                         #=                                                 - Network socket.
-  has int                      $.conn_checker;               #=                                                 - ugly thing used by _XEventsQueued
-  has int                      $.proto_major_version;        #=                                                 - maj. version of server's X protocol
-  has int                      $.proto_minor_version;        #=                                                 - minor version of server's X protocol
-  has Str                      $.vendor;                     #=                                                 - vendor of the server hardware
-  has XID                      $.resource_base;              #=                                                 - resource ID base
-  has XID                      $.resource_mask;              #=                                                 - resource ID mask bits
-  has XID                      $.resource_id;                #=                                                 - allocator current ID
-  has int                      $.resource_shift;             #=                                                 - allocator shift to correct bits
-  has Pointer                  $.resource_alloc;             #= fp:(XDisplay* --> XID)
-  has int                      $.bitmap_unit;                #=                                                 - padding and data requirements
-  has int                      $.byte_order;                 #=                                                 - screen byte order, LSBFirst, MSBFirst
-  has int                      $.bitmap_pad;                 #=                                                 - padding requirements on bitmaps
-  has int                      $.bitmap_bit_order;           #=                                                 - LeastSignificant or MostSignificant
-  has int                      $.nformats;                   #=                                                 - number of pixmap formats in list
-  has ScreenFormat             $.pixmap_format;              #=                                                 - pixmap format list
-  has int                      $.vnumber;                    #=                                                 - Xlib's X protocol version number.
-  has int                      $.release;                    #=                                                 - release of the server
-  has XSQEvent                 $.head;                       #=                                                 -
-  has XSQEvent                 $.tail;                       #=                                                 - Input event queue.
-  has int                      $.qlen;                       #=                                                 - Length of input event queue
-  has ulong                    $.last_request_read;          #=                                                 - seq number of last event read
-  has ulong                    $.request;                    #=                                                 - sequence number of last request.
-  has Pointer                  $.last_req;                   #= ot:(char*)                                      - beginning of last request, or dummy
-  has Pointer                  $.buffer;                     #= ot:(char*)                                      - Output buffer starting address.
-  has Pointer                  $.bufptr;                     #= ot:(char*)                                      - Output buffer index pointer.
-  has Pointer                  $.bufmax;                     #= ot:(char*)                                      - Output buffer maximum+1 address.
-  has unsigned                 $.max_request_size;           #=                                                 - maximum number 32 bit words in reques
-  has XrmHashBucket            $.db;                         #= ot:XrmHashBucket                                -
-  has Pointer                  $.synchandler;                #= fp:(XDisplay * --> in);                         -
-  has Str                      $.display_name;               #=                                                 - "host:display" string used on this connec
-  has int                      $.default_screen;             #=                                                 - default screen for operations
-  has int                      $.nscreens;                   #=                                                 - number of screens on this serve
-  has Pointer                  $.screens;                    #= tb:screens,$!nscreens                           - pointer to list of screens
-  has ulong                    $.motion_buffer;              #=                                                 - size of motion buffer
-  has ulong                    $.flags;                      #=                                                 - internal connection flags
-  has int                      $.min_keycode;                #=                                                 - minimum defined keycode
-  has int                      $.max_keycode;                #=                                                 - maximum defined keycode
-  has KeySym                   $.keysyms;                    #=                                                 - This server's keysyms
-  has XModifierKeymap          $.modifiermap;                #=                                                 - This server's modifier keymap
-  has int                      $.keysyms_per_keycode;        #=                                                 - number of rows
-  has CArray[uint8]            $.xdefaults;                  #=                                                 - contents of defaults from server
-  has CArray[uint8]            $.scratch_buffer;             #=                                                 - place to hang scratch buffer
-  has ulong                    $.scratch_length;             #=                                                 - length of scratch buffer
-  has int                      $.ext_number;                 #=                                                 - extension number on this display
-  has Pointer                  $.ext_procs;                  #= tb:XExten,$!ext_number                          - extensions initialized on this display
-  has Pointer                  @.event_vec[128] is CArray;   #= fp:(Display *, XEvent *, xEvent * --> Boolean)  -
-  has Pointer                  @.wire_vec[128]  is CArray;   #= fp:(Display *, XEvent *, xEvent * --> Status)   -
-  has KeySym                   $.lock_meaning;               #=                                                 - for XLookupString
-  has XLockInfo                $.lock;                       #=                                                 - multi-thread state, display lock
-  has XInternalAsync           $.async_handlers;             #=                                                 - for internal async
-  has ulong                    $.bigreq_size;                #=                                                 - max size of big requests
-  has XLockPtrs                $.lock_fns;                   #=                                                 - pointers to threads functions
-  has Pointer                  $.idlist_alloc;               #= fp:(Disply *, XID *, int --> Pointer);
+  has XExtData                 $.ext_data;                               #=                                                       - hook for extension to hang data
+  has XFreeFuncs               $.free_funcs;                             #=                                                       - internal free functions
+  has int                      $.fd;                                     #=                                                       - Network socket.
+  has int                      $.conn_checker;                           #=                                                       - ugly thing used by _XEventsQueued
+  has int                      $.proto_major_version;                    #=                                                       - maj. version of server's X protocol
+  has int                      $.proto_minor_version;                    #=                                                       - minor version of server's X protocol
+  has Str                      $.vendor;                                 #=                                                       - vendor of the server hardware
+  has XID                      $.resource_base;                          #=                                                       - resource ID base
+  has XID                      $.resource_mask;                          #=                                                       - resource ID mask bits
+  has XID                      $.resource_id;                            #=                                                       - allocator current ID
+  has int                      $.resource_shift;                         #=                                                       - allocator shift to correct bits
+  has Pointer                  $.resource_alloc;                         #= fp:(XDisplay* --> XID)
+  has int                      $.bitmap_unit;                            #=                                                       - padding and data requirements
+  has int                      $.byte_order;                             #=                                                       - screen byte order, LSBFirst, MSBFirst
+  has int                      $.bitmap_pad;                             #=                                                       - padding requirements on bitmaps
+  has int                      $.bitmap_bit_order;                       #=                                                       - LeastSignificant or MostSignificant
+  has int                      $.nformats;                               #=                                                       - number of pixmap formats in list
+  has ScreenFormat             $.pixmap_format;                          #=                                                       - pixmap format list
+  has int                      $.vnumber;                                #=                                                       - Xlib's X protocol version number.
+  has int                      $.release;                                #=                                                       - release of the server
+  has XSQEvent                 $.head;                                   #=                                                       -
+  has XSQEvent                 $.tail;                                   #=                                                       - Input event queue.
+  has int                      $.qlen;                                   #=                                                       - Length of input event queue
+  has ulong                    $.last_request_read;                      #=                                                       - seq number of last event read
+  has ulong                    $.request;                                #=                                                       - sequence number of last request.
+  has Pointer                  $.last_req;                               #= ot:(char*)                                            - beginning of last request, or dummy
+  has Pointer                  $.buffer;                                 #= ot:(char*)                                            - Output buffer starting address.
+  has Pointer                  $.bufptr;                                 #= ot:(char*)                                            - Output buffer index pointer.
+  has Pointer                  $.bufmax;                                 #= ot:(char*)                                            - Output buffer maximum+1 address.
+  has unsigned                 $.max_request_size;                       #=                                                       - maximum number 32 bit words in reques
+  has XrmHashBucket            $.db;                                     #= ot:XrmHashBucket                                      -
+  has Pointer                  $.synchandler;                            #= fp:(XDisplay * --> in);                               -
+  has Str                      $.display_name;                           #=                                                       - "host:display" string used on this connec
+  has int                      $.default_screen;                         #=                                                       - default screen for operations
+  has int                      $.nscreens;                               #=                                                       - number of screens on this serve
+  has Pointer                  $.screens;                                #= tb:screens,$!nscreens                                 - pointer to list of screens
+  has ulong                    $.motion_buffer;                          #=                                                       - size of motion buffer
+  has ulong                    $.flags;                                  #=                                                       - internal connection flags
+  has int                      $.min_keycode;                            #=                                                       - minimum defined keycode
+  has int                      $.max_keycode;                            #=                                                       - maximum defined keycode
+  has KeySym                   $.keysyms;                                #=                                                       - This server's keysyms
+  has XModifierKeymap          $.modifiermap;                            #=                                                       - This server's modifier keymap
+  has int                      $.keysyms_per_keycode;                    #=                                                       - number of rows
+  has CArray[uint8]            $.xdefaults;                              #=                                                       - contents of defaults from server
+  has CArray[uint8]            $.scratch_buffer;                         #=                                                       - place to hang scratch buffer
+  has ulong                    $.scratch_length;                         #=                                                       - length of scratch buffer
+  has int                      $.ext_number;                             #=                                                       - extension number on this display
+  has Pointer                  $.ext_procs;                              #= tb:XExten,$!ext_number                                - extensions initialized on this display
+  has Pointer                  @.event_vec[128]              is CArray;  #= fp:(Display *, XEvent *, xEvent * --> Boolean)        -
+  has Pointer                  @.wire_vec[128]               is CArray;  #= fp:(Display *, XEvent *, xEvent * --> Status)         -
+  has KeySym                   $.lock_meaning;                           #=                                                       - for XLookupString
+  has XLockInfo                $.lock;                                   #=                                                       - multi-thread state, display lock
+  has XInternalAsync           $.async_handlers;                         #=                                                       - for internal async
+  has ulong                    $.bigreq_size;                            #=                                                       - max size of big requests
+  has XLockPtrs                $.lock_fns;                               #=                                                       - pointers to threads functions
+  has Pointer                  $.idlist_alloc;                           #= fp:(Disply *, XID *, int --> Pointer);
 
-#   XKeytrans                *key_bindings;                /* for XLookupString */
-#   Font                     cursor_font;                 /* for XCreateFontCursor */
-#   XDisplayAtoms            *atoms; /* for XInternAtom */
-#   uint                     mode_switch;  /* keyboard group modifiers */
-#   uint                     num_lock;  /* keyboard numlock modifiers */
-#   XContextDB               *context_db; /* context database */
-#   Pointer                  (**error_vec)(Display *, XErrorEvent *, xError * --> Boolean);
-#
-#   # Xcms information
-#   XcmsInfo                 cms;
-#   XIMFilter                im_filters;
-#   XSQEvent                 qfree; /* unallocated event queue elements */
-#   ulong                    next_event_serial_num; /* inserted into next queue elt */
-#   XExten                   flushes; /* Flush hooks */
-#   Pointer                  im_fd_info;  #= tb:XConnectionInfo,$!im_fd_length /* _XRegisterInternalConnection */
-#   int                      im_fd_length;       /* number of im_fd_info */
-#   Pointer                   conn_watchers; #= tb:XConnWatchInfo,$!watcher_count  /* XAddConnectionWatch */
-#   int                      watcher_count;      /* number of conn_watchers */
-#   XPointer                 filedes;       /* struct pollfd cache for _XWaitForReadable */
-#   Pointer                  savedsynchandle; #= fp:(Display * --> int);
-#   XID                      resource_max;       /* allocator max ID */
-#   int                      xcmisc_opcode;      /* major opcode for XC-MISC */
-#   XkbInfoRec               xkb_info; /* XKB info */
-#   XtransConnInfo           trans_conn; /* transport connection object */
-#   X11XCBPrivate            xcb; /* XCB glue private data */
+  has XKeytrans                $.key_bindings;                           #=                                                       - for XLookupString
+  has FontRec                  $.cursor_font;                            #=                                                       - for XCreateFontCursor
+  has XDisplayAtoms            $.atoms;                                  #=                                                       - for XInternAtom
+  has uint                     $.mode_switch;                            #=                                                       - keyboard group modifiers
+  has uint                     $.num_lock;                               #=                                                       - keyboard numlock modifiers
+  has XContextDB               $.context_db;                             #=                                                       - context database
+  has Pointer[Pointer]         $.error_vec;                              #= fp:(Display *, XErrorEvent *, xError * --> Boolean);
 
-#   # Generic event cookie handling
-#   uint                     next_cookie; /* next event cookie */
+  # Xcms information
+  has XcmsInfo                 $.cms;
+  has XIMFilter                $.im_filters;
+  has XSQEvent                 $.qfree;                                  #=                                                       - unallocated event queue elements
+  has ulong                    $.next_event_serial_num;                  #=                                                       - inserted into next queue elt
+  has XExten                   $.flushes;                                #=                                                       - Flush hooks
+  has Pointer                  $.im_fd_info;                             #= tb:XConnectionInfo,$!im_fd_length                     - _XRegisterInternalConnection
+  has int                      $.im_fd_length;                           #=                                                       - number of im_fd_info
+  has Pointer                  $.conn_watchers;                          #= tb:XConnWatchInfo,$!watcher_count                     - XAddConnectionWa
+  has int                      $.watcher_count;                          #=                                                       - number of conn_watchers
+  has XPointer                 $.filedes;                                #=                                                       - struct pollfd cache for _XWaitForReadable
+  has Pointer                  $.savedsynchandle;                        #= fp:(Display * --> int);
+  has XID                      $.resource_max;                           #=                                                       - allocator max ID
+  has int                      $.xcmisc_opcode;                          #=                                                       - major opcode for XC-MISC
+  has XkbInfoRec               $.xkb_info;                               #=                                                       - XKB info
+  has XtransConnInfo           $.trans_conn;                             #=                                                       - transport connection object
+  has X11XCBPrivate            $.xcb;                                    #=                                                       - XCB glue private data
 
-#   # vector for wire to generic event, index is (extension - 128)
-#   Pointer                  generic_event_vec[128] is CArray; #= fp:(Display *, XGenericEventCookie *, xEvent * --> Bool);
+  # Generic event cookie handling
+  has uint                     $.next_cookie;                            #=                                                       - next event cookie
 
-#   # vector for event copy, index is (extension - 128)
-#   Pointer                  generic_event_copy_vec[128] is CArray; #= fp:(Display *, XGenericEventCookie ,XGenericEventCookie * --> Bool);
-#   Pointer                  cookiejar;  /* cookie events returned but not claimed */
-#   XErrorThreadInfo         *error_threads;
-#   XIOErrorExitHandler      exit_handler;
-#   void                     *exit_handler_data;
+  # vector for wire to generic event, index is (extension - 128)
+  HAS Pointer                  @.generic_event_vec[128]      is CArray;  #= fp:(Display *, XGenericEventCookie *, xEvent * --> Bool);
+
+  # vector for event copy, index is (extension - 128)
+  has Pointer                  @.generic_event_copy_vec[128] is CArray;  #= fp:(Display *, XGenericEventCookie ,XGenericEventCookie * --> Bool);
+  has Pointer                  $.cookiejar;                              #= cookie events returned but not claimed */
+  has XErrorThreadInfo         $.error_threads;
+  has Pointer                  $.exit_handler;                           #= fp:XIOErrorExitHandler
+  has Pointer                  $.exit_handler_data;
 }
 
-# class XtAppStruct is repr<CStruct> is export {
-# 	has XtAppContext                 $!next              ;
-# 	has ProcessContext               $!process           ;
-# 	has InternalCallbackList         $!destroy_callbacks ;
-# 	has CArray[Pointer[Display]]     $!list              ;
-# 	has TimerEvent                   $!timerQueue        ;
-# 	has WorkProc                     $!workQueue         ;
-# 	has CArray[Pointer[InputEvent]]  $!input_list        ;
-# 	has InputEvent                   $!outstandingQueue  ;
-# 	has SignalEvent                  $!signalQueue       ;
-# 	has XrmDatabase                  $!errorDB           ;
-#
-#   # cw: Will &!handler ever be a thing?
-# 	has Pointer                      $!errorMsgHandler   ; #= fp:XtErrorMsgHandler
-# 	has Pointer                      $!warningMsgHandler ; #= fp:XtErrorMsgHandler
-# 	has Pointer                      $!errorHandler      ; #= fp:XtErrorHandler
-# 	has Pointer                      $!warningHandler    ; #= fp:XtErrorHandler
-# 	has ActionList                   $!action_table      ;
-# 	has ConverterTable               $!converterTable    ;
-# 	has ulong                        $!selectionTimeout  ;
-# 	HAS FdStruct                     $!fds               ;
-# 	has short                        $!count             ;
-# 	has short                        $!max               ;
-# 	has short                        $!last              ;
-# 	has short                        $!input_count       ;
-# 	has short                        $!input_max         ;
-# 	has Boolean                      $!sync              ;
-# 	has Boolean                      $!being_destroyed   ;
-# 	has Boolean                      $!error_inited      ;
-# 	has Boolean                      $!identify_windows  ;
-# 	has Heap                         $!heap              ;
-# 	has String                       $!fallback_resources;
-# 	has ActionHook                   $!action_hook_list  ;
-# 	has BlockHook                    $!block_hook_list   ;
-# 	has realInt                      $!destroy_list_size ;
-# 	has realInt                      $!destroy_count     ;
-# 	has realInt                      $!dispatch_level    ;
-# 	has DestroyRec                   $!destroy_list      ;
-# 	has Widget                       $!in_phase2_destroy ;
-# 	has LangProc                     $!langProcRec       ;
-# 	has TMBindCacheRec               $!free_bindings     ;
-# 	has XtString                     $!display_name_tried;
-# 	has Display                      $!dpy_destroy_list  ;
-# 	has realInt                      $!dpy_destroy_count ;
-# 	has Boolean                      $!exit_flag         ;
-# 	has Boolean                      $!rebuild_fdlist    ;
-# 	has LockPtr                      $!lock_info         ;
-# 	has Pointer                      $!lock              ; #= fp:ThreadAppProc
-# 	has Pointer                      $!unlock            ; #= fp:ThreadAppProc
-# 	has Pointer                      $!yield_lock        ; #= fp:ThreadAppYieldLockProc
-# 	has Pointer                      $!restore_lock      ; #= fp:ThreadAppRestoreLockProc
-# 	has Pointer                      $!free_lock         ; #= fp:ThreadAppProc
-# }
+class XtAppStruct is repr<CStruct> is export {
+	has XtAppContext                 $!next              ;
+	has ProcessContext               $!process           ;
+	has InternalCallbackList         $!destroy_callbacks ;
+	has CArray[Pointer[Display]]     $!list              ;
+	has TimerEvent                   $!timerQueue        ;
+	has WorkProc                     $!workQueue         ;
+	has CArray[Pointer[InputEvent]]  $!input_list        ;
+	has InputEvent                   $!outstandingQueue  ;
+	has SignalEvent                  $!signalQueue       ;
+	has XrmDatabase                  $!errorDB           ;
+
+  # cw: Will &!handler ever be a thing?
+	has Pointer                      $!errorMsgHandler   ; #= fp:XtErrorMsgHandler
+	has Pointer                      $!warningMsgHandler ; #= fp:XtErrorMsgHandler
+	has Pointer                      $!errorHandler      ; #= fp:XtErrorHandler
+	has Pointer                      $!warningHandler    ; #= fp:XtErrorHandler
+	has ActionList                   $!action_table      ;
+	has ConverterTable               $!converterTable    ;
+	has ulong                        $!selectionTimeout  ;
+	HAS FdStruct                     $!fds               ;
+	has short                        $!count             ;
+	has short                        $!max               ;
+	has short                        $!last              ;
+	has short                        $!input_count       ;
+	has short                        $!input_max         ;
+	has Boolean                      $!sync              ;
+	has Boolean                      $!being_destroyed   ;
+	has Boolean                      $!error_inited      ;
+	has Boolean                      $!identify_windows  ;
+	has Heap                         $!heap              ;
+	has String                       $!fallback_resources;
+	has ActionHook                   $!action_hook_list  ;
+	has BlockHook                    $!block_hook_list   ;
+	has realInt                      $!destroy_list_size ;
+	has realInt                      $!destroy_count     ;
+	has realInt                      $!dispatch_level    ;
+	has DestroyRec                   $!destroy_list      ;
+	has Widget                       $!in_phase2_destroy ;
+	has LangProc                     $!langProcRec       ;
+	has TMBindCacheRec               $!free_bindings     ;
+	has XtString                     $!display_name_tried;
+	has Display                      $!dpy_destroy_list  ;
+	has realInt                      $!dpy_destroy_count ;
+	has Boolean                      $!exit_flag         ;
+	has Boolean                      $!rebuild_fdlist    ;
+	has LockPtr                      $!lock_info         ;
+	has Pointer                      $!lock              ; #= fp:ThreadAppProc
+	has Pointer                      $!unlock            ; #= fp:ThreadAppProc
+	has Pointer                      $!yield_lock        ; #= fp:ThreadAppYieldLockProc
+	has Pointer                      $!restore_lock      ; #= fp:ThreadAppRestoreLockProc
+	has Pointer                      $!free_lock         ; #= fp:ThreadAppProc
+}
