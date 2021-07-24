@@ -353,7 +353,7 @@ sub XCloseOM (XOM $var0)
 sub XConfigureWindow (
   Display        $var0,
   Window         $var1,
-  realInt           $var2,
+  realInt        $var2,
   XWindowChanges $var3
 )
   returns realInt
