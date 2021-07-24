@@ -2502,19 +2502,23 @@ constant ZRCTSPERBATCH                                                   is expo
 
 
 # cw: Temporary stubs.
-constant XColor               is export := Pointer;
-constant XConnectionWatchProc is export := Pointer;
 #constant XExtCodes            is export := Pointer;
 #constant XExtData             is export := Pointer;
-constant XHostAddress         is export := Pointer;
-constant XLockInfo            is export := Pointer;
-constant XrmHashBucket        is export := Pointer;
-constant XKeytrans            is export := Pointer;
-constant XDisplayAtoms        is export := Pointer;
-constant XContextDB           is export := Pointer;
-constant XIMFilter            is export := Pointer;
-constant XkbInfoRec           is export := Pointer;
 constant X11XCBPrivate        is export := Pointer;
+constant XColor               is export := Pointer;
+constant XConnectionWatchProc is export := Pointer;
+constant XContextDB           is export := Pointer;
+constant XDisplayAtoms        is export := Pointer;
+constant XErrorHandler        is export := Pointer;
 constant XErrorThreadInfo     is export := Pointer;
-constant XOM                  is export := Pointer;
+constant XHostAddress         is export := Pointer;
+constant XIDProc              is export := Pointer;
+constant XIMFilter            is export := Pointer;
+constant XIOErrorExitHandler  is export := Pointer;
+constant XIOErrorHandler      is export := Pointer;
+constant XkbInfoRec           is export := Pointer;
+constant XKeytrans            is export := Pointer;
+constant XLockInfo            is export := Pointer;
 constant XOC                  is export := Pointer;
+constant XOM                  is export := Pointer;
+constant XrmHashBucket        is export := Pointer;
