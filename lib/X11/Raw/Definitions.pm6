@@ -2,16 +2,12 @@ use v6.c;
 
 use NativeCall;
 
+use X11::Compat::Definitions;
+
 unit package XLib::Raw::Definitions;
 
 our $DEBUG is export;
 INIT $DEBUG = True if %*ENV<P6_X11_DEBUG>;
-
-constant realInt  is export := $*KERNEL.bits == 64 ?? int64
-                                                   !! int32;
-
-constant realUInt is export := $*KERNEL.bits == 64 ?? uint64
-                                                   !! uint32;
 
 constant x11                          is export = 'x11',v6;
 
@@ -41,7 +37,7 @@ constant LockRec                      is export := Pointer;
 constant LockPtr                      is export := Pointer;
 constant Modifiers                    is export := uint;
 constant String                       is export := Str;
-constant Status                       is export := int;
+constant Status                       is export := realInt;
 constant TMLongCard                   is export := ulong;
 constant XIC                          is export := Pointer;
 constant XID                          is export := uint64;
@@ -88,9 +84,10 @@ constant EIGHT                        is export =  8;
 constant NINE                         is export =  9;
 constant TEN                          is export = 10;
 
-constant XAppGroup                    is export := XID;
+constant Font                         is export := XID;
 constant GContext                     is export := XID;
 constant Picture                      is export := XID;
+constant XAppGroup                    is export := XID;
 
 constant CARD8                        is export := uint8;
 constant CARD16                       is export := uint16;
@@ -2512,3 +2509,12 @@ constant XConnectionWatchProc is export := Pointer;
 constant XHostAddress         is export := Pointer;
 constant XLockInfo            is export := Pointer;
 constant XrmHashBucket        is export := Pointer;
+constant XKeytrans            is export := Pointer;
+constant XDisplayAtoms        is export := Pointer;
+constant XContextDB           is export := Pointer;
+constant XIMFilter            is export := Pointer;
+constant XkbInfoRec           is export := Pointer;
+constant X11XCBPrivate        is export := Pointer;
+constant XErrorThreadInfo     is export := Pointer;
+constant XOM                  is export := Pointer;
+constant XOC                  is export := Pointer;
