@@ -4,12 +4,20 @@ use NativeCall;
 
 unit package X11::Compat::Definitions;
 
+constant realInt  is export := $*KERNEL.bits == 64 ?? int64
+                                                   !! int32;
+
+constant realUInt is export := $*KERNEL.bits == 64 ?? uint64
+                                                   !! uint32;
+
 constant FcChar8   is export := uint8;
 constant FcChar16  is export := uint16;
 constant FcChar32  is export := uint;
 constant FcBool    is export := int;
 constant FcCharSet is export := Pointer;
 constant FcPattern is export := Pointer;
+
+constant FT_UInt   is export := realUInt;
 
 class SizedCArray is CArray is export does Positional {
   has               $!size;
