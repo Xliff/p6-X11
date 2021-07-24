@@ -1065,7 +1065,7 @@ constant ScreenSaverInternal                                             is expo
 constant ScreenSaverMajorVersion                                         is export = 1;
 constant ScreenSaverMinorVersion                                         is export = 1;
 constant ScreenSaverName                                                 is export = 'MIT-SCREEN-SAVER';
-constant ScreenSaverNotify                                               is export = 0;
+#constant ScreenSaverNotify                                               is export = 0;
 constant ScreenSaverNotifyMask                                           is export = 0x00000001;
 constant ScreenSaverNumberEvents                                         is export = 1;
 constant ScreenSaverPropertyName                                         is export = '_MIT_SCREEN_SAVER_ID';
@@ -1548,7 +1548,7 @@ constant XkbDW_Unknown                                                   is expo
 constant XkbErr_BadDevice                                                is export = 0xff;
 constant XkbExplicitAutoRepeatMask                                       is export = (1 +< 5);
 constant XkbExplicitComponentsMask                                       is export = (1 +< 3);
-constant XkbExtensionDeviceNotify                                        is export = 11;
+#constant XkbExtensionDeviceNotify                                        is export = 11;
 constant XkbExtensionDeviceNotifyMask                                    is export = 1;
 constant XkbGBN_AllComponentsMask                                        is export = (0xff);
 constant XkbGBN_ClientSymbolsMask                                        is export = 1;
@@ -1570,7 +1570,7 @@ constant XkbIM_NoAutomatic                                               is expo
 constant XkbIM_NoExplicit                                                is export = 1;
 constant XkbIM_UseEffective                                              is export = 1;
 constant XkbIM_UseLatched                                                is export = 1;
-constant XkbIndicatorDoodad                                              is export = 4;
+#constant XkbIndicatorDoodad                                              is export = 4;
 constant XkbIndicatorMapNotifyMask                                       is export = 1;
 constant XkbIndicatorNamesMask                                           is export = (1 +< 8);
 constant XkbIndicatorStateNotifyMask                                     is export = 1;
@@ -2505,11 +2505,10 @@ constant ZRCTSPERBATCH                                                   is expo
 
 
 # cw: Temporary stubs.
-constant Display is export := Pointer;
+constant XColor               is export := Pointer;
 constant XConnectionWatchProc is export := Pointer;
-constant XExtCodes is export := Pointer;
-constant XHostAddress is export := Pointer;
-constant XExtData is export := Pointer;
-constant XColor is export := Pointer;
-constant Screen is export := Pointer;
-constant GC is export := Pointer;
+#constant XExtCodes            is export := Pointer;
+#constant XExtData             is export := Pointer;
+constant XHostAddress         is export := Pointer;
+constant XLockInfo            is export := Pointer;
+constant XrmHashBucket        is export := Pointer;
