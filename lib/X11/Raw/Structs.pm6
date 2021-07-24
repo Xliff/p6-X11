@@ -54,6 +54,12 @@ class XKeyboardControl is repr<CStruct> is export {
   has realInt $.auto_repeat_mode ;  #= e?:<On Off Default>
 }
 
+class XPixmapFormatValues is repr<CStruct> is export {
+  has realUInt $.depth           is rw;
+  has realUInt $.bits_per_pixel  is rw;
+  has realUInt $.scanline_pad    is rw;
+}
+
 class XSetWindowAttributes is repr<CStruct> is export {
   has Pixmap   $.background_pixmap     is rw; #=         - background or None or ParentRelative
   has ulong    $.background_pixel      is rw; #=         - background pixel
@@ -161,11 +167,56 @@ class XEventPadding is repr<CStruct> {
   HAS long     @.pad[24]    is CArray;
 }
 
+class XKeyEvent is repr<CStruct> is export {
+  has realInt  $.type        is rw; #=             - type of event
+  has ulong    $.serial      is rw; #=             - # of last request processed by server
+  has Boolean  $.send_event  is rw; #= ot:Boolean  - true if this came from a SendEvent request
+  has Display  $.display          ; #=             - Display the event was read from
+  has Window   $.window      is rw; #=             - "event" window it is reported relative to
+  has Window   $.root        is rw; #=             - root window that the event occurred on
+  has Window   $.subwindow   is rw; #=             - child window
+  has Time     $.time        is rw; #=             - milliseconds
+  has realInt  $.x           is rw; #=             -
+  has realInt  $.y           is rw; #=             - pointer x, y coordinates in event window
+  has realInt  $.x_root      is rw; #=             -
+  has realInt  $.y_root      is rw; #=             - coordinates relative to root
+  has realUInt $.state       is rw; #=             - key or button mask
+  has realUInt $.keycode     is rw; #=             - detail
+  has Boolean  $.same_screen is rw; #= ot:Boolean  - same screen flag
+}
+constant XKeyPressedEvent  is export := XKeyEvent;
+constant XKeyReleasedEvent is export := XKeyEvent;
+
+class XMappingEvent is repr<CStruct> is export {
+  has realInt     $.type          is rw;
+  has ulong       $.serial        is rw; #=         - # of last request processed by server
+  has Boolean     $.send_event    is rw; #= ot:Bool - true if this came from a SendEvent request
+  has Display     $.display            ; #=         - Display the event was read from
+  has Window      $.window        is rw; #=         - unused
+  has realInt     $.request       is rw; #=         - one of MappingModifier, MappingKeyboard, MappingPointer
+  has realInt     $.first_keycode is rw; #=         - first keycode
+  has realInt     $.count         is rw; #=         - defines range of change w. first_keycod
+}
+
+class XmbTextItem is repr<CStruct> is export {
+  has CArray[uint8]   $.chars          ;
+  has realInt         $.nchars    is rw;
+  has realInt         $.delta     is rw;
+  has XFontSet        $.font_set       ;
+}
+
+class XwcTextItem is repr<CStruct> is export {
+  has CArray[wchar_t] $.chars         ;
+  has int             $.nchars   is rw;
+  has int             $.delta    is rw;
+  has XFontSet        $.font_set      ;
+}
+
 # cw: Add missing CStrucgs as they are created.
 class XEvent is repr<CUnion> is export {
   has realInt                 $.type;
   HAS XAnyEvent               $.any;
-  # HAS XKeyEvent               $.xkey;
+  HAS XKeyEvent               $.xkey;
   # HAS XButtonEvent            $.xbutton;
   # HAS XMotionEvent            $.xmotion;
   # HAS XCrossingEvent          $.xcrossing;
@@ -192,7 +243,7 @@ class XEvent is repr<CUnion> is export {
   # HAS XSelectionEvent         $.xselection;
   # HAS XColormapEvent          $.xcolormap;
   # HAS XClientMessageEvent     $.xclient;
-  # HAS XMappingEvent           $.xmapping;
+  HAS XMappingEvent           $.xmapping;
   # HAS XErrorEvent             $.xerror;
   # HAS XKeymapEvent            $.xkeymap;
   HAS XGenericEvent           $.xgeneric;
