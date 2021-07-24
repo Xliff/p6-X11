@@ -83,7 +83,7 @@ class XWindowChanges is repr<CStruct> is export {
 }
 
 class XImageFuncs is repr<CStruct> is export {
-  has Pointer $.create_image;  #= fp:(Display* ,Visual* ,uint ,realInt ,realInt ,Str ,uint ,uint ,realInt ,realInt --> XImage);
+  has Pointer $.create_image;  #= fp:(Display* ,4* ,uint ,realInt ,realInt ,Str ,uint ,uint ,realInt ,realInt --> XImage);
   has Pointer $.destroy_image; #= fp:(XImage * --> int   );
   has Pointer $.get_pixel;     #= fp:(XImage *, int, int --> ulong );
   has Pointer $.put_pixel;     #= fp:(XImage *, int, int, unsigned long --> int   );
@@ -2493,6 +2493,59 @@ class XGenericEventCookie is repr<CStruct> is export {
   has Pointer    $.data;
 }
 
+class XTimeCoord is repr<CStruct> is export {
+  has Time  $.time is rw;
+  has short $.x    is rw;
+  has short $.y    is rw;
+}
+
+class Visual is repr<CStruct> is export {
+  has XExtData $.ext_data;            #= hook for extension to hang data
+  has VisualID $.visualid     is rw;  #= visual id of this visual
+  has realInt  $.class        is rw;  #= class of screen (monochrome, etc.)
+  has ulong    $.red_mask     is rw;
+  has ulong    $.green_mask   is rw;
+  has ulong    $.blue_mask    is rw;  #= mask values
+  has realInt  $.bits_per_rgb is rw;  #= log base 2 of distinct color values
+  has realInt  $.map_entries  is rw;  #= color map entries
+}
+
+class XWindowAttributes is repr<CStruct> is export {
+  has int      $.x                     is rw;
+  has int      $.y                     is rw; #=         - location of window
+  has int      $.width                 is rw;
+  has int      $.height                is rw; #=         - width and height of window
+  has int      $.border_width          is rw; #=         - border width of window
+  has int      $.depth                 is rw; #=         - depth of window
+  has Visual   $.visual                is rw; #=         - the associated visual structure
+  has Window   $.root                  is rw; #=         - root of screen containing window
+  has int      $.class                 is rw; #=         - InputOutput, InputOnly
+  has int      $.bit_gravity           is rw; #=         - one of bit gravity values
+  has int      $.win_gravity           is rw; #=         - one of the window gravity values
+  has int      $.backing_store         is rw; #=         - NotUseful, WhenMapped, Always
+  has ulong    $.backing_planes        is rw; #=         - planes to be preserved if possible
+  has ulong    $.backing_pixel         is rw; #=         - value to be used when restoring planes
+  has Boolean  $.save_under            is rw; #= ot:Bool - boolean, should bits under be saved?
+  has Colormap $.colormap              is rw; #=         - color map to be associated with window
+  has Boolean  $.map_installed         is rw; #= ot:Bool - boolean, is color map currently installed
+  has int      $.map_state             is rw; #=         - IsUnmapped, IsUnviewable, IsViewable
+  has long     $.all_event_masks       is rw; #=         - set of events all people have interest in
+  has long     $.your_event_mask       is rw; #=         - my event mask
+  has long     $.do_not_propagate_mask is rw; #=         - set of events that should not propagate
+  has Boolean  $.override_redirect     is rw; #= ot:Bool - boolean value for override-redirect
+  has Screen   $.screen                is rw; #=         - back pointer to correct screen
+} ;
+
+class XKeyboardState is repr<CStruct> is export {
+  has realInt  $.key_click_percent  is rw;
+  has realInt  $.bell_percent       is rw;
+  has realUInt $.bell_pitch         is rw;
+  has realUInt $.bell_duration      is rw;
+  has ulong    $.led_mask           is rw;
+  has realInt  $.global_auto_repeat is rw;
+  HAS char     @.auto_repeats[32]   is CArray;
+}
+
 class PannerPart is repr<CStruct> is export {
   has XtCallbackList $!report_callbacks;             #= callback/Callback
   has Boolean        $.allow_off         is rw;      #= allowOff/AllowOff
@@ -3379,8 +3432,6 @@ class SimpleMenuPart is repr<CStruct> is export {
 	has Str            $!state               ;
 	has XtPointer      $!pad                 ;
 }
-
-class Visual is repr<CStruct> is export { ... }
 
 class ShellPart is repr<CStruct> is export {
   has char           $.geometry;
@@ -7966,17 +8017,6 @@ class xwd_file_header is repr<CStruct> is export {
 	has CARD32 $!window_x        ;
 	has CARD32 $!window_y        ;
 	has CARD32 $!window_bdrwidth ;
-}
-
-class Visual {
-  has XExtData $.ext_data;
-  has VisualID $.visualid;
-  has realInt  $.class;
-  has ulong    $.red_mask;
-  has ulong    $.green_mask;
-  has ulong    $.blue_mask;
-  has realInt  $.bits_per_rgb;
-  has realInt  $.map_entries;
 }
 
 class Depth is repr<CStruct> is export {
