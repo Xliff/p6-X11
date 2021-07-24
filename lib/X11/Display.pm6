@@ -1,6 +1,10 @@
 use v6.c;
 
+use NativeCall;
+
+use X11::Compat::Definitions;
 use X11::Raw::Definitions;
+use X11::Raw::Structs;
 use X11::Raw::Subs;
 use X11::Raw::Lib;
 
@@ -32,7 +36,7 @@ class X11::Display {
   }
 
   method AddHosts (XHostAddress() $var1, Int() $var2) {
-    my gint $v2 = $var2;
+    my realInt $v2 = $var2;
 
     XAddHosts($!d, $var1, $v2);
   }
@@ -57,7 +61,7 @@ class X11::Display {
   ) {
     my Boolean $v2     = $var2.so.Int;
     my long ($v3, $v5) = ($var3, $var5);
-    my gint ($v4, $v6) = ($var4, $var6);
+    my realInt ($v4, $v6) = ($var4, $var6);
 
     XAllocColorCells($!d, $var1, $v2, $v3, $v4, $v5, $v6);
   }
@@ -76,7 +80,7 @@ class X11::Display {
   ) {
     my Boolean $v2 = $var2.so.Int;
     my long ($v3, $v8, $v9, $v10) = ($var3, $var8, $var9, $var10);
-    my gint ($v4, $v5, $v6, $v7)  = ($var4, $var5, $var6, $var7);
+    my realInt ($v4, $v5, $v6, $v7)  = ($var4, $var5, $var6, $var7);
 
     XAllocColorPlanes($!d, $var1, $v2, $v3, $v4, $v5, $v6, $v7, $v8, $v9, $v10);
   }
@@ -87,12 +91,12 @@ class X11::Display {
     XColor()   $var3,
     XColor()   $var4
   ) {
-    XAllocNamedColor($!d, $var1, $v2, $var3, $var4);
+    XAllocNamedColor($!d, $var1, $var2, $var3, $var4);
   }
 
   method AllowEvents (Int() $var1, Int() $var2) {
-    my gint $v1 = $var1;
-    my Time $v2 = $var2;
+    my realInt $v1 = $var1;
+    my Time    $v2 = $var2;
 
     XAllowEvents($!d, $v1, $v2);
   }
@@ -106,7 +110,7 @@ class X11::Display {
   }
 
   method Bell (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XBell($!d, $v1);
   }
@@ -124,13 +128,13 @@ class X11::Display {
   }
 
   method BlackPixel (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XBlackPixel($!d, $v1);
   }
 
   method ChangeActivePointerGrab (Int() $var1, Int() $var2, Int() $var3) {
-    my gint   $v1 = $var1;
+    my realInt   $v1 = $var1;
     my Cursor $v2 = $var2;
     my Time   $v3 = $var3;
 
@@ -155,7 +159,7 @@ class X11::Display {
     Int() $var3,
     Int() $var4
   ) {
-    my gint ($v1, $v2, $v4) = ($var1, $var2, $var4);
+    my realInt ($v1, $v2, $v4) = ($var1, $var2, $var4);
     my KeySym $v3           = $var3;
 
     XChangeKeyboardMapping($!d, $v1, $v2, $v3, $v4);
@@ -169,7 +173,7 @@ class X11::Display {
     Int() $var5
   ) {
     my Boolean ($v1, $v2)      = ($var1, $var2);
-    my gint    ($v3, $v4, $v5) = ($var3, $var4, $var5);
+    my realInt    ($v3, $v4, $v5) = ($var3, $var4, $var5);
 
     XChangePointerControl($!d, $v1, $v2, $v3, $v4, $v5);
   }
@@ -183,16 +187,16 @@ class X11::Display {
     Str() $var6,
     Int() $var7
   ) {
-    my Window $v1           = $var1;
-    my Atom ($v2, $v3)      = ($var2, $var3);
-    my gint ($v4, $v5, $v7) = ($var4, $var5, $var7);
+    my Window  $v1             = $var1;
+    my Atom    ($v2, $v3)      = ($var2, $var3);
+    my realInt ($v4, $v5, $v7) = ($var4, $var5, $var7);
 
-    XChangeProperty($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7);
+    XChangeProperty($!d, $v1, $v2, $v3, $v4, $v5, $var6, $v7);
   }
 
-  method ChangeSaveSet (Window $var1, gint $var2) {
-    my Window $v1 = $var1;
-    my gint   $v2 = $var2;
+  method ChangeSaveSet (Window $var1, realInt $var2) {
+    my Window  $v1 = $var1;
+    my realInt $v2 = $var2;
 
     XChangeSaveSet($!d, $v1, $v2);
   }
@@ -216,14 +220,14 @@ class X11::Display {
   }
 
   method CheckTypedEvent (Int() $var1, XEvent() $var2) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XCheckTypedEvent($!d, $v1, $var2);
   }
 
   method CheckTypedWindowEvent (Int() $var1, Int() $var2, XEvent() $var3) {
     my Window $v1 = $var1;
-    my gint   $v2 = $var2;
+    my realInt   $v2 = $var2;
 
     XCheckTypedWindowEvent($!d, $v1, $v2, $var3);
   }
@@ -237,7 +241,7 @@ class X11::Display {
 
   method CirculateSubwindows (Int() $var1, Int() $var2) {
     my Window $v1 = $var1;
-    my gint   $v2 = $var2;
+    my realInt   $v2 = $var2;
 
     XCirculateSubwindows($!d, $v1, $v2);
   }
@@ -262,8 +266,8 @@ class X11::Display {
     Int() $var5,
     Int() $var6
   ) {
-    my Window $v1                 = $var1;
-    my gint  ($v2, $v3, $v4, $v5) = ($var2, $var3, $var4, $var5);
+    my Window  $v1                       = $var1;
+    my realInt ($v2, $v3, $v4, $v5, $v6) = ($var2, $var3, $var4, $var5, $var6);
 
     XClearArea($!d, $v1, $v2, $v3, $v4, $v5, $v6);
   }
@@ -279,8 +283,8 @@ class X11::Display {
   }
 
   method ConfigureWindow (Int() $var1, Int() $var2, XWindowChanges() $var3) {
-    my Window $v1 = $var1;
-    my gint   $v2 = $var2
+    my Window  $v1 = $var1;
+    my realInt $v2 = $var2;
 
     XConfigureWindow($!d, $v1, $v2, $var3);
   }
@@ -315,7 +319,7 @@ class X11::Display {
     Int() $var9
   ) {
     my Drawable ($v1, $v2) = ($var1, $var2);
-    my gint ($v4, $v5, $v6, $v7, $v8, $v9) = (
+    my realInt ($v4, $v5, $v6, $v7, $v8, $v9) = (
       $var4,
       $var5,
       $var6,
@@ -350,7 +354,7 @@ class X11::Display {
     Int() $var10
   ) {
     my Drawable ($v1, $v2) = ($var1, $var2);
-    my gint ($v4, $v5, $v6, $v7, $v8, $v9) = (
+    my realInt ($v4, $v5, $v6, $v7, $v8, $v9) = (
       $var4,
       $var5,
       $var6,
@@ -370,20 +374,20 @@ class X11::Display {
     Int() $var4
   ) {
     my Drawable $v1 = $var1;
-    my gint ($v3, $v4) = ($var3, $var4);
+    my realInt ($v3, $v4) = ($var3, $var4);
 
     XCreateBitmapFromData($!d, $v1, $var2, $v3, $v4);
   }
 
   method CreateColormap (Int() $var1, Visual() $var2, Int() $var3) {
     my Window $v1 = $var1;
-    my gint   $v3 = $var3;
+    my realInt   $v3 = $var3;
 
     XCreateColormap($!d, $v1, $var2, $v3);
   }
 
   method CreateFontCursor (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XCreateFontCursor($!d, $v1);
   }
@@ -403,7 +407,7 @@ class X11::Display {
     CArray[Str]         $var4,
                         :$all  = False
   ) {
-    my gint $v3 = 0;
+    my realInt $v3 = 0;
 
     my $r = XCreateFontSet($!d, $var1, $var2, $v3, $var4);
     $var3 = $v3;
@@ -412,7 +416,7 @@ class X11::Display {
       $r,
       CStringArrayToArray( ppr($var2) ),
       $var3,
-      CStringArray($var4)
+      CStringArrayToArray($var4)
     );
   }
 
@@ -435,7 +439,7 @@ class X11::Display {
     XColor() $var5,
     XColor() $var6
   ) {
-    my gint ($v3, $v4) = ($var3, $var4);
+    my realInt ($v3, $v4) = ($var3, $var4);
 
     XCreateGlyphCursor($!d, $var1, $var2, $v3, $v4, $var5, $var6);
   }
@@ -451,7 +455,7 @@ class X11::Display {
     Int() $var8,
     Int() $var9
   ) {
-    my gint ($v2, $v3, $v4, $v6, $v7, $v8, $v9) = (
+    my realInt ($v2, $v3, $v4, $v6, $v7, $v8, $v9) = (
       $var2,
       $var3,
       $var4,
@@ -466,7 +470,7 @@ class X11::Display {
 
   method CreatePixmap (Int() $var1, Int() $var2, Int() $var3, Int() $var4) {
     my Drawable $v1             = $var1;
-    my gint     ($v2, $v3, $v4) = ($var2, $var3, $var4);
+    my realInt     ($v2, $v3, $v4) = ($var2, $var3, $var4);
 
     XCreatePixmap($!d, $v1, $v2, $v3, $v4);
   }
@@ -480,7 +484,7 @@ class X11::Display {
     Int()    $var6
   ) {
     my Pixmap ($v1, $v2) = ($var2, $var2);
-    my gint   ($v5, $v6) = ($var5, $var6);
+    my realInt   ($v5, $v6) = ($var5, $var6);
 
     XCreatePixmapCursor($!d, $v1, $v2, $var3, $var4, $v5, $v6);
   }
@@ -495,10 +499,10 @@ class X11::Display {
     Int() $var7
   ) {
     my Drawable $v1             = $var1;
-    my gint     ($v3, $v4, $v7) = ($var3, $var4, $var7);
+    my realInt  ($v3, $v4, $v7) = ($var3, $var4, $var7);
     my long     ($v5, $v6)      = ($var5, $var6);
 
-    XCreatePixmapFromBitmapData($!d, $v1, $var2, $v3, $v4, $v5, $va, $v7);
+    XCreatePixmapFromBitmapData($!d, $v1, $var2, $v3, $v4, $v5, $v6, $v7);
   }
 
   method CreateSimpleWindow (
@@ -511,9 +515,9 @@ class X11::Display {
     Int() $var7,
     Int() $var8
   ) {
-    my Window $v1                       = $var1
-    my gint   ($v2, $v3, $v4, $v5, $v6) = ($var2, $var3, $var4, $var5, $var6);
-    my long   ($v7, $v8)                = ($var7, $var8);
+    my Window  $v1                       = $var1;
+    my realInt ($v2, $v3, $v4, $v5, $v6) = ($var2, $var3, $var4, $var5, $var6);
+    my long    ($v7, $v8)                = ($var7, $var8);
 
     XCreateSimpleWindow($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7, $v8);
   }
@@ -535,7 +539,7 @@ class X11::Display {
     my long                 $v10 = $var10;
     my XSetWindowAttributes $v11 = $var11;
 
-    my gint ($v2, $v3, $v4, $v5, $v6, $v7, $v8) = (
+    my realInt ($v2, $v3, $v4, $v5, $v6, $v7, $v8) = (
       $var2,
       $var3,
       $var4,
@@ -556,25 +560,25 @@ class X11::Display {
       $v7,
       $v8,
       $var9,
-      $va10,
+      $v10,
       $v11
     );
   }
 
   method DefaultColormap (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XDefaultColormap($!d, $v1);
   }
 
   method DefaultDepth (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XDefaultDepth($!d, $v1);
   }
 
   method DefaultGC (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XDefaultGC($!d, $v1);
   }
@@ -592,7 +596,7 @@ class X11::Display {
   }
 
   method DefaultVisual (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XDefaultVisual($!d, $v1);
   }
@@ -629,19 +633,19 @@ class X11::Display {
   }
 
   method DisplayCells (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XDisplayCells($!d, $v1);
   }
 
   method DisplayHeight (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XDisplayHeight($!d, $v1);
   }
 
   method DisplayHeightMM (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XDisplayHeightMM($!d, $v1);
   }
@@ -649,11 +653,11 @@ class X11::Display {
   proto method DisplayKeycodes (|)
   { * }
 
-  method DisplayKeycodes {
+  multi method DisplayKeycodes {
     samewith($, $);
   }
-  method DisplayKeycodes ($var1 is rw, $var2 is rw) {
-    my gint ($v1, $v1) = 0 xx 2;
+  multi method DisplayKeycodes ($var1 is rw, $var2 is rw) {
+    my realInt ($v1, $v2) = 0 xx 2;
 
     XDisplayKeycodes($!d, $v1, $v2);
     ($var1, $var2) = ($v1, $v2);
@@ -664,7 +668,7 @@ class X11::Display {
   }
 
   method DisplayPlanes (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XDisplayPlanes($!d, $v1);
   }
@@ -674,13 +678,13 @@ class X11::Display {
   }
 
   method DisplayWidth (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XDisplayWidth($!d, $v1);
   }
 
   method DisplayWidthMM (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XDisplayWidthMM($!d, $v1);
   }
@@ -695,13 +699,13 @@ class X11::Display {
     Int() $var7,
     Int() $var8
   ) {
-    my Drawable $var1 = $v1;
+    my Drawable $v1 = $var1;
 
     XDrawArc($!d, $v1, $var2, $var3, $var4, $var5, $var6, $var7, $var8);
   }
 
   method DrawArcs (Int() $var1, GC() $var2, XArc() $var3, Int() $var4) {
-    my Drawable $var1 = $v1;
+    my Drawable $v1 = $var1;
 
     XDrawArcs($!d, $v1, $var2, $var3, $var4);
   }
@@ -714,8 +718,8 @@ class X11::Display {
     Str() $var5,
     Int() $var6
   ) {
-    my Drawable $var1           = $v1;
-    my gint     ($v3, $v4, $v6) = ($var3, $var4, $var6);
+    my Drawable $v1             = $var1;
+    my realInt  ($v3, $v4, $v6) = ($var3, $var4, $var6);
 
     XDrawImageString($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
@@ -728,8 +732,8 @@ class X11::Display {
     XChar2b() $var5,
     Int()     $var6
   ) {
-    my Drawable $var1 = $v1;
-    my gint     ($v3, $v4, $v6) = ($var3, $var4, $var6);
+    my Drawable $v1 = $var1;
+    my realInt  ($v3, $v4, $v6) = ($var3, $var4, $var6);
 
     XDrawImageString16($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
@@ -742,8 +746,8 @@ class X11::Display {
     Int() $var5,
     Int() $var6
   ) {
-    my Drawable $var1 = $v1;
-    my gint     ($v3, $v4, $v5, $v6) = ($var3, $var4, $var5, $var6);
+    my Drawable $v1 = $var1;
+    my realInt     ($v3, $v4, $v5, $v6) = ($var3, $var4, $var5, $var6);
 
     XDrawLine($!d, $v1, $var2, $v3, $v4, $v5, $v6);
   }
@@ -755,8 +759,8 @@ class X11::Display {
     Int()  $var4,
     Int()  $var5
   ) {
-    my Drawable $var1 = $v1;
-    my gint     ($v4, $v5) = ($var4, $var5);
+    my Drawable $v1 = $var1;
+    my realInt     ($v4, $v5) = ($var4, $var5);
 
     XDrawLines($!d, $v1, $var2, $var3, $v4, $v5);
   }
@@ -767,8 +771,8 @@ class X11::Display {
     Int() $var3,
     Int() $var4
   ) {
-    my Drawable $var1 = $v1;
-    my gint     ($v3, $v4) = ($var3, $var4);
+    my Drawable $v1 = $var1;
+    my realInt     ($v3, $v4) = ($var3, $var4);
 
     XDrawPoint($!d, $v1, $var2, $v3, $v4);
   }
@@ -780,8 +784,8 @@ class X11::Display {
     Int()  $var4,
     Int()  $var5
   ) {
-    my Drawable $var1 = $v1;
-    my gint     ($v4, $v5) = ($var4, $var5);
+    my Drawable $v1 = $var1;
+    my realInt     ($v4, $v5) = ($var4, $var5);
 
     XDrawPoints($!d, $v1, $var2, $var3, $v4, $v5);
   }
@@ -794,8 +798,8 @@ class X11::Display {
     Int() $var5,
     Int() $var6
   ) {
-    my Drawable $var1 = $v1;
-    my gint     ($v3, $v4, $v5, $v6) = ($var3, $var4, $var5, $var6);
+    my Drawable $v1 = $var1;
+    my realInt     ($v3, $v4, $v5, $v6) = ($var3, $var4, $var5, $var6);
 
     XDrawRectangle($!d, $v1, $var2, $v3, $v4, $v5, $v6);
   }
@@ -806,8 +810,8 @@ class X11::Display {
     XRectangle $var3,
     Int()      $var4
   ) {
-    my Drawable $var1 = $v1;
-    my gint     $v4   = $var4;
+    my Drawable $v1 = $var1;
+    my realInt     $v4   = $var4;
 
     XDrawRectangles($!d, $v1, $var2, $var3, $v4);
   }
@@ -818,8 +822,8 @@ class X11::Display {
     XSegment $var3,
     Int()    $var4
   ) {
-    my Drawable $var1 = $v1;
-    my gint     $v4   = $var4;
+    my Drawable $v1 = $var1;
+    my realInt     $v4   = $var4;
 
     XDrawSegments($!d, $v1, $var2, $var3, $var4);
   }
@@ -832,7 +836,7 @@ class X11::Display {
     Str $var5,
     Int() $var6
   ) {
-    my Drawable $var1 = $v1;
+    my Drawable $v1 = $var1;
 
     XDrawString($!d, $v1, $var2, $var3, $var4, $var5, $var6);
   }
@@ -845,8 +849,8 @@ class X11::Display {
     XChar2b $var5,
     Int()   $var6
   ) {
-    my Drawable $var1 = $v1;
-    my gint     ($v3, $v4, $v6) = ($var3, $var4, $var6);
+    my Drawable $v1 = $var1;
+    my realInt     ($v3, $v4, $v6) = ($var3, $var4, $var6);
 
     XDrawString16($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
@@ -859,8 +863,8 @@ class X11::Display {
     XTextItem $var5,
     Int()     $var6
   ) {
-    my Drawable $var1 = $v1;Int()
-    my gint     ($v3, $v4, $v6) = ($var3, $var4, $var6);
+    my Drawable $v1             = $var1;
+    my realInt  ($v3, $v4, $v6) = ($var3, $var4, $var6);
 
     XDrawText($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
@@ -873,8 +877,8 @@ class X11::Display {
     XTextItem16 $var5,
     Int()       $var6
   ) {
-    my Drawable $var1 = $v1;
-    my gint     ($v3, $v4, $v6) = ($var3, $var4, $var6);
+    my Drawable $v1             = $var1;
+    my realInt  ($v3, $v4, $v6) = ($var3, $var4, $var6);
 
     XDrawText16($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
@@ -884,7 +888,7 @@ class X11::Display {
   }
 
   method EventsQueued (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XEventsQueued($!d, $v1);
   }
@@ -894,7 +898,7 @@ class X11::Display {
   }
 
   method FetchBuffer ($var1 is rw, Int() $var2) {
-    my gint ($v1, $v2) = (0, $var2);
+    my realInt ($v1, $v2) = (0, $var2);
 
     my $r = XFetchBuffer($!d, $v1, $v2);
     $var1 = $v1;
@@ -902,7 +906,7 @@ class X11::Display {
   }
 
   method FetchBytes ($var1 is rw) {
-    my gint $v1 = 0;
+    my realInt $v1 = 0;
 
     my $r = XFetchBytes($!d, $v1);
     $var1 = $v1;
@@ -925,8 +929,9 @@ class X11::Display {
     Int() $var7,
     Int() $var8
   ) {
-    my Drawable $v1                            = $var1;
-    my gint     ($v3, $v4, $v5, $v6, $v7, $v8) = (
+    my Drawable $v1 = $var1;
+
+    my realInt ($v3, $v4, $v5, $v6, $v7, $v8) = (
       $var3,
       $var4,
       $var5,
@@ -935,12 +940,12 @@ class X11::Display {
       $var8
     );
 
-    XFillArc($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7, $v8);
+    XFillArc($!d, $v1, $var2, $v3, $v4, $v5, $v6, $v7, $v8);
   }
 
   method FillArcs (Int() $var1, GC() $var2, XArc() $var3, Int() $var4) {
-    my Drawable $v1  = $var1;
-    my gint     $v4, = $var4;
+    my Drawable $v1 = $var1;
+    my realInt  $v4 = $var4;
 
     XFillArcs($!d, $v1, $var2, $var3, $v4);
   }
@@ -953,7 +958,7 @@ class X11::Display {
     Int()      $var5,
     Int()      $var6
   ) {
-    my gint ($v4, $v5, $v6) = ($var4, $var5, $var6);
+    my realInt ($v4, $v5, $v6) = ($var4, $var5, $var6);
 
     XFillPolygon($!d, $var1, $var2, $var3, $v4, $v5, $v6);
   }
@@ -966,7 +971,7 @@ class X11::Display {
     Int()      $var5,
     Int()      $var6
   ) {
-    my gint ($v3, $v4, $v5, $v6) = ($var3, $var4, $var5, $var6);
+    my realInt ($v3, $v4, $v5, $v6) = ($var3, $var4, $var5, $var6);
 
     XFillRectangle($!d, $var1, $var2, $v3, $v4, $v5, $v6);
   }
@@ -978,7 +983,7 @@ class X11::Display {
     Int()        $var4
   ) {
     my Drawable $v1 = $var1;
-    my gint     $v4 = $var4;
+    my realInt     $v4 = $var4;
 
     XFillRectangles($!d, $v1, $var2, $var3, $v4);
   }
@@ -992,7 +997,7 @@ class X11::Display {
   }
 
   method ForceScreenSaver (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
     XForceScreenSaver($!d, $var1);
   }
 
@@ -1003,7 +1008,7 @@ class X11::Display {
   method FreeColors (Int() $var1, Int() $var2, Int() $var3, Int() $var4) {
     my Colormap $v1        = $var1;
     my long     ($v2, $v4) = ($var2, $var4);
-    my gint     $v3        = $var3;
+    my realInt     $v3        = $var3;
 
     XFreeColors($!d, $v1, $v2, $v3, $v4);
   }
@@ -1039,7 +1044,7 @@ class X11::Display {
   proto method Geometry (|)
   { * }
 
-  method Geometry (
+  multi method Geometry (
     Int() $var1,
     Str() $var2,
     Str() $var3,
@@ -1064,7 +1069,7 @@ class X11::Display {
       $
     );
   }
-  method Geometry (
+  multi method Geometry (
     Int() $var1,
     Str() $var2,
     Str() $var3,
@@ -1078,7 +1083,7 @@ class X11::Display {
     Int() $var11 is rw,
     Int() $var12 is rw
   ) {
-    my gint ($v1, $v4, $v5, $v6, $v7, $v8, $v9, $v10, $v11, $v12) = (
+    my realInt ($v1, $v4, $v5, $v6, $v7, $v8, $v9, $v10, $v11, $v12) = (
       $var1,
       $var4,
       $var5,
@@ -1091,8 +1096,8 @@ class X11::Display {
     XGeometry(
       $!d,
       $v1,
-      $v2,
-      $v3,
+      $var2,
+      $var3,
       $v4,
       $v5,
       $v6,
@@ -1115,13 +1120,13 @@ class X11::Display {
   proto method GetAtomNames (|)
   { * }
 
-  method GetAtomNames (@atoms)
+  multi method GetAtomNames (@atoms) {
     (my CArray[Str] $names .= new)[0] = Str;
 
-    samewith( ArrayToCArray(Atom, @atoms), @atoms.elems, $names) );
+    samewith( ArrayToCArray(Atom, @atoms), @atoms.elems, $names );
     CStringArrayToArray($names);
   }
-  method GetAtomNames (
+  multi method GetAtomNames (
     CArray[Atom] $var1,
     Int()        $var2,
     CArray[Str]  $var3,
@@ -1144,7 +1149,7 @@ class X11::Display {
           :$all =  False
   ) {
     my Window $v1 = $var1;
-    my gint   $v3 = $var3;
+    my realInt   $v3 = $var3;
 
     my $s = XGetCommand($!d, $v1, $var2, $v3);
     $var3 = $v3;
@@ -1163,13 +1168,13 @@ class X11::Display {
     Str() $var4,
     Int() $var5
   ) {
-    my gint $v5 = $var5;
+    my realInt $v5 = $var5;
 
-    XGetErrorDatabaseText($!d, $v1, $v2, $v3, $v4, $v5);
+    XGetErrorDatabaseText($!d, $var1, $var2, $var3, $var4, $v5);
   }
 
   method GetErrorText (Int() $var1, Str() $var2, Int() $var3) {
-    my gint ($v1, $v3) = ($var1, $var3);
+    my realInt ($v1, $v3) = ($var1, $var3);
 
     XGetErrorText($!d, $v1, $var2, $v3);
   }
@@ -1181,20 +1186,20 @@ class X11::Display {
   proto method GetFontPath (|)
   { * }
 
-  method GetFontPath {
+  multi method GetFontPath {
     samewith($);
   }
-  method GetFontPath ($var1 is rw) {
-    my gint $v1 = 0;
+  multi method GetFontPath ($var1 is rw) {
+    my realInt $v1 = 0;
 
     my $r = XGetFontPath($!d, $v1);
     CStringArrayToArray($r, $var1 = $v1);
   }
 
-  proto method GetFontPath (|)
+  proto method GetGCValues (|)
   { * }
 
-  multi method GetFontPath (GC() $var1, Int() $var2) {
+  multi method GetGCValues (GC() $var1, Int() $var2) {
     my XGCValues $gcv .= new;
 
     samewith($var1, $var2, $gcv, :all);
@@ -1228,11 +1233,11 @@ class X11::Display {
           $var7 is rw,
           $var8 is rw
   ) {
-    my gint ($v3, $v4, $v5, $v6, $v7, $v8) =  0 xx 6;
+    my realInt ($v3, $v4, $v5, $v6, $v7, $v8) =  0 xx 6;
 
     my Drawable $v1 = $var1;
     my Window   $v2 = $var2;
-    XGetGeometry($!d, $var1, $var2, $v3, $v4, $v5, $v6, $v7, $v8);
+    XGetGeometry($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7, $v8);
     ($var3 ,$var4 ,$var5 ,$var6 ,$var7 ,$var8) = ($v3, $v4, $v5, $v6, $v7, $v8);
 
   }
@@ -1241,8 +1246,8 @@ class X11::Display {
   { * }
 
   multi method XGetIconName (Int() $var1) {
-    (my $cr = (CArray[Str].new)[0] = 0;
-    samewith($var1, $var2, :all);
+    (my $cr = CArray[Str].new)[0] = 0;
+    samewith($var1, $cr, :all);
   }
   multi method XGetIconName (Int() $var1, CArray[Str] $var2, :$all = False) {
     my Window $v1 = $var1;
@@ -1262,9 +1267,9 @@ class X11::Display {
     Int() $var7
   ) {
     my Drawable $v1 = $var1;
-    my long     $v6 = $var6
+    my long     $v6 = $var6;
 
-    my gint ($v2, $v3, $v4, $v5, $v7) = ($var2, $var3, $var4, $var5, $var7);
+    my realInt ($v2, $v3, $v4, $v5, $v7) = ($var2, $var3, $var4, $var5, $var7);
 
     XGetImage($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7);
   }
@@ -1277,11 +1282,11 @@ class X11::Display {
   }
   multi method GetInputFocus (Int() $var1, $var2 is rw, :$all = False) {
     my Window $v1 = $var1;
-    my gint   $v2 = 0;
+    my realInt   $v2 = 0;
 
     my $s = XGetInputFocus($!d, $v1, $v2);
     $var2 = $v2;
-    return $s unless $raw;
+    return $s unless $all;
     ($s, $var2);
   }
 
@@ -1301,20 +1306,20 @@ class X11::Display {
   proto method GetKeyboardMapping (|)
   { * }
 
-  method GetKeyboardMapping (
+  multi method GetKeyboardMapping (
     Int() $var1,
     Int() $var2,
     Int() $var3,
   ) {
     samewith($var1, $var2, $var3, $);
   }
-  method GetKeyboardMapping (
+  multi method GetKeyboardMapping (
     Int() $var1,
     Int() $var2,
     Int() $var3,
           $var4  is rw
   ) {
-    my gint    ($v1, $v3, $v4) = ($var1, $var3, 0);
+    my realInt    ($v1, $v3, $v4) = ($var1, $var3, 0);
     my KeyCode $v2             = $var2;
 
     XGetKeyboardMapping($!d, $v1, $v2, $v3, $v4);
@@ -1335,14 +1340,14 @@ class X11::Display {
     Int() $var1,
     Int() $var2,
     Int() $var3,
-          $var4  is rw
+          $var4  is rw,
           :$all  =  False
   ) {
     my Window $v1        = $var1;
     my Time   ($v2, $v3) = ($var2, $var3);
-    my gint   $v4        = 0;
+    my realInt   $v4        = 0;
 
-    my $xtc = GetMotionEvents($!d, $v1, $v2, $v3, $v4);
+    my $xtc = XGetMotionEvents($!d, $v1, $v2, $v3, $v4);
     $var4 = $v4;
     return $xtc unless $all;
     ($xtc, $v4);
@@ -1359,14 +1364,14 @@ class X11::Display {
     $var2 is rw,
     $var3 is rw
   ) {
-    my gint ($v1, $v2, $v3) = 0 xx 3;
+    my realInt ($v1, $v2, $v3) = 0 xx 3;
 
     XGetPointerControl($!d, $v1, $v2, $v3);
     ($var1, $var2, $var3) = ($v1, $v2, $v3);
   }
 
   method GetPointerMapping (Str() $var1, Int() $var2) {
-    my gint $v2 = $var2;
+    my realInt $v2 = $var2;
 
     XGetPointerMapping($!d, $var1, $var2);
   }
@@ -1383,7 +1388,7 @@ class X11::Display {
     $var3 is rw,
     $var4 is rw
   ) {
-    my gint ($v1, $v2, $v3, $v4) = 0 xx 4;
+    my realInt ($v1, $v2, $v3, $v4) = 0 xx 4;
 
     XGetScreenSaver($!d, $v1, $v2, $v3, $v4);
     ($var1, $var2, $var3, $var4) = ($v1, $v2, $v3, $v4);
@@ -1410,7 +1415,7 @@ class X11::Display {
     my Drawable $v1 = $var1;
     my long     $v6 = $var6;
 
-    my gint ($v2, $v3, $v4, $v5, $v7, $v9, $v10) = (
+    my realInt ($v2, $v3, $v4, $v5, $v7, $v9, $v10) = (
       $var2,
       $var3,
       $var4,
@@ -1420,7 +1425,7 @@ class X11::Display {
       $var10
     );
 
-    XGetSubImage($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7, $v8, $v9, $v10);
+    XGetSubImage($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7, $var8, $v9, $v10);
   }
 
   method GetTransientForHint (Int() $var1, Int() $var2) {
@@ -1440,11 +1445,11 @@ class X11::Display {
   multi method GetWMColormapWindows (
     Int()          $var1,
     CArray[Window] $var2,
-                   $var3 is rw
+                   $var3 is rw,
                    :$all =  False
   ) {
     my Window $v1 = $var1;
-    my gint   $v3 = 0;
+    my realInt   $v3 = 0;
 
     my $s = XGetWMColormapWindows($!d, $v1, $var2, $v3);
     $var3 = $v3;
@@ -1460,9 +1465,14 @@ class X11::Display {
 
     samewith($var1, $rw, $, :all);
   }
-  multi method GetWMProtocols (Int() $var1, CArray[Atom] $var2, $var3 is rw) {
-    my Window $v1 = $var1;
-    my gint   $v3 = 0;
+  multi method GetWMProtocols (
+    Int()        $var1,
+    CArray[Atom] $var2,
+                 $var3  is rw,
+                 :$all  =  False
+  ) {
+    my Window  $v1 = $var1;
+    my realInt $v3 = 0;
 
     my $s = XGetWMProtocols($!d, $var1, $var2, $v3);
     $var3 = $v3;
@@ -1493,7 +1503,7 @@ class X11::Display {
   proto method GetWindowProperty (|)
   { * }
 
-  method GetWindowProperty (
+  multi method GetWindowProperty (
     Int()        $var1,
     Int()        $var2,
     Int()        $var3,
@@ -1538,7 +1548,7 @@ class X11::Display {
     @returns.tail = CArrayToArray( @returns.tail, @returns[3] );
     @returns;
   }
-  method GetWindowProperty (
+  multi method GetWindowProperty (
     Int() $var1,
     Int() $var2,
     Int() $var3,
@@ -1552,14 +1562,15 @@ class X11::Display {
           $var11  is rw,
           :$all   =  False
   ) {
-    my Window $v1                   = $var1;
-    my Atom   ($v2, $v6, $v7)       = ($var2, $var6, 0);
-    my long   ($v3, $v4, $v9, $v10) = ($var3, $var4, 0, 0);
-    my gint   $v8                   = 0;
+    my Window  $v1                   = $var1;
+    my Atom    ($v2, $v6, $v7)       = ($var2, $var6, 0);
+    my Boolean $v5                   = $var5.so.Int;
+    my long    ($v3, $v4, $v9, $v10) = ($var3, $var4, 0, 0);
+    my realInt $v8                   = 0;
 
     (my CArray[uint8] $v11 = .new;)[0] = uint8;
 
-    my $retVal = $XGetWindowProperty(
+    my $retVal = XGetWindowProperty(
       $!d,
       $v1,
       $v2,
@@ -1589,7 +1600,7 @@ class X11::Display {
     Int() $var8,
     Int() $var9
   ) {
-    my gint   ($v1, $v2, $v5, $v6, $v7) = ($var1, $var2, $var5, $var6, $var7);
+    my realInt   ($v1, $v2, $v5, $v6, $v7) = ($var1, $var2, $var5, $var6, $var7);
     my Window ($v3, $v8)                = ($var3, $var8);
     my Boolean $v4                      = $var4.so.Int;
     my Cursor  $v9                      = $var9;
@@ -1605,9 +1616,9 @@ class X11::Display {
     Int() $var5,
     Int() $var6
   ) {
-    my gint    ($v1, $v2, $v5, $v6) = ($var1, $var2, $var5, $var6)
+    my realInt ($v1, $v2, $v5, $v6) = ($var1, $var2, $var5, $var6);
     my Window  $v3                  = $var3;
-    my Boolean $v4                  = $v4.so.Int
+    my Boolean $v4                  = $var4.so.Int;
 
     XGrabKey($!d, $v1, $v2, $v3, $v4, $v5, $v6);
   }
@@ -1621,7 +1632,7 @@ class X11::Display {
   ) {
     my Window  $v1        = $var1;
     my Boolean $v2        = $var2.so.Int;
-    my gint    ($v3, $v4) = ($var3, $var4);
+    my realInt ($v3, $v4) = ($var3, $var4);
     my Time    $v5        = $var5;
 
     XGrabKeyboard($!d, $v1, $v2, $v3, $v4, $v5);
@@ -1637,10 +1648,10 @@ class X11::Display {
     Int() $var7,
     Int() $var8
   ) {
-    my Window  ($v1, $v6)      = ($var1, $var6);
-    my Boolean $v2             = $var2.so.Int;
-    my Time    $v8             = $var8;
-    my gint    ($v3, $v4 ,$v5) = ($var3, $var4, $var5);
+    my Window  ($v1, $v7)           = ($var1, $var7);
+    my Boolean $v2                  = $var2.so.Int;
+    my Time    $v8                  = $var8;
+    my realInt ($v3, $v4 ,$v5, $v6) = ($var3, $var4, $var5, $var6);
 
     XGrabPointer($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7, $v8);
   }
@@ -1651,7 +1662,7 @@ class X11::Display {
 
   method IconifyWindow (Int() $var1, Int() $var2) {
     my Window $v1 = $var1;
-    my gint   $v2 = $var2;
+    my realInt   $v2 = $var2;
 
     XIconifyWindow($!d, $v1, $v2);
   }
@@ -1678,12 +1689,12 @@ class X11::Display {
     XInternAtom($!d, $var1, $v2);
   }
 
-  method InternAtoms (Str $var1, Int() $var2, Int() $var3, Int() $var4) {
-    my gint     $v2 = $var2;
+  method InternAtoms (Str() $var1, Int() $var2, Int() $var3, Int() $var4) {
+    my realInt  $v2 = $var2;
     my Boolean  $v3 = $var3.so.int;
     my Atom     $v4 = $var4;
 
-    XInternAtoms($!d, $v1, $v2, $v3, $v4);
+    XInternAtoms($!d, $var1, $v2, $v3, $v4);
   }
 
   proto method InternalConnectionNumbers (|)
@@ -1697,13 +1708,13 @@ class X11::Display {
     CArrayToArray($fds, $c);
   }
   multi method InternalConnectionNumbers (CArray[realInt] $var1, $var2 is rw) {
-    my gint ($v1, $v2) = ($var1, 0);
+    my realInt ($v1, $v2) = ($var1, 0);
 
     XInternalConnectionNumbers($!d, $v1, $v2);
   }
 
   method KeycodeToKeysym (Int() $var1, Int() $var2, Int() $var3) {
-    my gint    ($v1, $v3) = ($var1, $var3);
+    my realInt    ($v1, $v3) = ($var1, $var3);
     my KeyCode $v2        = $var2;
 
     XKeycodeToKeysym($!d, $v1, $v2, $v3);
@@ -1732,7 +1743,7 @@ class X11::Display {
     samewith($var1, $);
   }
   multi method ListDepths (Int() $var1, $var2 is rw) {
-    my gint    ($v1, $v2) = ($var1, 0);
+    my realInt    ($v1, $v2) = ($var1, 0);
 
     XListDepths($!d, $v1, $v2);
   }
@@ -1744,7 +1755,7 @@ class X11::Display {
     samewith($);
   }
   multi method ListExtensions ($var1 is rw) {
-    my gint $v1 = 0;
+    my realInt $v1 = 0;
     my      $e  = XListExtensions($!d, $v1);
 
     CStringArrayToArray($e, $var1 = $v1)
@@ -1753,11 +1764,11 @@ class X11::Display {
   proto method ListFonts (|)
   { * }
 
-  method ListFonts (Str() $var1, Int() $var2 = 9999) {
+  multi method ListFonts (Str() $var1, Int() $var2 = 9999) {
     samewith($var1, $var2, $);
   }
-  method ListFonts (Str() $var1, Int() $var2, $var3 is rw) {
-    my gint ($v2, $v3) = ($var2, 0);
+  multi method ListFonts (Str() $var1, Int() $var2, $var3 is rw) {
+    my realInt ($v2, $v3) = ($var2, 0);
 
     my $fn = XListFonts($!d, $var1, $v2, $v3);
     CStringArrayToArray($fn, $var3 = $v3);
@@ -1769,7 +1780,7 @@ class X11::Display {
                   $var3  is rw,
     XFontStruct() $var4
   ) {
-    my gint ($v2, $v3) = ($var2, 0);
+    my realInt ($v2, $v3) = ($var2, 0);
 
     my $fn = XListFontsWithInfo($!d, $var1, $v2, $v3, $var4);
     CStringArrayToArray($fn, $var3 = $v3);
@@ -1782,7 +1793,7 @@ class X11::Display {
     samewith($, $);
   }
   multi method ListHosts (Int() $var1 is rw, Int() $var2 is rw, :$raw = False) {
-    my gint    $v1 = 0;
+    my realInt    $v1 = 0;
     my Boolean $v2 = 0;
 
     my $hl = XListHosts($!d, $v1, $v2);
@@ -1795,12 +1806,12 @@ class X11::Display {
   proto method ListInstalledColormaps (|)
   { * }
 
-  method ListInstalledColormaps (Int() $var1) {
+  multi method ListInstalledColormaps (Int() $var1) {
     samewith($var1, $);
   }
-  method ListInstalledColormaps (Int() $var1, $var2 is rw, :$raw = False) {
+  multi method ListInstalledColormaps (Int() $var1, $var2 is rw, :$raw = False) {
     my Window $v1 = $var1;
-    my gint   $v2 = 0;
+    my realInt   $v2 = 0;
 
     my $a = XListInstalledColormaps($!d, $v1, $v2);
     $var2 = $v2;
@@ -1815,7 +1826,7 @@ class X11::Display {
     samewith($);
   }
   multi method ListPixmapFormats ($var1 is rw, :$raw = False) {
-    my gint $v1 = 0;
+    my realInt $v1 = 0;
 
     my $pf = XListPixmapFormats($!d, $v1);
     $var1 = $v1;
@@ -1827,12 +1838,12 @@ class X11::Display {
   proto method ListProperties (|)
   { * }
 
-  method ListProperties (Int() $var1) {
+  multi method ListProperties (Int() $var1) {
     samewith($var1, $);
   }
-  method ListProperties (Int() $var1, $var2 is rw, :$raw = False) {
+  multi method ListProperties (Int() $var1, $var2 is rw, :$raw = False) {
     my Window $v1 = $var1;
-    my gint   $v2 = 0;
+    my realInt   $v2 = 0;
 
     my $pl = XListProperties($!d, $var1, $v2);
     $var2 = $v2;
@@ -1906,14 +1917,14 @@ class X11::Display {
     Int() $var5
   ) {
     my Window $v1                  = $var1;
-    my gint   ($v2, $v3, $v4, $v5) = ($var2, $var3, $var4, $var5);
+    my realInt   ($v2, $v3, $v4, $v5) = ($var2, $var3, $var4, $var5);
 
     XMoveResizeWindow($!d, $v1, $v2, $v3, $v4, $v5);
   }
 
   method MoveWindow (Int() $var1, Int() $var2, Int() $var3) {
     my Window $v1      = $var1;
-    my gint ($v2, $v3) = ($var2, $var3);
+    my realInt ($v2, $v3) = ($var2, $var3);
 
     XMoveWindow($!d, $v1, $v2, $v3);
   }
@@ -1958,7 +1969,7 @@ class X11::Display {
     $xc
   }
   multi method ParseColor (Int() $var1, Str $var2, XColor() $var3) {
-    my Coolormap $v1 = $var1;
+    my Colormap $v1 = $var1;
 
     XParseColor($!d, $var1, $var2, $var3);
   }
@@ -1981,7 +1992,7 @@ class X11::Display {
   }
 
   method ProcessInternalConnection (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XProcessInternalConnection($!d, $v1);
   }
@@ -2001,53 +2012,83 @@ class X11::Display {
   }
 
   method PutImage (
-    Int() $var1,
-    GC()  $var2,
-    Int() $var3,
-    Int() $var4,
-    Int() $var5,
-    Int() $var6,
-    Int() $var7,
-    Int() $var8,
-    Int() $var9
+    Int()    $var1,
+    GC()     $var2,
+    XImage() $var3,
+    Int()    $var4,
+    Int()    $var5,
+    Int()    $var6,
+    Int()    $var7,
+    Int()    $var8,
+    Int()    $var9
   ) {
     my Drawable $v1 = $var1;
-    my Image    $v3 = $var3;
-    my gint ($var4, $var5, $var6, $var7, $var8, $var9) =
-      ($v4, $v5, $v6, $v7, $v8, $v9);
+    my realInt ($v4, $v5, $v6, $v7, $v8, $v9) =
+      ($var4, $var5, $var6, $var7, $var8, $var9);
 
-    XPutImage($!d, $v1, $var2, $v3, $v4, $v5, $v6, $v7, $v8, $v9);
+    XPutImage($!d, $v1, $var2, $var3, $v4, $v5, $v6, $v7, $v8, $v9);
   }
 
   method QLength {
     XQLength($!d);
   }
 
-  method QueryBestCursor (
+  proto method QueryBestCursor (|)
+  { * }
+
+  multi method QueryBestCursor (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3
+  ) {
+    samewith($var1, $var2, $var3, $, $, :all);
+  }
+  multi method QueryBestCursor (
     Int() $var1,
     Int() $var2,
     Int() $var3,
           $var4 is rw,
-          $var5 is rw
+          $var5 is rw,
+          :$all =  False
   ) {
-    my Display $v2                   = $var2;
-    my gint    ($var3, $var4  $var5) = ($v3, 0, 0);
+    my Display $v2 = $var2;
 
-    XQueryBestCursor($!d, $var1, $v2, $v3, $v4, $v5);
+    my realInt ($v3, $v4, $v5) = ($var3, 0, 0);
+
+    my $s = XQueryBestCursor($!d, $var1, $v2, $v3, $v4, $v5);
+    ($var4, $var5) = ($v4, $v5);
+    return $s unless $all;
+    ($s, $var4, $var5)
   }
 
-  method QueryBestSize (
+  proto method QueryBestSize (|)
+  { * }
+
+  multi method QueryBestSize (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+  ) {
+    samewith($var1, $var2, $var3, $var4, $, $, :all);
+  }
+  multi method QueryBestSize (
     Int() $var1,
     Int() $var2,
     Int() $var3,
     Int() $var4,
           $var5 is rw,
-          $var6 is rw
+          $var6 is rw,
+          :$all =  False
   ) {
-    my Drawable $v2                  = $var2;
-    my gint     ($v3, $v4, $v5, $v6) = ($var3, $var4, 0, 0);
+    my Drawable $v2 = $var2;
 
-    XQueryBestSize($!d, $v1, $v2, $v3, $v4, $v5, $v6);
+    my realInt ($v1, $v3, $v4, $v5, $v6) = ($var1, $var3, $var4, 0, 0);
+
+    my $s = XQueryBestSize($!d, $v1, $v2, $v3, $v4, $v5, $v6);
+    ($var5, $var6) = ($v5, $v6);
+    return $s unless $all;
+    ($s, $var5, $var6)
   }
 
   method QueryBestStipple (
@@ -2057,8 +2098,9 @@ class X11::Display {
           $var4 is rw,
           $var5 is rw
   ) {
-    my Drawable $v1                   = $var1;
-    my gint      ($v2, $v3, $v4, $v5) = ($var2, $var3, 0, 0);
+    my Drawable $v1 = $var1;
+
+    my realInt  ($v2, $v3, $v4, $v5) = ($var2, $var3, 0, 0);
 
     XQueryBestStipple($!d, $v1, $v2, $v3, $v4, $v5);
   }
@@ -2071,7 +2113,7 @@ class X11::Display {
           $var5 is rw
   ) {
     my Drawable $v1                  = $var1;
-    my gint     ($v2, $v3, $v4, $v5) = ($var2, $var3, 0, 0);
+    my realInt     ($v2, $v3, $v4, $v5) = ($var2, $var3, 0, 0);
 
     XQueryBestTile($!d, $v1, $v2, $v3, $v4, $v5);
   }
@@ -2084,7 +2126,7 @@ class X11::Display {
 
   method QueryColors (Int() $var1, XColor() $var2, Int() $var3) {
     my Colormap $v1 = $var1;
-    my gint     $v3 = $var3;
+    my realInt     $v3 = $var3;
 
     XQueryColors($!d, $v1, $var2, $v3);
   }
@@ -2095,7 +2137,7 @@ class X11::Display {
           $var3 is rw,
           $var4 is rw
   ) {
-    my gint ($v2, $v3, $v4) = 0 xx 3;
+    my realInt ($v2, $v3, $v4) = 0 xx 3;
 
     XQueryExtension($!d, $var1, $v2, $v3, $v4);
     ($var2, $var3, $var4) = ($v2, $v3, $v4);
@@ -2121,8 +2163,8 @@ class X11::Display {
           $var7  is rw,
           $var8  is rw
   ) {
-    my Window ($v1, $v2, $v3) = ($var, $var2, $var3);
-    my gint   ($var4, $var5, $var6, $var7, $var8) = 0 xx 5;
+    my Window  ($v1, $v2, $v3)           = ($var1, $var2, $var3);
+    my realInt ($v4, $v5, $v6, $v7, $v8) = 0 xx 5;
 
     XQueryPointer($!d, $var1, $var2, $var3, $v4, $v5, $v6, $v7, $v8);
     ($var4, $var5, $var6, $var7, $var8) = ($v4, $v5, $v6, $v7, $v8);
@@ -2138,7 +2180,7 @@ class X11::Display {
   ) {
     my XCharStruct $var7 .= new;
 
-    samewith($var1, $var2, $var3, $, $, $, $var7);
+    samewith($var1, $var2, $var3, $, $, $, $var7, :all);
   }
   multi method QueryTextExtents (
     Int()         $var1,
@@ -2147,13 +2189,17 @@ class X11::Display {
                   $var4  is rw,
                   $var5  is rw,
                   $var6  is rw,
-    XCharStruct() $var7
+    XCharStruct() $var7,
+                  :$all  =  False
   ) {
-    my XID  $v1                          = $var1;
-    my gint ($var3, $var4, $var5, $var6) = ($v3, 0, 0, 0);
+    my XID $v1 = $var1;
 
-    XQueryTextExtents($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
+    my realInt ($v3, $v4, $v5, $v6) = ($var3, 0, 0, 0);
+
+    my $s = XQueryTextExtents($!d, $v1, $var2, $v3, $v4, $v5, $v6, $var7);
+    return $s unless $all;
     ($var4, $var5, $var6) = ($v4, $v5, $v6);
+    ($s, $var4, $var5, $var6, $var7);
   }
 
   proto method QueryTextExtents16 (|)
@@ -2166,7 +2212,7 @@ class X11::Display {
   ) {
     my XCharStruct $var7 .= new;
 
-    samewith($var1, $var2, $var3, $, $, $, $var7);
+    samewith($var1, $var2, $var3, $, $, $, $var7, :all);
   }
   multi method QueryTextExtents16 (
     Int()         $var1,
@@ -2175,13 +2221,17 @@ class X11::Display {
                   $var4 is rw,
                   $var5 is rw,
                   $var6 is rw,
-    XCharStruct() $var7
+    XCharStruct() $var7,
+                  :$all =  False
   ) {
     my XID $v1 = $var1;
-    my gint ($v3, $v4, $v5, $v6) = ($var3, 0, 0, 0);
 
-    XQueryTextExtents16($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7);
+    my realInt ($v3, $v4, $v5, $v6) = ($var3, 0, 0, 0);
+
+    my $s = XQueryTextExtents16($!d, $v1, $var2, $v3, $v4, $v5, $v6, $var7);
     ($var4, $var5, $var6) = ($v4, $v5, $v6);
+    return $s unless $all;
+    ($var4, $var5, $var6, $var7)
   }
 
   proto method QueryTree (|)
@@ -2203,14 +2253,14 @@ class X11::Display {
                              $var5 is rw
   ) {
     my Window ($v2, $v3, $v4) = ($var2, $var3, $var4);
-    my gint   $v5             = 0;
+    my realInt   $v5             = 0;
 
     XQueryTree($!d, $var1, $v2, $v3, $v4, $v5);
     $var5 = $v5;
   }
 
-  method RaiseWindow (Window() $var1) {
-    my Window $var1 = $v1;
+  method RaiseWindow (Int() $var1) {
+    my Window $v1 = $var1;
 
     XRaiseWindow($!d, $v1);
   }
@@ -2222,7 +2272,7 @@ class X11::Display {
     Drawable $var1,
     Str      $var2
   ) {
-    samewith($var1, $var2, $, $, $, $, $);
+    samewith($var1, $var2, $, $, $, $, $, :all);
   }
   multi method ReadBitmapFile (
     Int() $var1,
@@ -2231,13 +2281,16 @@ class X11::Display {
           $var4 is rw,
           $var5 is rw, # Pixmap
           $var6 is rw,
-          $var7 is rw
+          $var7 is rw,
+          :$all =  False
   ) {
     my Drawable $v1 = $var1;
-    my gint ($v3, $v4, $v5, $v6, $v7) = ($var3, $var4, $var5, $var6, $var7);
+    my realInt ($v3, $v4, $v5, $v6, $v7) = ($var3, $var4, $var5, $var6, $var7);
 
-    XReadBitmapFile($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7);
+    my $s = XReadBitmapFile($!d, $v1, $var2, $v3, $v4, $v5, $v6, $v7);
     ($var3, $var4, $var5, $var6, $var7) = ($v3, $v4, $v5, $v6, $v7);
+    return $s unless $all;
+    ($s, $var3, $var4, $var5, $var6, $var7)
   }
 
   method RebindKeysym (
@@ -2248,7 +2301,7 @@ class X11::Display {
     Int() $var5
   ) {
     my KeySym ($v1, $v2) = ($var1, $var2);
-    my gint   ($v3, $v5) = ($var3, $var5);
+    my realInt   ($v3, $v5) = ($var3, $var5);
 
     XRebindKeysym($!d, $v1, $v2, $v3, $var4, $v5);
   }
@@ -2266,7 +2319,7 @@ class X11::Display {
     XWindowChanges $var4 = XWindowChanges.new
   ) {
     my Window $v1        = $var1;
-    my gint   ($v2, $v4) = ($var2, $var3);
+    my realInt   ($v2, $v4) = ($var2, $var3);
 
     XReconfigureWMWindow($!d, $var1, $var2, $var3, $var4);
   }
@@ -2306,14 +2359,14 @@ class X11::Display {
     );
   }
   multi method RemoveHosts (Pointer $var1, Int() $var2) {
-    my gint $v2 = $var2;
+    my realInt $v2 = $var2;
 
     XRemoveHosts($!d, $var1, $var2);
   }
 
   method ReparentWindow (Int() $var1, Int() $var2, Int() $var3, Int() $var4) {
     my Window ($v1, $v2) = ($var1, $var2);
-    my gint   ($v3, $v4) = ($var3, $var4);
+    my realInt   ($v3, $v4) = ($var3, $var4);
 
     XReparentWindow($!d, $v1, $v2, $v3, $v4);
   }
@@ -2324,7 +2377,7 @@ class X11::Display {
 
   method ResizeWindow (Int() $var1, Int() $var2, Int() $var3) {
     my Window $v1        = $var1;
-    my gint   ($v2, $v3) = ($var2, $var3);
+    my realInt   ($v2, $v3) = ($var2, $var3);
 
     XResizeWindow($!d, $v1, $v2, $v3);
   }
@@ -2341,19 +2394,19 @@ class X11::Display {
   }
   multi method RestackWindows (CArray[Window] $var1, Int() $var2) {
     my Window $v1 = $var1;
-    my gint   $v2 = $var2;
+    my realInt   $v2 = $var2;
 
     XRestackWindows($!d, $v1, $v2);
   }
 
   method RootWindow (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XRootWindow($!d, $v1);
   }
 
   method RotateBuffers (Int() $var1) {
-    my gint $v1 = $var1;
+    my realInt $v1 = $var1;
 
     XRotateBuffers($!d, $var1);
   }
@@ -2375,7 +2428,7 @@ class X11::Display {
     Int()        $var4
   ) {
     my Window $v1        = $var1;
-    my gint   ($v3, $v4) = ($var3, $var4);
+    my realInt   ($v3, $v4) = ($var3, $var4);
 
     XRotateWindowProperties($!d, $v1, $var2, $v3, $v4);
   }
@@ -2386,7 +2439,7 @@ class X11::Display {
 
   # 4 / 8
 
-  method ScreenOfDisplay (gint $var1) {
+  method ScreenOfDisplay (realInt $var1) {
     XScreenOfDisplay($!d, $var1);
   }
 
@@ -2402,11 +2455,11 @@ class X11::Display {
     XServerVendor($!d);
   }
 
-  method SetAccessControl (gint $var1) {
+  method SetAccessControl (realInt $var1) {
     XSetAccessControl($!d, $var1);
   }
 
-  method SetArcMode (GC $var1, gint $var2) {
+  method SetArcMode (GC $var1, realInt $var2) {
     XSetArcMode($!d, $var1, $var2);
   }
 
@@ -2418,33 +2471,33 @@ class X11::Display {
     XSetClipMask($!d, $var1, $var2);
   }
 
-  method SetClipOrigin (GC $var1, gint $var2, gint $var3) {
+  method SetClipOrigin (GC $var1, realInt $var2, realInt $var3) {
     XSetClipOrigin($!d, $var1, $var2, $var3);
   }
 
-  method SetClipRectangles (GC $var1, gint $var2, gint $var3, XRectangle $var4, gint $var5, gint $var6) {
+  method SetClipRectangles (GC $var1, realInt $var2, realInt $var3, XRectangle $var4, realInt $var5, realInt $var6) {
     XSetClipRectangles($!d, $var1, $var2, $var3, $var4, $var5, $var6);
   }
 
-  method SetCloseDownMode (gint $var1) {
+  method SetCloseDownMode (realInt $var1) {
     XSetCloseDownMode($!d, $var1);
   }
 
-  method SetCommand (Window $var1, Str $var2, gint $var3) {
+  method SetCommand (Window $var1, Str $var2, realInt $var3) {
     XSetCommand($!d, $var1, $var2, $var3);
   }
 
-  method SetDashes (GC $var1, gint $var2, Str $var3, gint $var4) {
+  method SetDashes (GC $var1, realInt $var2, Str $var3, realInt $var4) {
     XSetDashes($!d, $var1, $var2, $var3, $var4);
   }
 
   # 9 / 16
 
-  method SetFillRule (GC $var1, gint $var2) {
+  method SetFillRule (GC $var1, realInt $var2) {
     XSetFillRule($!d, $var1, $var2);
   }
 
-  method SetFillStyle (GC $var1, gint $var2) {
+  method SetFillStyle (GC $var1, realInt $var2) {
     XSetFillStyle($!d, $var1, $var2);
   }
 
@@ -2452,7 +2505,7 @@ class X11::Display {
     XSetFont($!d, $var1, $var2);
   }
 
-  method SetFontPath (Str $var1, gint $var2) {
+  method SetFontPath (Str $var1, realInt $var2) {
     XSetFontPath($!d, $var1, $var2);
   }
 
@@ -2460,7 +2513,7 @@ class X11::Display {
     XSetForeground($!d, $var1, $var2);
   }
 
-  method SetFunction (GC $var1, gint $var2) {
+  method SetFunction (GC $var1, realInt $var2) {
     XSetFunction($!d, $var1, $var2);
   }
 
@@ -2476,11 +2529,11 @@ class X11::Display {
     XSetIconName($!d, $var1, $var2);
   }
 
-  method SetInputFocus (Window $var1, gint $var2, Time $var3) {
+  method SetInputFocus (Window $var1, realInt $var2, Time $var3) {
     XSetInputFocus($!d, $var1, $var2, $var3);
   }
 
-  method SetLineAttributes (GC $var1, gint $var2, gint $var3, gint $var4, gint $var5) {
+  method SetLineAttributes (GC $var1, realInt $var2, realInt $var3, realInt $var4, realInt $var5) {
     XSetLineAttributes($!d, $var1, $var2, $var3, $var4, $var5);
   }
 
@@ -2494,11 +2547,11 @@ class X11::Display {
     XSetPlaneMask($!d, $var1, $var2);
   }
 
-  method SetPointerMapping (Str $var1, gint $var2) {
+  method SetPointerMapping (Str $var1, realInt $var2) {
     XSetPointerMapping($!d, $var1, $var2);
   }
 
-  method SetScreenSaver (gint $var1, gint $var2, gint $var3, gint $var4) {
+  method SetScreenSaver (realInt $var1, realInt $var2, realInt $var3, realInt $var4) {
     XSetScreenSaver($!d, $var1, $var2, $var3, $var4);
   }
 
@@ -2506,7 +2559,7 @@ class X11::Display {
     XSetSelectionOwner($!d, $var1, $var2, $var3);
   }
 
-  method SetState (GC $var1, long $var2, long $var3, gint $var4, long $var5) {
+  method SetState (GC $var1, long $var2, long $var3, realInt $var4, long $var5) {
     XSetState($!d, $var1, $var2, $var3, $var4, $var5);
   }
 
@@ -2514,11 +2567,11 @@ class X11::Display {
     XSetStipple($!d, $var1, $var2);
   }
 
-  method SetSubwindowMode (GC $var1, gint $var2) {
+  method SetSubwindowMode (GC $var1, realInt $var2) {
     XSetSubwindowMode($!d, $var1, $var2);
   }
 
-  method SetTSOrigin (GC $var1, gint $var2, gint $var3) {
+  method SetTSOrigin (GC $var1, realInt $var2, realInt $var3) {
     XSetTSOrigin($!d, $var1, $var2, $var3);
   }
 
@@ -2530,11 +2583,11 @@ class X11::Display {
     XSetTransientForHint($!d, $var1, $var2);
   }
 
-  method SetWMColormapWindows (Window $var1, Window $var2, gint $var3) {
+  method SetWMColormapWindows (Window $var1, Window $var2, realInt $var3) {
     XSetWMColormapWindows($!d, $var1, $var2, $var3);
   }
 
-  method SetWMProtocols (Window $var1, Atom $var2, gint $var3) {
+  method SetWMProtocols (Window $var1, Atom $var2, realInt $var3) {
     XSetWMProtocols($!d, $var1, $var2, $var3);
   }
 
@@ -2556,7 +2609,7 @@ class X11::Display {
     XSetWindowBorderPixmap($!d, $var1, $var2);
   }
 
-  method SetWindowBorderWidth (Window $var1, gint $var2) {
+  method SetWindowBorderWidth (Window $var1, realInt $var2) {
     XSetWindowBorderWidth($!d, $var1, $var2);
   }
 
@@ -2564,11 +2617,11 @@ class X11::Display {
     XSetWindowColormap($!d, $var1, $var2);
   }
 
-  method StoreBuffer (Str $var1, gint $var2, gint $var3) {
+  method StoreBuffer (Str $var1, realInt $var2, realInt $var3) {
     XStoreBuffer($!d, $var1, $var2, $var3);
   }
 
-  method StoreBytes (Str $var1, gint $var2) {
+  method StoreBytes (Str $var1, realInt $var2) {
     XStoreBytes($!d, $var1, $var2);
   }
 
@@ -2576,7 +2629,7 @@ class X11::Display {
     XStoreColor($!d, $var1, $var2);
   }
 
-  method StoreColors (Colormap $var1, XColor $var2, gint $var3) {
+  method StoreColors (Colormap $var1, XColor $var2, realInt $var3) {
     XStoreColors($!d, $var1, $var2, $var3);
   }
 
@@ -2584,7 +2637,7 @@ class X11::Display {
     XStoreName($!d, $var1, $var2);
   }
 
-  method StoreNamedColor (Colormap $var1, Str $var2, long $var3, gint $var4) {
+  method StoreNamedColor (Colormap $var1, Str $var2, long $var3, realInt $var4) {
     XStoreNamedColor($!d, $var1, $var2, $var3, $var4);
   }
 
@@ -2598,19 +2651,36 @@ class X11::Display {
     XSynchronize($!d, $var1);
   }
 
-  method TranslateCoordinates (Window $var1, Window $var2, gint $var3, gint $var4, gint $var5 is rw, gint $var6 is rw, Window $var7) {
-    XTranslateCoordinates($!d, $var1, $var2, $var3, $var4, $var5 is rw, $var6 is rw, $var7);
+  method TranslateCoordinates (
+    Window $var1,
+    Window $var2,
+    realInt $var3,
+    realInt $var4,
+    realInt $var5 is rw,
+    realInt $var6 is rw,
+    Window $var7
+  ) {
+    XTranslateCoordinates(
+      $!d,
+      $var1,
+      $var2,
+      $var3,
+      $var4,
+      $var5,
+      $var6,
+      $var7
+    );
   }
 
   method UndefineCursor (Window $var1) {
     XUndefineCursor($!d, $var1);
   }
 
-  method UngrabButton (gint $var1, gint $var2, Window $var3) {
+  method UngrabButton (realInt $var1, realInt $var2, Window $var3) {
     XUngrabButton($!d, $var1, $var2, $var3);
   }
 
-  method UngrabKey (gint $var1, gint $var2, Window $var3) {
+  method UngrabKey (realInt $var1, realInt $var2, Window $var3) {
     XUngrabKey($!d, $var1, $var2, $var3);
   }
 
@@ -2648,7 +2718,7 @@ class X11::Display {
     XUnmapWindow($!d, $var1);
   }
 
-  method UnregisterIMInstantiateCallback (_XrmHashBucketRec $var1, Str $var2, Str $var3, XIDProc $var4, XPointer $var5) {
+  method UnregisterIMInstantiateCallback (XrmHashBucket $var1, Str $var2, Str $var3, XIDProc $var4, XPointer $var5) {
     XUnregisterIMInstantiateCallback($!d, $var1, $var2, $var3, $var4, $var5);
   }
 
@@ -2656,11 +2726,11 @@ class X11::Display {
     XVendorRelease($!d);
   }
 
-  method WarpPointer (Window $var1, Window $var2, gint $var3, gint $var4, gint $var5, gint $var6, gint $var7, gint $var8) {
+  method WarpPointer (Window $var1, Window $var2, realInt $var3, realInt $var4, realInt $var5, realInt $var6, realInt $var7, realInt $var8) {
     XWarpPointer($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8);
   }
 
-  method WhitePixel (gint $var1) {
+  method WhitePixel (realInt $var1) {
     XWhitePixel($!d, $var1);
   }
 
@@ -2668,49 +2738,49 @@ class X11::Display {
     XWindowEvent($!d, $var1, $var2, $var3);
   }
 
-  method WithdrawWindow (Window $var1, gint $var2) {
+  method WithdrawWindow (Window $var1, realInt $var2) {
     XWithdrawWindow($!d, $var1, $var2);
   }
 
-  method WriteBitmapFile (Str $var1, Pixmap $var2, gint $var3, gint $var4, gint $var5, gint $var6) {
+  method WriteBitmapFile (Str $var1, Pixmap $var2, realInt $var3, realInt $var4, realInt $var5, realInt $var6) {
     XWriteBitmapFile($!d, $var1, $var2, $var3, $var4, $var5, $var6);
   }
 
-  method mbDrawImageString (Drawable $var1, XFontSet $var2, GC $var3, gint $var4, gint $var5, Str $var6, gint $var7) {
+  method mbDrawImageString (Drawable $var1, XFontSet $var2, GC $var3, realInt $var4, realInt $var5, Str $var6, realInt $var7) {
     XmbDrawImageString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
   }
 
-  method mbDrawString (Drawable $var1, XFontSet $var2, GC $var3, gint $var4, gint $var5, Str $var6, gint $var7) {
+  method mbDrawString (Drawable $var1, XFontSet $var2, GC $var3, realInt $var4, realInt $var5, Str $var6, realInt $var7) {
     XmbDrawString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
   }
 
-  method mbDrawText (Drawable $var1, GC $var2, gint $var3, gint $var4, XmbTextItem $var5, gint $var6) {
+  method mbDrawText (Drawable $var1, GC $var2, realInt $var3, realInt $var4, XmbTextItem $var5, realInt $var6) {
     XmbDrawText($!d, $var1, $var2, $var3, $var4, $var5, $var6);
   }
 
-  method utf8DrawImageString (Drawable $var1, XFontSet $var2, GC $var3, gint $var4, gint $var5, Str $var6, gint $var7) {
+  method utf8DrawImageString (Drawable $var1, XFontSet $var2, GC $var3, realInt $var4, realInt $var5, Str $var6, realInt $var7) {
     Xutf8DrawImageString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
   }
 
   # 7 / 8
 
-  method utf8DrawString (Drawable $var1, XFontSet $var2, GC $var3, gint $var4, gint $var5, Str $var6, gint $var7) {
+  method utf8DrawString (Drawable $var1, XFontSet $var2, GC $var3, realInt $var4, realInt $var5, Str $var6, realInt $var7) {
     Xutf8DrawString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
   }
 
-  method utf8DrawText (Drawable $var1, GC $var2, gint $var3, gint $var4, XmbTextItem $var5, gint $var6) {
+  method utf8DrawText (Drawable $var1, GC $var2, realInt $var3, realInt $var4, XmbTextItem $var5, realInt $var6) {
     Xutf8DrawText($!d, $var1, $var2, $var3, $var4, $var5, $var6);
   }
 
-  method wcDrawImageString (Drawable $var1, XFontSet $var2, GC $var3, gint $var4, gint $var5, wchar_t $var6, gint $var7) {
+  method wcDrawImageString (Drawable $var1, XFontSet $var2, GC $var3, realInt $var4, realInt $var5, wchar_t $var6, realInt $var7) {
     XwcDrawImageString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
   }
 
-  method wcDrawString (Drawable $var1, XFontSet $var2, GC $var3, gint $var4, gint $var5, wchar_t $var6, gint $var7) {
+  method wcDrawString (Drawable $var1, XFontSet $var2, GC $var3, realInt $var4, realInt $var5, wchar_t $var6, realInt $var7) {
     XwcDrawString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
   }
 
-  method wcDrawText (Drawable $var1, GC $var2, gint $var3, gint $var4, XwcTextItem $var5, gint $var6) {
+  method wcDrawText (Drawable $var1, GC $var2, realInt $var3, realInt $var4, XwcTextItem $var5, realInt $var6) {
     XwcDrawText($!d, $var1, $var2, $var3, $var4, $var5, $var6);
   }
 
