@@ -7805,25 +7805,49 @@ class xwd_file_header is repr<CStruct> is export {
 	has CARD32 $!window_bdrwidth ;
 }
 
-# struct {
-#   XExtData *ext_data;     /* hook for extension to hang data */
-#   struct _XDisplay *display;/* back pointer to display structure */
-#   Window root;            /* Root window id. */
-#   int width, height;      /* width and height of screen */
-#   int mwidth, mheight;    /* width and height of  in millimeters */
-#   int ndepths;            /* number of depths possible */
-#   Depth *depths;          /* list of allowable depths on the screen */
-#   int root_depth;         /* bits per pixel */
-#   Visual *root_visual;    /* root visual */
-#   GC default_gc;          /* GC for the root root visual */
-#   Colormap cmap;          /* default color map */
-#   unsigned long white_pixel;
-#   unsigned long black_pixel;      /* White and Black pixel values */
-#   int max_maps, min_maps; /* max and min color maps */
-#   int backing_store;      /* Never, WhenMapped, Always */
-#   Bool save_unders;
-#   long root_input_mask;   /* initial root input mask */
-# } Screen;
+class Visual {
+  has XExtData $.ext_data;
+  has VisualID $.visualid;
+  has realInt  $.class;
+  has ulong    $.red_mask;
+  has ulong    $.green_mask;
+  has ulong    $.blue_mask;
+  has realInt  $.bits_per_rgb;
+  has realInt  $.map_entries;
+}
+
+class Depth is repr<CStruct> is export {
+  has realInt $.depth    is rw;
+  has realInt $.nvisuals is rw;
+  has Pointer $.visuals       ; #= tb:Visual
+}
+
+class Screen {
+  has XExtData $.ext_data;                 #= - hook for extension to hang data
+  has Display  $.display;                  #= - back pointer to display structure
+  has Window   $.root            is rw;    #= - Root window id.
+  has realInt  $.width           is rw;
+  has realInt  $.height          is rw;    #= - width and height of screen
+  has realInt  $.mwidth          is rw;
+  has realInt  $.mheight         is rw;    #= - width and height of  in millimeters
+  has realInt  $.ndepths         is rw;    #= - number of depths possible
+  has Depth    $.depths;                   #= - list of allowable depths on the screen
+  has realInt  $.root_depth;               #= - bits per pixel
+  has Visual   $.root_visual;              #= - root visual
+  has GC       $.default_gc;               #= - GC for the root root visual
+  has Colormap $.cmap            is rw;    #= - default color map
+
+  # White and Black pixel values
+  has ulong    $.white_pixel     is rw;
+  has ulong    $.black_pixel     is rw;
+
+  # max and min color maps
+  has realInt  $.max_maps        is rw;
+  has realInt  $.min_maps        is rw;
+  has realInt  $.backing_store   is rw;    #= - Never, WhenMapped, Always
+  has Boolean  $.save_unders     is rw;    #= ot:Bool
+  has ulong    $.root_input_mask is rw;    #= -initial root input mask
+}
 
 class XcmsInfo is repr<CStruct> {
   has XPointer $.defaultCCCs;            #= pointer to an array of default XcmsCCC
