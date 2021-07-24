@@ -409,7 +409,103 @@ class AsciiSinkClassRec is repr<CStruct> is export {
 }
 
 class ObjectPart    is repr<CStruct> is export { ... }
-class TextSinkPart  is repr<CStruct> is export { ... }
+
+class XawTextProperty is repr<CStruct> is export {
+  has  XrmQuark     $.identifier          is rw;
+  has  XrmQuark     $.code                is rw;
+  has  ulong        $.mask                is rw;
+  has  XFontStruct  $.font                is rw;
+  has  XFontSet     $.fontset             is rw;
+  has  Pixel        $.foreground          is rw;
+  has  Pixel        $.background          is rw;
+  has  Pixmap       $.foreground_pixmap   is rw;
+  has  Pixmap       $.background_pixmap   is rw;
+  has  XrmQuark     $.xlfd                is rw;
+  has  ulong        $.xlfd_mask           is rw;
+  has  XrmQuark     $.foundry             is rw;
+  has  XrmQuark     $.family              is rw;
+  has  XrmQuark     $.weight              is rw;
+  has  XrmQuark     $.slant               is rw;
+  has  XrmQuark     $.setwidth            is rw;
+  has  XrmQuark     $.addstyle            is rw;
+  has  XrmQuark     $.pixel_size          is rw;
+  has  XrmQuark     $.point_size          is rw;
+  has  XrmQuark     $.res_x               is rw;
+  has  XrmQuark     $.res_y               is rw;
+  has  XrmQuark     $.spacing             is rw;
+  has  XrmQuark     $.avgwidth            is rw;
+  has  XrmQuark     $.registry            is rw;
+  has  XrmQuark     $.encoding            is rw;
+  has  short        $.underline_position  is rw;
+  has  short        $.underline_thickness is rw;
+}
+
+class XawTextPropertyList is repr<CStruct> is export {
+	has XrmQuark                         $.identifier      is rw;
+	has Screen                           $!screen               ;
+	has Colormap                         $.colormap        is rw;
+	has int                              $.depth           is rw;
+	has CArray[Pointer[XawTextProperty]] $!properties           ;
+	has Cardinal                         $.num_properties  is rw;
+	has XawTextPropertyList              $!next                 ;
+}
+
+class XmuSegment is repr<CStruct> is export {
+  has int        $.x1    is rw;
+  has int        $.x2    is rw;
+  has XmuSegment $.next;
+}
+
+class XmuScanline is repr<CStruct> is export {
+  has int         $.y        is rw;
+  has XmuSegment  $.segment;
+  has XmuScanline $.next;
+}
+constant XmuTextUpdate is export := XmuScanline;
+
+class XmuArea is repr<CStruct> is export {
+  has XmuScanline $!scanline;
+}
+
+class XawTextPaintStruct is repr<CStruct> is export {
+	has XawTextPaintStruct $!next       ;
+	has int                $!x          ;
+	has int                $!y          ;
+	has int                $!width      ;
+	has Str                $!text       ;
+	has Cardinal           $!length     ;
+	has XawTextProperty    $!property   ;
+	has int                $!max_ascent ;
+	has int                $!max_descent;
+	has XmuArea            $!backtabs   ;
+	has Boolean            $!highlight  ;
+}
+
+class XawTextPaintList is repr<CStruct> is export {
+  # clip list
+  has XmuArea            $.clip;
+  has XmuArea            $.hightabs;
+  # drawing information
+  has XawTextPaintStruct $.paint;
+  has XawTextPaintStruct $.bearings;
+}
+
+class TextSinkPart is repr<CStruct> is export {
+  # resources
+  has Pixel               $.foreground       is rw    ; #= - Foreground color
+  has Pixel               $.background       is rw    ; #= - Background color
+
+  # private
+  has Position            $.tabs             is rw    ; #= - The tab stops as pixel values
+  has CArray[short]       $.char_tabs                 ; #= - The tabs stops as character values
+  has realInt             $.tab_count                 ; #= - number of items in tabs
+
+  # more resources
+  has Pixel               $.cursor_color     is rw    ;
+  has XawTextPropertyList $.properties                ;
+  has XawTextPaintList    $.paint                     ;
+  has XtPointer           @.pad[2]           is CArray;
+}
 
 class AsciiSinkRec is repr<CStruct> is export {
 	has ObjectPart    $!object    ;
@@ -453,7 +549,46 @@ class AsciiSrcPart is repr<CStruct> is export {
 	has XtPointer       $!pad                ;
 }
 
-class TextSrcPart is repr<CStruct> is export { ... }
+class Widget is repr<CStruct> is export {
+	has CorePart $!core;
+}
+class WidgetList is repr<CPointer> is export { * }
+constant WidgetRec  is export := Widget;
+constant CoreRec    is export := Widget;
+
+class XawTextEntity is repr<CStruct> is export {
+	has short           $.type      is rw;
+	has short           $.flags     is rw;
+	has XawTextEntity   $!next    ;
+	has XtPointer       $!data    ;
+	has XawTextPosition $.offset    is rw;
+	has Cardinal        $.length    is rw;
+	has XrmQuark        $!property;
+}
+
+class XawTextAnchor is repr<CStruct> is export {
+  has XawTextPosition $.position is rw;
+  has XawTextEntity   $.entities      ;
+  has XawTextEntity   $.cache         ;
+}
+
+class TextSrcPart is repr<CStruct> is export {
+    # resources
+    has XawTextEditType                $.edit_mode          is rw    ;
+    has XrmQuark                       $.text_format        is rw    ; #= - 2 formats: FMT8BIT for Ascii FMTWIDE for ISO 10646
+    has XtCallbackList                 $.callback                    ; #= - A callback list to call when the source is changed
+    has Boolean                        $.changed            is rw    ;
+    has Boolean                        $.enable_undo        is rw    ;
+    # private state
+    has Boolean                        $.undo_state         is rw    ; #= - to protect undo manipulation
+    has XawTextUndo                    $.undo               is rw    ;
+    has CArray[Widget]                 $.text                        ; #= - TextWidget's using this source
+    has Cardinal                       $.num_text           is rw    ;
+    has XtCallbackList                 $.property_callback           ;
+    has CArray[Pointer[XawTextAnchor]] $.anchors                     ;
+    has realInt                        $.num_anchors        is rw    ;
+    HAS XtPointer                      @.pad[1]             is CArray; #= - for future use and keep binary compatability
+}
 
 class AsciiSrcRec is repr<CStruct> is export {
 	has ObjectPart   $!object   ;
@@ -595,8 +730,53 @@ class CommandClassRec is repr<CStruct> is export {
 	has CommandClassPart $!command_class;
 }
 
-class LabelPart   is repr<CStruct> is export { ... }
-class CommandPart is repr<CStruct> is export { ... }
+class CommandPart is repr<CStruct> is export {
+    # resources
+    has Dimension           $.highlight_thickness is rw;
+    has XtCallbackList      $.callbacks;
+
+    # private state
+    has Pixmap              $.gray_pixmap         is rw;
+    has GC                  $.normal_GC           is rw;
+    has GC                  $.inverse_GC          is rw;
+    has Boolean             $.set                 is rw;
+    has XtCommandHighlight  $.highlighted         is rw;
+
+    # more resources
+    has int                 $.shape_style;
+    has Dimension           $.corner_round;
+
+    HAS XtPointer           @.pad[4]              is CArray;
+}
+
+class LabelPart is repr<CStruct> {
+  # resources
+  has Pixel       $.foreground      is rw;
+  has XFontStruct $!font                 ;
+  has XFontSet    $.fontset         is rw;
+  has Str         $!label                ;
+  has XtJustify   $.justify         is rw;
+  has Dimension   $.internal_width  is rw;
+  has Dimension   $.internal_height is rw;
+  has Pixmap      $.pixmap          is rw;
+  has Boolean     $.resize          is rw;
+  has uchar       $.encoding        is rw;
+  has Pixmap      $.left_bitmap     is rw;
+
+  # private state
+  has GC          $!normal_GC;
+  has GC          $!gray_GC;
+  has Pixmap      $.stipple         is rw;
+  has Position    $.label_x         is rw;
+  has Position    $.label_y         is rw;
+  has Dimension   $.label_width     is rw;
+  has Dimension   $.label_height    is rw;
+  has Dimension   $.label_len       is rw;
+  has realInt     $.lbm_y           is rw;  #= - where in label
+  has realUInt    $.lbm_width       is rw;  #= - size of pixmap
+  has realUInt    $.lbm_height      is rw;
+  HAS XtPointer   @.pad[4]          is CArray;
+}
 
 class CommandRec is repr<CStruct> is export {
 	has CorePart    $!core   ;
@@ -617,13 +797,6 @@ class CompositeClassRec is repr<CStruct> is export {
 	has CoreClassPart      $!core_class     ;
 	has CompositeClassPart $!composite_class;
 }
-
-class WidgetRec is repr<CStruct> is export {
-	has CorePart $!core;
-}
-class WidgetList is repr<CPointer> is export { * }
-constant Widget     is export := WidgetRec;
-constant CoreRec    is export := WidgetRec;
 
 # Widget --> Cardinal
 constant XtOrderProc is export := Pointer;
@@ -1734,7 +1907,6 @@ class LbxTagData is repr<CStruct> is export {
 	has CARD32 $!real_length;
 }
 
-
 class ListClassRec is repr<CStruct> is export {
 	has CoreClassPart   $!core_class  ;
 	has SimpleClassPart $!simple_class;
@@ -1747,7 +1919,7 @@ class XFontProp is repr<CStruct> is export {
 }
 
 class FontPropRec is repr<CStruct>is export  {
-  has int64 $.name is rw;
+  has int64 $.name  is rw;
   has int64 $.value is rw; #= assumes ATOM is not larger than INT32
 }
 constant FontProp is export := FontPropRec;
@@ -3449,19 +3621,6 @@ class XawTextLineTable is repr<CStruct> is export {
   has XawTextLineTableEntry $.info;            #= A dynamic array, one entry per line
 }
 
-class XmuSegment is repr<CStruct> is export {
-  has int        $.x1    is rw;
-  has int        $.x2    is rw;
-  has XmuSegment $.next;
-}
-
-class XmuScanline is repr<CStruct> is export {
-  has int         $.y        is rw;
-  has XmuSegment  $.segment;
-  has XmuScanline $.next;
-}
-constant XmuTextUpdate is export := XmuScanline;
-
 class XawTextKillRing is repr<CStruct> is export {
   has XawTextKillRing $!next;
   has Str             $!contents;
@@ -4594,74 +4753,6 @@ class XawImPart is repr<CStruct> is export {
 class XawListReturnStruct is repr<CStruct> is export {
 	has String $!string    ;
 	has int    $.list_index  is rw;
-}
-
-class XawTextEntity is repr<CStruct> is export {
-	has short           $.type      is rw;
-	has short           $.flags     is rw;
-	has XawTextEntity   $!next    ;
-	has XtPointer       $!data    ;
-	has XawTextPosition $.offset    is rw;
-	has Cardinal        $.length    is rw;
-	has XrmQuark        $!property;
-}
-
-class XawTextProperty is repr<CStruct> is export {
-  has  XrmQuark     $.identifier          is rw;
-  has  XrmQuark     $.code                is rw;
-  has  ulong        $.mask                is rw;
-  has  XFontStruct  $.font                is rw;
-  has  XFontSet     $.fontset             is rw;
-  has  Pixel        $.foreground          is rw;
-  has  Pixel        $.background          is rw;
-  has  Pixmap       $.foreground_pixmap   is rw;
-  has  Pixmap       $.background_pixmap   is rw;
-  has  XrmQuark     $.xlfd                is rw;
-  has  ulong        $.xlfd_mask           is rw;
-  has  XrmQuark     $.foundry             is rw;
-  has  XrmQuark     $.family              is rw;
-  has  XrmQuark     $.weight              is rw;
-  has  XrmQuark     $.slant               is rw;
-  has  XrmQuark     $.setwidth            is rw;
-  has  XrmQuark     $.addstyle            is rw;
-  has  XrmQuark     $.pixel_size          is rw;
-  has  XrmQuark     $.point_size          is rw;
-  has  XrmQuark     $.res_x               is rw;
-  has  XrmQuark     $.res_y               is rw;
-  has  XrmQuark     $.spacing             is rw;
-  has  XrmQuark     $.avgwidth            is rw;
-  has  XrmQuark     $.registry            is rw;
-  has  XrmQuark     $.encoding            is rw;
-  has  short        $.underline_position  is rw;
-  has  short        $.underline_thickness is rw;
-}
-
-class XmuArea is repr<CStruct> is export {
-  has XmuScanline $!scanline;
-}
-
-class XawTextPaintStruct is repr<CStruct> is export {
-	has XawTextPaintStruct $!next       ;
-	has int                $!x          ;
-	has int                $!y          ;
-	has int                $!width      ;
-	has Str                $!text       ;
-	has Cardinal           $!length     ;
-	has XawTextProperty    $!property   ;
-	has int                $!max_ascent ;
-	has int                $!max_descent;
-	has XmuArea            $!backtabs   ;
-	has Boolean            $!highlight  ;
-}
-
-class XawTextPropertyList is repr<CStruct> is export {
-	has XrmQuark                         $.identifier      is rw;
-	has Screen                           $!screen               ;
-	has Colormap                         $.colormap        is rw;
-	has int                              $.depth           is rw;
-	has CArray[Pointer[XawTextProperty]] $!properties           ;
-	has Cardinal                         $.num_properties  is rw;
-	has XawTextPropertyList              $!next                 ;
 }
 
 class XawVendorShellExtPart is repr<CStruct> is export {
