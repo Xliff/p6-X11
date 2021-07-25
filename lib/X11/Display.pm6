@@ -1,6 +1,7 @@
 use v6.c;
 
 use NativeCall;
+use Method::Also;
 
 use X11::Compat::Definitions;
 use X11::Raw::Definitions;
@@ -15,7 +16,20 @@ class X11::Display {
     $!d = $display;
   }
 
-  method new (Display $display) {
+  multi method new (Display $display) {
+    $display ?? self.bless( :$display ) !! Nil;
+  }
+  multi method new (Str() $name) {
+    self.OpenDisplay($name);
+  }
+
+  method X11::Raw::Structs::Display
+    is also<Display>
+  { $!d }
+
+  method OpenDisplay (Str() $name) {
+    my $display = XOpenDisplay($name);
+
     $display ?? self.bless( :$display ) !! Nil;
   }
 
@@ -587,11 +601,19 @@ class X11::Display {
     XDefaultRootWindow($!d);
   }
 
-  method DefaultScreen {
-    XDefaultScreen($!d);
+  proto method DefaultScreen (:$raw = False, *%extras) {
+    my $s = *;
+
+    return Nil unless $s;
+    return $s  if     $raw;
+
+    ::('X11::Screen').new($s);
   }
 
-  method DefaultScreenOfDisplay {
+  multi method DefaultScreen (:$raw = False) {
+    XDefaultScreen($!d);
+  }
+  multi method DefaultScreen(:$display is required, :$raw = False) {
     XDefaultScreenOfDisplay($!d);
   }
 
@@ -1708,9 +1730,9 @@ class X11::Display {
     CArrayToArray($fds, $c);
   }
   multi method InternalConnectionNumbers (CArray[realInt] $var1, $var2 is rw) {
-    my realInt ($v1, $v2) = ($var1, 0);
+    my realInt $v2 = 0;
 
-    XInternalConnectionNumbers($!d, $v1, $v2);
+    XInternalConnectionNumbers($!d, $var1, $v2);
   }
 
   method KeycodeToKeysym (Int() $var1, Int() $var2, Int() $var3) {
@@ -2153,21 +2175,28 @@ class X11::Display {
     XQueryKeymap($!d, $var1);
   }
 
-  method QueryPointer (
+  proto method QueryPointer (|)
+  { * }
+
+  multi method QueryPointer (Int() $var1) {
+    samewith($var1, $, $, $, $, $, $, $);
+  }
+  multi method QueryPointer (
     Int() $var1,
-    Int() $var2,
-    Int() $var3,
+          $var2  is rw,
+          $var3  is rw,
           $var4  is rw,
           $var5  is rw,
           $var6  is rw,
           $var7  is rw,
           $var8  is rw
   ) {
-    my Window  ($v1, $v2, $v3)           = ($var1, $var2, $var3);
-    my realInt ($v4, $v5, $v6, $v7, $v8) = 0 xx 5;
+    my Window  ($v1, $v2, $v3)           = ($var1, 0, 0);
+    my realInt ($v4, $v5, $v6, $v7, $v8) = 0 xx 7;
 
-    XQueryPointer($!d, $var1, $var2, $var3, $v4, $v5, $v6, $v7, $v8);
-    ($var4, $var5, $var6, $var7, $var8) = ($v4, $v5, $v6, $v7, $v8);
+    XQueryPointer($!d, $var1, $v2, $v3, $v4, $v5, $v6, $v7, $v8);
+    ($var2, $var3, $var4, $var5, $var6, $var7, $var8) =
+      ($v2, $v3, $v4, $v5, $v6, $v7, $v8);
   }
 
   proto method QueryTextExtents (|)
@@ -2393,10 +2422,9 @@ class X11::Display {
     samewith( ArrayToCArray(Window, @windows), @windows.elems );
   }
   multi method RestackWindows (CArray[Window] $var1, Int() $var2) {
-    my Window $v1 = $var1;
-    my realInt   $v2 = $var2;
+    my realInt $v2 = $var2;
 
-    XRestackWindows($!d, $v1, $v2);
+    XRestackWindows($!d, $var1, $v2);
   }
 
   method RootWindow (Int() $var1) {
@@ -2439,10 +2467,15 @@ class X11::Display {
 
   # 4 / 8
 
-  method ScreenOfDisplay (Int() $var1, :$raw = False) {
+  method Screen (Int() $var1, :$raw = False) {
     my realInt $v1 = $var1;
 
-    XScreenOfDisplay($!d, $v1);
+    my $s = XScreenOfDisplay($!d, $v1);
+
+    return Nil unless $s;
+    return $s  if     $raw;
+
+    ::('X11::Screen').new($s);
   }
 
   method SelectInput (Int() $var1, Int() $var2) {
@@ -2549,31 +2582,45 @@ class X11::Display {
 
   # 9 / 16
 
-  method SetFillRule (GC $var1, realInt $var2) {
-    XSetFillRule($!d, $var1, $var2);
+  method SetFillRule (GC() $var1, Int() $var2) {
+    my realInt $v2 = $var2;
+
+    XSetFillRule($!d, $var1, $v2);
   }
 
-  method SetFillStyle (GC $var1, realInt $var2) {
+  method SetFillStyle (GC() $var1, Int() $var2) {
+    my realInt $v2 = $var2;
+
     XSetFillStyle($!d, $var1, $var2);
   }
 
-  method SetFont (GC $var1, Font $var2) {
+  method SetFont (GC() $var1, Int() $var2) {
+    my Font $v2 = $var2;
+
     XSetFont($!d, $var1, $var2);
   }
 
-  method SetFontPath (Str $var1, realInt $var2) {
+  method SetFontPath (Str() $var1, Int() $var2) {
+    my realInt $v2 = $var2;
+
     XSetFontPath($!d, $var1, $var2);
   }
 
-  method SetForeground (GC $var1, long $var2) {
+  method SetForeground (GC() $var1, Int() $var2) {
+    my long $v2 = $var2;
+
     XSetForeground($!d, $var1, $var2);
   }
 
-  method SetFunction (GC $var1, realInt $var2) {
+  method SetFunction (GC() $var1, Int() $var2) {
+    my realInt $v2 = $var2;
+
     XSetFunction($!d, $var1, $var2);
   }
 
-  method SetGraphicsExposures (GC $var1, Bool $var2) {
+  method SetGraphicsExposures (GC() $var1, Int() $var2) {
+    my Boolean $v2 = $var2.so.Int;
+
     XSetGraphicsExposures($!d, $var1, $var2);
   }
 
@@ -2581,19 +2628,33 @@ class X11::Display {
     XSetIOErrorExitHandler($!d, $var1, $var2);
   }
 
-  method SetIconName (Window $var1, Str $var2) {
-    XSetIconName($!d, $var1, $var2);
+  method SetIconName (Int() $var1, Str() $var2) {
+    my Window $v1 = $var1;
+
+    XSetIconName($!d, $v1, $var2);
   }
 
-  method SetInputFocus (Window $var1, realInt $var2, Time $var3) {
-    XSetInputFocus($!d, $var1, $var2, $var3);
+  method SetInputFocus (Int() $var1, Int() $var2, Int() $var3) {
+    my Window  $v1 = $var1;
+    my realInt $v2 = $var2;
+    my Time    $v3 = $var3;
+
+    XSetInputFocus($!d, $v1, $v2, $v3);
   }
 
-  method SetLineAttributes (GC $var1, realInt $var2, realInt $var3, realInt $var4, realInt $var5) {
-    XSetLineAttributes($!d, $var1, $var2, $var3, $var4, $var5);
+  method SetLineAttributes (
+    GC() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5
+  ) {
+    my realInt ($v2, $v3, $v4, $v5) = ($var2, $var3, $var4, $var5);
+
+    XSetLineAttributes($!d, $var1, $v2, $v3, $v4, $v5);
   }
 
-  method SetModifierMapping (XModifierKeymap $var1) {
+  method SetModifierMapping (XModifierKeymap() $var1) {
     XSetModifierMapping($!d, $var1);
   }
 
