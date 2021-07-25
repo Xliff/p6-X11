@@ -9,7 +9,7 @@ unit package XLib::Raw::Definitions;
 our $DEBUG is export;
 INIT $DEBUG = True if %*ENV<P6_X11_DEBUG>;
 
-constant x11                          is export = 'x11',v6;
+constant x11                          is export = 'X11',v6;
 
 constant uchar                        is export := uint8;
 constant char                         is export :=  int8;
