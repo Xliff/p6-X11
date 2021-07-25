@@ -2006,7 +2006,13 @@ sub XSetCommand (Display $var0, Window $var1, CArray[Str] $var2, realInt $var3)
   is export
 { * }
 
-sub XSetDashes (Display $var0, GC $var1, realInt $var2, Str $var3, realInt $var4)
+sub XSetDashes (
+  Display       $var0, 
+  GC            $var1, 
+  realInt       $var2,
+  CArray[uint8] $var3,
+  realInt       $var4
+)
   returns realInt
   is native(x11)
   is export
