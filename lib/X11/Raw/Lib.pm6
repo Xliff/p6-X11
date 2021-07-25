@@ -1387,7 +1387,7 @@ sub XInternAtoms (Display $var0, Str $var1, realInt $var2, Bool $var3, Atom $var
 { * }
 
 sub XInternalConnectionNumbers (
-  Display     $var0,
+  Display         $var0,
   CArray[realInt] $var1,
   realInt         $var2 is rw
 )
@@ -1749,7 +1749,17 @@ sub XQueryKeymap (Display $var0, Str $var1)
   is export
 { * }
 
-sub XQueryPointer (Display $var0, Window $var1, Window $var2, Window $var3, realInt $var4 is rw, realInt $var5 is rw, realInt $var6 is rw, realInt $var7 is rw, realInt $var8 is rw)
+sub XQueryPointer (
+  Display $var0,
+  Window  $var1,
+  Window  $var2  is rw,
+  Window  $var3  is rw,
+  realInt $var4  is rw,
+  realInt $var5  is rw,
+  realInt $var6  is rw,
+  realInt $var7  is rw,
+  realInt $var8  is rw
+)
   returns Bool
   is native(x11)
   is export
@@ -2007,8 +2017,8 @@ sub XSetCommand (Display $var0, Window $var1, CArray[Str] $var2, realInt $var3)
 { * }
 
 sub XSetDashes (
-  Display       $var0, 
-  GC            $var1, 
+  Display       $var0,
+  GC            $var1,
   realInt       $var2,
   CArray[uint8] $var3,
   realInt       $var4
