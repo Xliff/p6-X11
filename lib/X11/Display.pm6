@@ -2439,56 +2439,112 @@ class X11::Display {
 
   # 4 / 8
 
-  method ScreenOfDisplay (realInt $var1) {
-    XScreenOfDisplay($!d, $var1);
+  method ScreenOfDisplay (Int() $var1, :$raw = False) {
+    my realInt $v1 = $var1;
+
+    XScreenOfDisplay($!d, $v1);
   }
 
-  method SelectInput (Window $var1, long $var2) {
-    XSelectInput($!d, $var1, $var2);
+  method SelectInput (Int() $var1, Int() $var2) {
+    my Window $v1 = $var1;
+    my long   $v2 = $var2;
+
+    XSelectInput($!d, $v1, $v2);
   }
 
-  method SendEvent (Window $var1, Bool $var2, long $var3, XEvent $var4) {
-    XSendEvent($!d, $var1, $var2, $var3, $var4);
+  method SendEvent (Int() $var1, Int() $var2, Int() $var3, XEvent() $var4) {
+    my Window  $v1 = $var1;
+    my Boolean $v2 = $var2.so.Int;
+    my long    $v3 = $var3;
+
+    XSendEvent($!d, $v1, $v2, $v3, $var4);
   }
 
   method ServerVendor {
     XServerVendor($!d);
   }
 
-  method SetAccessControl (realInt $var1) {
-    XSetAccessControl($!d, $var1);
+  method SetAccessControl (Int() $var1) {
+    my realInt $v1 = $var1;
+
+    XSetAccessControl($!d, $v1);
   }
 
-  method SetArcMode (GC $var1, realInt $var2) {
-    XSetArcMode($!d, $var1, $var2);
+  method SetArcMode (GC() $var1, Int() $var2) {
+    my realInt $v2 = $var2;
+
+    XSetArcMode($!d, $var1, $v2);
   }
 
-  method SetBackground (GC $var1, long $var2) {
-    XSetBackground($!d, $var1, $var2);
+  method SetBackground (GC() $var1, Int() $var2) {
+    my long $v2 = $var2;
+
+    XSetBackground($!d, $var1, $v2);
   }
 
-  method SetClipMask (GC $var1, Pixmap $var2) {
-    XSetClipMask($!d, $var1, $var2);
+  method SetClipMask (GC() $var1, Int() $var2) {
+    my Pixmap $v2 = $var2;
+
+    XSetClipMask($!d, $var1, $v2);
   }
 
-  method SetClipOrigin (GC $var1, realInt $var2, realInt $var3) {
-    XSetClipOrigin($!d, $var1, $var2, $var3);
+  method SetClipOrigin (GC() $var1, realInt $var2, realInt $var3) {
+    my realInt ($v2, $v3) = ($var2, $var3);
+
+    XSetClipOrigin($!d, $var1, $v2, $v3);
   }
 
-  method SetClipRectangles (GC $var1, realInt $var2, realInt $var3, XRectangle $var4, realInt $var5, realInt $var6) {
-    XSetClipRectangles($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method SetClipRectangles (
+    GC()         $var1,
+    Int()        $var2,
+    Int()        $var3,
+    XRectangle() $var4,
+    Int()        $var5,
+    Int()        $var6
+  ) {
+    my realInt ($v2, $v3, $v5, $v6) = ($var2, $var3, $var5, $var6);
+
+    XSetClipRectangles($!d, $var1, $v2, $v3, $var4, $v5, $v6);
   }
 
   method SetCloseDownMode (realInt $var1) {
-    XSetCloseDownMode($!d, $var1);
+    my realInt $v1 = $var1;
+
+    XSetCloseDownMode($!d, $v1);
   }
 
-  method SetCommand (Window $var1, Str $var2, realInt $var3) {
-    XSetCommand($!d, $var1, $var2, $var3);
+  proto method SetCommand (|)
+  { * }
+
+  multi method SetCommand (Int() $var1, @command-and-args) {
+    samewith(
+      $var1,
+      ArrayToCArray(Str, @command-and-args),
+      @command-and-args.elems
+    )
+  }
+  multi method SetCommand (Int() $var1, CArray[Str] $var2, Int() $var3) {
+    my Window  $v1 = $var1;
+    my realInt $v3 = $var3;
+
+    XSetCommand($!d, $v1, $var2, $v3);
   }
 
-  method SetDashes (GC $var1, realInt $var2, Str $var3, realInt $var4) {
-    XSetDashes($!d, $var1, $var2, $var3, $var4);
+  proto method SetDashes (|)
+  { * }
+
+  multi method SetDashes (GC() $var1, Int() $var2, @dashes) {
+    samewith($var1, $var2, ArrayToCArray(uint8, @dashes), @dashes.elems);
+  }
+  multi method SetDashes (
+    GC()          $var1,
+    Int()         $var2,
+    CArray[uint8] $var3,
+    Int()         $var4
+  ) {
+    my realInt ($v2, $v4) = ($var2, $var4);
+
+    XSetDashes($!d, $var1, $v2, $var3, $v4);
   }
 
   # 9 / 16
