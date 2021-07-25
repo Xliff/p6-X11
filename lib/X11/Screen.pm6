@@ -6,46 +6,46 @@ use X11::Raw::Structs;
 class X11::Screen {
   has Screen $!s;
 
-  method BlackPixelOfScreen      { XBlackPixelOfScreen($!s) }
+  method BlackPixel             { XBlackPixelOfScreen($!s) }
 
-  method CellsOfScreen           { XCellsOfScreen($!s) }
+  method Cells                  { XCellsOfScreen($!s) }
 
-  method DefaultColormapOfScreen { XDefaultColormapOfScreen($!s) }
+  method DefaultColormap        { XDefaultColormapOfScreen($!s) }
 
-  method DefaultDepthOfScreen    { XDefaultDepthOfScreen($!s) }
+  method DefaultDepth           { XDefaultDepthOfScreen($!s) }
 
-  method DefaultGCOfScreen       { XDefaultGCOfScreen($!s) }
+  method DefaultGC              { XDefaultGCOfScreen($!s) }
 
-  method DefaultVisualOfScreen   { XDefaultVisualOfScreen($!s) }
+  method DefaultVisual          { XDefaultVisualOfScreen($!s) }
 
-  method DisplayOfScreen         { XDisplayOfScreen($!s) }
+  method Display                { XDisplayOfScreen($!s) }
 
-  method DoesBackingStore        { XDoesBackingStore($!s) }
+  method DoesBackingStore       { XDoesBackingStore($!s) }
 
-  method DoesSaveUnders          { XDoesSaveUnders($!s) }
+  method DoesSaveUnders         { XDoesSaveUnders($!s) }
 
-  method EventMaskOfScreen       { XEventMaskOfScreen($!s) }
+  method EventMask              { XEventMaskOfScreen($!s) }
 
-  method HeightMMOfScreen        { XHeightMMOfScreen($!s) }
+  method HeightMM               { XHeightMMOfScreen($!s) }
 
-  method HeightOfScreen          { XHeightOfScreen($!s) }
+  method Height                 { XHeightOfScreen($!s) }
 
-  method MaxCmapsOfScreen        { XMaxCmapsOfScreen($!s) }
+  method MaxCmaps               { XMaxCmapsOfScreen($!s) }
 
-  method MinCmapsOfScreen        { XMinCmapsOfScreen($!s) }
+  method MinCmaps               { XMinCmapsOfScreen($!s) }
 
-  method PlanesOfScreen          { XPlanesOfScreen($!s) }
+  method Planes                 { XPlanesOfScreen($!s) }
 
-  method RootWindowOfScreen      { XRootWindowOfScreen($!s) }
+  method RootWindow             { XRootWindowOfScreen($!s) }
 
-  method ScreenNumberOfScreen    { XScreenNumberOfScreen($!s) }
+  method ScreenNumber           { XScreenNumberOfScreen($!s) }
 
-  method ScreenResourceString    { XScreenResourceString($!s) }
+  method ScreenResourceString   { XScreenResourceString($!s) }
 
-  method WhitePixelOfScreen      { XWhitePixelOfScreen($!s) }
+  method WhitePixel             { XWhitePixelOfScreen($!s) }
 
-  method WidthMMOfScreen         { XWidthMMOfScreen($!s) }
+  method WidthMM                { XWidthMMOfScreen($!s) }
 
-  method WidthOfScreen           { XWidthOfScreen($!s) }
+  method Width                  { XWidthOfScreen($!s) }
 
 }
