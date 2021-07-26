@@ -4,11 +4,11 @@ use NativeCall;
 
 unit package X11::Compat::Definitions;
 
-constant realInt  is export := $*KERNEL.bits == 64 ?? int64
-                                                   !! int32;
+constant realInt  is export := #$*KERNEL.bits == 64 ?? int64 !!
+                               int32;
 
-constant realUInt is export := $*KERNEL.bits == 64 ?? uint64
-                                                   !! uint32;
+constant realUInt is export := #$*KERNEL.bits == 64 ?? uint64 !!
+                               uint32;
 
 constant FcChar8   is export := uint8;
 constant FcChar16  is export := uint16;
