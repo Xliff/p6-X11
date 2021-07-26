@@ -3,6 +3,8 @@ use v6.c;
 use Method::Also;
 use NativeCall;
 
+use X11::Raw::Subs;
+
 role X11::Roles::TypedBuffer[::T] does Positional {
   has $!size;
   has Pointer $!b;
@@ -104,8 +106,9 @@ role X11::Roles::TypedBuffer[::T] does Positional {
             :$size     = 0,
             :$clear    = False
   ) {
-    self.new-typedbuffer-obj($buffer, :$autosize, :$clear);
+    my $o = self.new-typedbuffer-obj($buffer, :$autosize, :$clear);
     self.setSize($size) if $size;
+    $o;
   }
   multi method new (@entries) {
     self.new-typedbuffer-obj(@entries);
