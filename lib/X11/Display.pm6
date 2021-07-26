@@ -2754,115 +2754,182 @@ class X11::Display {
 
   # 11 / 16
 
-  method SetWindowBackground (Window $var1, long $var2) {
-    XSetWindowBackground($!d, $var1, $var2);
+  method SetWindowBackground (Int() $var1, Int() $var2) {
+    my Window $v1 = $var1;
+    my long   $v2 = $var2;
+
+    XSetWindowBackground($!d, $v1, $v2);
   }
 
-  method SetWindowBackgroundPixmap (Window $var1, Pixmap $var2) {
-    XSetWindowBackgroundPixmap($!d, $var1, $var2);
+  method SetWindowBackgroundPixmap (Int() $var1, Int() $var2) {
+    my Window $v1 = $var1;
+    my Pixmap $v2 = $var2;
+
+    XSetWindowBackgroundPixmap($!d, $v1, $v2);
   }
 
-  method SetWindowBorder (Window $var1, long $var2) {
-    XSetWindowBorder($!d, $var1, $var2);
+  method SetWindowBorder (Int() $var1, Int() $var2) {
+    my Window $v1 = $var1;
+    my long   $v2 = $var
+
+    XSetWindowBorder($!d, $v1, $v2);
   }
 
-  method SetWindowBorderPixmap (Window $var1, Pixmap $var2) {
-    XSetWindowBorderPixmap($!d, $var1, $var2);
+  method SetWindowBorderPixmap (Int() $var1, Int() $var2) {
+    my Window $v1 = $var1;
+    my Pixmap $v2 = $var2;
+
+    XSetWindowBorderPixmap($!d, $v1, $v2);
   }
 
-  method SetWindowBorderWidth (Window $var1, realInt $var2) {
-    XSetWindowBorderWidth($!d, $var1, $var2);
+  method SetWindowBorderWidth (Int() $var1, Int() $var2) {
+    my Window  $v1 = $var1;
+    my realInt $v2 = $var2;
+
+    XSetWindowBorderWidth($!d, $v1, $v2);
   }
 
-  method SetWindowColormap (Window $var1, Colormap $var2) {
-    XSetWindowColormap($!d, $var1, $var2);
+  method SetWindowColormap (Int() $var1, Int() $var2) {
+    my Window   $v1 = $var1;
+    my Colormap $v2 = $var2;
+
+    XSetWindowColormap($!d, $v1, $v2);
   }
 
-  method StoreBuffer (Str $var1, realInt $var2, realInt $var3) {
-    XStoreBuffer($!d, $var1, $var2, $var3);
+  method StoreBuffer (Str() $var1, Int() $var2, Int() $var3) {
+    my realInt ($v2, $v3) = ($var2, $var3);
+
+    XStoreBuffer($!d, $var1, $v2, $v3);
   }
 
-  method StoreBytes (Str $var1, realInt $var2) {
-    XStoreBytes($!d, $var1, $var2);
+  method StoreBytes (Str() $var1, Int() $var2) {
+    my realInt $v2 = $var2;
+
+    XStoreBytes($!d, $var1, $v2);
   }
 
-  method StoreColor (Colormap $var1, XColor $var2) {
-    XStoreColor($!d, $var1, $var2);
+  method StoreColor (Colormap $var1, XColor() $var2) {
+    my Colormap $v1 = $var1;
+
+    XStoreColor($!d, $v1, $var2);
   }
 
-  method StoreColors (Colormap $var1, XColor $var2, realInt $var3) {
-    XStoreColors($!d, $var1, $var2, $var3);
+  proto method StoreColors (|)
+  { * }
+
+  multi method StoreColors (Int() $var1, @colors) {
+    samewith(
+      $var1,
+      X11::Roles::TypedBuffer[XColor].new(@colors).p,
+      @colors.elems
+    );
+  }
+  multi method StoreColors (Int() $var1, Pointer $var2, Int() $var3) {
+    my Colormap $v1 = $var1;
+    my realInt  $v3 = $var3;
+
+    XStoreColors($!d, $v1, $var2, $v3);
   }
 
-  method StoreName (Window $var1, Str $var2) {
-    XStoreName($!d, $var1, $var2);
+  method StoreName (Int() $var1, Str() $var2) {
+    my Window $v1 = $var1;
+
+    XStoreName($!d, $v1, $var2);
   }
 
-  method StoreNamedColor (Colormap $var1, Str $var2, long $var3, realInt $var4) {
-    XStoreNamedColor($!d, $var1, $var2, $var3, $var4);
+  method StoreNamedColor (Int() $var1, Str() $var2, Int() $var3, Int() $var4) {
+    my Colormap $v1 = $var1;
+    my long     $v3 = $var3;
+    my realInt  $v4 = $var4;
+
+    XStoreNamedColor($!d, $v1, $var2, $v3, $v4);
   }
 
   # 6 / 8
 
   method Sync (Bool $var1) {
-    XSync($!d, $var1);
+    my Boolean $v1 = $var1.so.Int;
+
+    XSync($!d, $v1);
   }
 
-  method Synchronize (Bool $var1) {
-    XSynchronize($!d, $var1);
+  method Synchronize (Int() $var1) {
+    my Boolean $v1 = $var1.so.Int;
+
+    XSynchronize($!d, $v1);
   }
 
   method TranslateCoordinates (
-    Window $var1,
-    Window $var2,
-    realInt $var3,
-    realInt $var4,
-    realInt $var5 is rw,
-    realInt $var6 is rw,
-    Window $var7
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+          $var5 is rw,
+          $var6 is rw,
+          $var7 is rw
   ) {
+    my Window ($v1, $v2, $v7) = ($var1, $var2, 0);
+    my realInt ($v3, $v4, $v5, $v6) = ($var3, $var4, 0, 0);
+
     XTranslateCoordinates(
       $!d,
-      $var1,
-      $var2,
-      $var3,
-      $var4,
-      $var5,
-      $var6,
-      $var7
+      $v1,
+      $v2,
+      $v3,
+      $v4,
+      $v5,
+      $v6,
+      $v7
     );
+    ($var5, $var6, $var7) = ($v5, $v6, $v7);
   }
 
-  method UndefineCursor (Window $var1) {
-    XUndefineCursor($!d, $var1);
+  method UndefineCursor (Int() $var1) {
+    my Window $v1 = $var1;
+
+    XUndefineCursor($!d, $v1);
   }
 
-  method UngrabButton (realInt $var1, realInt $var2, Window $var3) {
-    XUngrabButton($!d, $var1, $var2, $var3);
+  method UngrabButton (Int() $var1, Int() $var2, Int() $var3) {
+    my realInt ($v1, $v2) = ($var1, $var2);
+    my Window   $v3       = $var3;
+
+    XUngrabButton($!d, $v1, $v2, $v3);
   }
 
-  method UngrabKey (realInt $var1, realInt $var2, Window $var3) {
-    XUngrabKey($!d, $var1, $var2, $var3);
+  method UngrabKey (Int() $var1, Int() $var2, Int() $var3) {
+    my realInt ($v1, $v2) = ($var1, $var2);
+    my Window   $v3       = $var3;
+
+    XUngrabKey($!d, $v1, $v2, $v3);
   }
 
-  method UngrabKeyboard (Time $var1) {
-    XUngrabKeyboard($!d, $var1);
+  method UngrabKeyboard (Int() $var1) {
+    my Time $v1 = $var1;
+
+    XUngrabKeyboard($!d, $v1);
   }
 
-  method UngrabPointer (Time $var1) {
-    XUngrabPointer($!d, $var1);
+  method UngrabPointer (Int() $var1) {
+    my Time $v1 = $var1;
+
+    XUngrabPointer($!d, $v1);
   }
 
   method UngrabServer {
     XUngrabServer($!d);
   }
 
-  method UninstallColormap (Colormap $var1) {
+  method UninstallColormap (Int() $var1) {
+    my Colormap $v1 = $var1;
+
     XUninstallColormap($!d, $var1);
   }
 
-  method UnloadFont (Font $var1) {
-    XUnloadFont($!d, $var1);
+  method UnloadFont (Int() $var1) {
+    my Font $v1 = $var1;
+
+    XUnloadFont($!d, $v1);
   }
 
   method UnlockDisplay {
