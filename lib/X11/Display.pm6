@@ -2660,51 +2660,95 @@ class X11::Display {
 
   # 5 / 8
 
-  method SetPlaneMask (GC $var1, long $var2) {
-    XSetPlaneMask($!d, $var1, $var2);
+  method SetPlaneMask (GC() $var1, Int() $var2) {
+    my long $v2 = $var2;
+
+    XSetPlaneMask($!d, $var1, $v2);
   }
 
-  method SetPointerMapping (Str $var1, realInt $var2) {
-    XSetPointerMapping($!d, $var1, $var2);
+  method SetPointerMapping (Str() $var1, Int() $var2) {
+    my realInt $v2 = $var2;
+
+    XSetPointerMapping($!d, $var1, $v2);
   }
 
-  method SetScreenSaver (realInt $var1, realInt $var2, realInt $var3, realInt $var4) {
-    XSetScreenSaver($!d, $var1, $var2, $var3, $var4);
+  method SetScreenSaver (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4
+  ) {
+    my Boolean ($v1, $v2, $v3, $v4) =
+      ($var1, $var2, $var3, $var4).map( *.so.Int );
+
+    XSetScreenSaver($!d, $v1, $v2, $v3, $v4);
   }
 
-  method SetSelectionOwner (Atom $var1, Window $var2, Time $var3) {
-    XSetSelectionOwner($!d, $var1, $var2, $var3);
+  method SetSelectionOwner (Int() $var1, Int() $var2, Int() $var3) {
+    my Atom   $v1 = $var1;
+    my Window $v2 = $var2;
+    my Time   $v3 = $var3;
+
+    XSetSelectionOwner($!d, $v1, $v2, $v3);
   }
 
-  method SetState (GC $var1, long $var2, long $var3, realInt $var4, long $var5) {
-    XSetState($!d, $var1, $var2, $var3, $var4, $var5);
+  method SetState (
+    GC() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5
+  ) {
+    my ulong ($v2, $v3, $v5) = ($var2, $var5);
+    my int   $v4             = $var4;
+
+    XSetState($!d, $var1, $v2, $v3, $v4, $v5);
   }
 
-  method SetStipple (GC $var1, Pixmap $var2) {
-    XSetStipple($!d, $var1, $var2);
+  method SetStipple (GC() $var1, Int() $var2) {
+    my Pixmap $v2 = $var2;
+
+    XSetStipple($!d, $var1, $v2);
   }
 
-  method SetSubwindowMode (GC $var1, realInt $var2) {
-    XSetSubwindowMode($!d, $var1, $var2);
+  method SetSubwindowMode (GC() $var1, Int() $var2) {
+    my realInt $v2 = $var2;
+
+    XSetSubwindowMode($!d, $var1, $v2);
   }
 
-  method SetTSOrigin (GC $var1, realInt $var2, realInt $var3) {
-    XSetTSOrigin($!d, $var1, $var2, $var3);
+  method SetTSOrigin (GC() $var1, Int() $var2, Int() $var3) {
+    my realInt ($v2, $v3) = ($var2, $var3);
+
+    XSetTSOrigin($!d, $var1, $v2, $v3);
   }
 
-  method SetTile (GC $var1, Pixmap $var2) {
-    XSetTile($!d, $var1, $var2);
+  # method SetTextProperty ?
+
+  method SetTile (GC() $var1, Int() $var2) {
+    my Pixmap $v2 = $var2;
+
+    XSetTile($!d, $var1, $v2);
   }
 
-  method SetTransientForHint (Window $var1, Window $var2) {
-    XSetTransientForHint($!d, $var1, $var2);
+  method SetTransientForHint (Int() $var1, Int() $var2) {
+    my Window ($v1, $v2) = ($var1, $var2);
+
+    XSetTransientForHint($!d, $v1, $v2);
   }
 
-  method SetWMColormapWindows (Window $var1, Window $var2, realInt $var3) {
-    XSetWMColormapWindows($!d, $var1, $var2, $var3);
+  method SetWMColormapWindows (Int() $var1, Int() $var2, Int() $var3) {
+    my Window  ($v1, $v2) = ($var1, $var2);
+    my realInt $v3        = $var3;
+
+    XSetWMColormapWindows($!d, $v1, $v2, $v3);
   }
 
-  method SetWMProtocols (Window $var1, Atom $var2, realInt $var3) {
+  method SetWMProtocols (Int() $var1, Int() $var2, Int() $var3) {
+    my Window  $v1 = $var1;
+    my Atom    $v2 = $var2;
+    my realInt $v3 = $var3;
+
     XSetWMProtocols($!d, $var1, $var2, $var3);
   }
 
