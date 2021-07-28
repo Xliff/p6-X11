@@ -2326,13 +2326,13 @@ sub XTextExtents16 (XFontStruct $var0, XChar2b $var1, realInt $var2, realInt $va
   is export
 { * }
 
-sub XTextWidth (XFontStruct $var0, Str $var1, realInt $var2)
+sub XTextWidth (XFontStruct $var0, Pointer $var1, realInt $var2)
   returns realInt
   is native(x11)
   is export
 { * }
 
-sub XTextWidth16 (XFontStruct $var0, XChar2b $var1, realInt $var2)
+sub XTextWidth16 (XFontStruct $var0, Pointer $var1, realInt $var2)
   returns realInt
   is native(x11)
   is export
