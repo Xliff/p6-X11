@@ -57,7 +57,13 @@ class X11::Xinerama {
     $tb.Array;
   }
 
-  method QueryVersion (
+  proto method QueryVersion (|)
+  { * }
+
+  multi method QueryVersion {
+    samewith($, $);
+  }
+  multi method QueryVersion (
     $major_versionp is rw,
     $minor_versionp is rw
   ) {
@@ -65,6 +71,10 @@ class X11::Xinerama {
 
     XineramaQueryVersion($!dpy, $mav, $miv);
     ($major_versionp, $minor_versionp) = ($mav, $miv);
+  }
+
+  method Version {
+    self.QueryVersion;
   }
 
 }
