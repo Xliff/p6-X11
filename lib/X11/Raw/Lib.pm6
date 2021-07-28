@@ -2254,7 +2254,7 @@ sub XSetWindowColormap (Display $var0, Window $var1, Colormap $var2)
   is export
 { * }
 
-sub XStoreBuffer (Display $var0, Str $var1, realInt $var2, realInt $var3)
+sub XStoreBuffer (Display $var0, CArray[uint8] $var1, realInt $var2, realInt $var3)
   returns realInt
   is native(x11)
   is export
