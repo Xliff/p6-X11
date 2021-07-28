@@ -1,6 +1,6 @@
 use v6.c;
 
-use Compunit::Util :re-export;
+use CompUnit::Util :re-export;
 
 our %exported;
 
