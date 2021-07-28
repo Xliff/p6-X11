@@ -1,0 +1,4 @@
+prefix=X11::
+modules=X11::Raw::Types,X11::Compat::Types
+backups=backup,bitbucket,google-backup
+exec=x11exec
