@@ -609,7 +609,7 @@ sub XDefaultVisualOfScreen (Screen $var0)
   is export
 { * }
 
-sub XDefineCursor (Display $var0, Window $var1, Cursor $var2)
+sub XDefineCursor (Display $var0, Window $var1, X11Cursor $var2)
   returns realInt
   is native(x11)
   is export
@@ -982,7 +982,7 @@ sub XFreeColors (Display $var0, Colormap $var1, long $var2, realInt $var3, long 
   is export
 { * }
 
-sub XFreeCursor (Display $var0, Cursor $var1)
+sub XFreeCursor (Display $var0, X11Cursor $var1)
   returns realInt
   is native(x11)
   is export
@@ -1807,7 +1807,7 @@ sub XRebindKeysym (Display $var0, KeySym $var1, KeySym $var2, realInt $var3, Str
   is export
 { * }
 
-sub XRecolorCursor (Display $var0, Cursor $var1, XColor $var2, XColor $var3)
+sub XRecolorCursor (Display $var0, X11Cursor $var1, XColor $var2, XColor $var3)
   returns realInt
   is native(x11)
   is export
