@@ -11,6 +11,9 @@ use X11::Raw::Enums;
 
 unit package X11::Raw::Structs;
 
+# Non-exported local define until duplicate can be squashed.
+constant Cursor = CARD32;
+
 class TranslationData       is repr<CStruct> is export { ... } # L2306
 class ATranslationData      is repr<CStruct> is export { ... } # L13
 class TMComplexBindProcsRec is repr<CStruct> is export { ... } # L2039
