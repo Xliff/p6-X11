@@ -14,5 +14,5 @@ need X11::Raw::Enums;
 need X11::Raw::Structs;
 
 BEGIN {
-  glib-re-export($_) for |@x11-exports;
+  x11-re-export($_) for |@x11-exports;
 }
