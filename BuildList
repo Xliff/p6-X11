@@ -12,6 +12,7 @@ X11::Raw::Xinerama
 X11::Roles::TypedBuffer
 X11::Raw::Lib
 X11::Display
+X11::Fonts
 X11::Lib
 X11::Screen
 X11::Xinerama
