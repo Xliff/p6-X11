@@ -467,7 +467,7 @@ constant YXBanded                     is export = 3;
 constant CoordModeOrigin              is export = 0;
 constant CoordModePrevious            is export = 1;
 
-constant Complex                      is export = 0;
+constant X11Complex                   is export = 0;
 constant Nonconvex                    is export = 1;
 constant Convex                       is export = 2;
 
