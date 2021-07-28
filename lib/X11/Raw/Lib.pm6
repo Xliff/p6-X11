@@ -182,7 +182,7 @@ sub XCellsOfScreen (Screen $var0)
 sub XChangeActivePointerGrab (
   Display $var0,
   realInt    $var1,
-  Cursor  $var2,
+  X11Cursor  $var2,
   Time    $var3
 )
   returns realInt
@@ -458,7 +458,7 @@ sub XCreateColormap (Display $var0, Window $var1, Visual $var2, realInt $var3)
 { * }
 
 sub XCreateFontCursor (Display $var0, realInt $var1)
-  returns Cursor
+  returns X11Cursor
   is native(x11)
   is export
 { * }
@@ -490,7 +490,7 @@ sub XCreateGlyphCursor (
   XColor  $var5,
   XColor  $var6
 )
-  returns Cursor
+  returns X11Cursor
   is native(x11)
   is export
 { * }
@@ -520,7 +520,7 @@ sub XCreatePixmap (Display $var0, Drawable $var1, realInt $var2, realInt $var3, 
 { * }
 
 sub XCreatePixmapCursor (Display $var0, Pixmap $var1, Pixmap $var2, XColor $var3, XColor $var4, realInt $var5, realInt $var6)
-  returns Cursor
+  returns X11Cursor
   is native(x11)
   is export
 { * }
@@ -1277,7 +1277,7 @@ sub XGetWindowProperty (
   is export
 { * }
 
-sub XGrabButton (Display $var0, realInt $var1, realInt $var2, Window $var3, Bool $var4, realInt $var5, realInt $var6, realInt $var7, Window $var8, Cursor $var9)
+sub XGrabButton (Display $var0, realInt $var1, realInt $var2, Window $var3, Bool $var4, realInt $var5, realInt $var6, realInt $var7, Window $var8, X11Cursor $var9)
   returns realInt
   is native(x11)
   is export
@@ -1295,7 +1295,7 @@ sub XGrabKeyboard (Display $var0, Window $var1, Bool $var2, realInt $var3, realI
   is export
 { * }
 
-sub XGrabPointer (Display $var0, Window $var1, Bool $var2, realInt $var3, realInt $var4, realInt $var5, Window $var6, Cursor $var7, Time $var8)
+sub XGrabPointer (Display $var0, Window $var1, Bool $var2, realInt $var3, realInt $var4, realInt $var5, Window $var6, X11Cursor $var7, Time $var8)
   returns realInt
   is native(x11)
   is export

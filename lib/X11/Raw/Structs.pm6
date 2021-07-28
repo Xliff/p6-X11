@@ -11,8 +11,6 @@ use X11::Raw::Enums;
 
 unit package X11::Raw::Structs;
 
-# Non-exported local define until duplicate can be squashed.
-constant Cursor = CARD32;
 
 class TranslationData       is repr<CStruct> is export { ... } # L2306
 class ATranslationData      is repr<CStruct> is export { ... } # L13
@@ -78,7 +76,7 @@ class XSetWindowAttributes is repr<CStruct> is export {
   has long     $.do_not_propagate_mask is rw; #=         - set of events that should not propagate */
   has Boolean  $.override_redirect     is rw; #= ot:Bool - boolean value for override-redirect */
   has Colormap $.colormap              is rw; #=         - color map to be associated with window */
-  has Cursor   $.cursor                is rw; #=         - cursor to be displayed (or None) */
+  has X11Cursor   $.cursor                is rw; #=         - cursor to be displayed (or None) */
 }
 
 class XWindowChanges is repr<CStruct> is export {
@@ -553,8 +551,8 @@ class AsciiSinkPart is repr<CStruct> is export {
   HAS GC                 $!xorgc;
   has XawTextPosition    $!cursor_position;
   has XawTextInsertState $!laststate;
-  has short              $!cursor_x;        #= Cursor Location.
-  has short              $!cursor_y;        #= Cursor Location.
+  has short              $!cursor_x;        #= X11Cursor Location.
+  has short              $!cursor_y;        #= X11Cursor Location.
 
   #has XtPointer pad[4];   /* for future use and keep binary compatability */
   has XtPointer          $!pad1;
@@ -805,7 +803,7 @@ class XawDisplayList is repr<CPointer> is export { * }
 
 class SimplePart {
   # resources
-  has Cursor         $.cursor             is rw;
+  has X11Cursor         $.cursor             is rw;
   has Pixmap         $.insensitive_border is rw;
   has String         $!cursor_name             ; #= cursor specified by name
   has Pixel          $.pointer_fg         is rw; #= Pointer colors
@@ -2290,7 +2288,7 @@ class MultiSinkPart is repr<CStruct> is export {
   has XawTextPosition    $!cursor_position;
   has XawTextInsertState $!laststate;
 
-  # Cursor location
+  # X11Cursor location
   has short              $!cursor_x,
   has short              $!cursor_y;
   has XFontSet           $!fontset;         #= font set to draw
@@ -2473,19 +2471,19 @@ class PanedPart is repr<CStruct> is export {
   has  Dimension      $.internal_bw              is rw;  #= internal border width
   has  XtOrientation  $.orientation              is rw;  #= Orientation of paned widget
 
-  has  Cursor         $.cursor                   is rw;  #= Cursor for paned window
-  has  Cursor         $.grip_cursor              is rw;  #= inactive grip cursor
-  has  Cursor         $.v_grip_cursor            is rw;  #= inactive vert grip cursor
-  has  Cursor         $.h_grip_cursor            is rw;  #= inactive horiz grip cursor
-  has  Cursor         $.adjust_this_cursor       is rw;  #= active grip cursor: T
-  has  Cursor         $.v_adjust_this_cursor     is rw;  #= active vert grip cursor: T
-  has  Cursor         $.h_adjust_this_cursor     is rw;  #= active horiz grip cursor: T
+  has  X11Cursor         $.cursor                   is rw;  #= Cursor for paned window
+  has  X11Cursor         $.grip_cursor              is rw;  #= inactive grip cursor
+  has  X11Cursor         $.v_grip_cursor            is rw;  #= inactive vert grip cursor
+  has  X11Cursor         $.h_grip_cursor            is rw;  #= inactive horiz grip cursor
+  has  X11Cursor         $.adjust_this_cursor       is rw;  #= active grip cursor: T
+  has  X11Cursor         $.v_adjust_this_cursor     is rw;  #= active vert grip cursor: T
+  has  X11Cursor         $.h_adjust_this_cursor     is rw;  #= active horiz grip cursor: T
   # vertical
-  has  Cursor         $.adjust_upper_cursor      is rw;  #= active grip cursor: U
-  has  Cursor         $.adjust_lower_cursor      is rw;  #= active grip cursor: D
+  has  X11Cursor         $.adjust_upper_cursor      is rw;  #= active grip cursor: U
+  has  X11Cursor         $.adjust_lower_cursor      is rw;  #= active grip cursor: D
   # horizontal
-  has  Cursor         $.adjust_left_cursor       is rw;  #= active grip cursor: U
-  has  Cursor         $.adjust_right_cursor      is rw;  #= active grip cursor: D
+  has  X11Cursor         $.adjust_left_cursor       is rw;  #= active grip cursor: U
+  has  X11Cursor         $.adjust_right_cursor      is rw;  #= active grip cursor: D
   # private
   has  Boolean        $!recursively_called;              #= for ChangeManaged
   has  Boolean        $!resize_children_to_pref;         #= override constrain resources and resize all children to preferred size
@@ -3131,12 +3129,12 @@ class ScrollbarPart is repr<CStruct> is export {
   has XtCallbackList $.thumbProc   is rw; #= jump (to position) scroll
   has XtCallbackList $.jumpProc    is rw; #= same as thumbProc but pass data by ref
   has Pixmap         $.thumb       is rw; #= thumb pixmap
-  has Cursor         $.upCursor    is rw; #= scroll up cursor
-  has Cursor         $.downCursor  is rw; #= scroll down cursor
-  has Cursor         $.leftCursor  is rw; #= scroll left cursor
-  has Cursor         $.rightCursor is rw; #= scroll right cursor
-  has Cursor         $.verCursor   is rw; #= scroll vertical cursor
-  has Cursor         $.horCursor   is rw; #= scroll horizontal cursor
+  has X11Cursor         $.upCursor    is rw; #= scroll up cursor
+  has X11Cursor         $.downCursor  is rw; #= scroll down cursor
+  has X11Cursor         $.leftCursor  is rw; #= scroll left cursor
+  has X11Cursor         $.rightCursor is rw; #= scroll right cursor
+  has X11Cursor         $.verCursor   is rw; #= scroll vertical cursor
+  has X11Cursor         $.horCursor   is rw; #= scroll horizontal cursor
   has float          $.top         is rw;
   has float          $.shown       is rw;
   has Dimension      $.length      is rw; #= either height or width
@@ -3144,7 +3142,7 @@ class ScrollbarPart is repr<CStruct> is export {
   has Dimension      $.min_thumb   is rw; #= minium size for the thumb
 
   # private
-  has Cursor         $!inactiveCursor; #= The normal cursor for scrollbar
+  has X11Cursor         $!inactiveCursor; #= The normal cursor for scrollbar
   has char           $!direction;      #= a scroll has started; which direction
   has GC             $!gc;             #= a (shared) gc
   has Position       $!topLoc;         #= Pixel that corresponds to top
@@ -3471,7 +3469,7 @@ class SimpleMenuPart is repr<CStruct> is export {
 	has Dimension      $!top_margin          ;
 	has Dimension      $!bottom_margin       ;
 	has Dimension      $!row_height          ;
-	has Cursor         $!cursor              ;
+	has X11Cursor         $!cursor              ;
 	has SmeObject      $!popup_entry         ;
 	has Boolean        $!menu_on_screen      ;
 	has int            $!backing_store       ;
@@ -3915,7 +3913,7 @@ constant TextSinkExt is export := TextSinkExtRec;
 
 class TextSinkClassPart {
 	has Pointer      $!DisplayText      ; #= fp:XawSinkDisplayTextProc
-	has Pointer      $!InsertCursor     ; #= fp:XawSinkInsertCursorProc
+	has Pointer      $!InsertX11Cursor     ; #= fp:XawSinkInsertCursorProc
 	has Pointer      $!ClearToBackground; #= fp:XawSinkClearToBackgroundProc
 	has Pointer      $!FindPosition     ; #= fp:XawSinkFindPositionProc
 	has Pointer      $!FindDistance     ; #= fp:XawSinkFindDistanceProc
@@ -3923,7 +3921,7 @@ class TextSinkClassPart {
 	has Pointer      $!MaxLines         ; #= fp:XawSinkMaxLinesProc
 	has Pointer      $!MaxHeight        ; #= fp:XawSinkMaxHeightProc
 	has Pointer      $!SetTabs          ; #= fp:XawSinkSetTabsProc
-	has Pointer      $!GetCursorBounds  ; #= fp:XawSinkGetCursorBoundsProc
+	has Pointer      $!GetX11CursorBounds  ; #= fp:XawSinkGetCursorBoundsProc
 	has TextSinkExt  $!extension        ;
 }
 
@@ -4194,8 +4192,8 @@ class WorkProc is repr<CStruct> is export {
 }
 constant WorkProcRec is export := WorkProc;
 
-class XAnimCursor is repr<CStruct> is export {
-	has Cursor $!cursor;
+class XAnimX11Cursor is repr<CStruct> is export {
+	has X11Cursor $!cursor;
 	has long   $.delay   is rw;
 }
 
@@ -5119,15 +5117,15 @@ class XcupStoreColors is repr<CStruct> is export {
 	has CARD32 $!cmap       ;
 }
 
-class XcursorCursors is repr<CStruct> is export {
+class XcursorX11Cursors is repr<CStruct> is export {
   has Display         $.dpy;             #= - Display holding cursors
   has int             $.ref     is rw;   #= - reference count
   has int             $.ncursor is rw;   #= - number of cursors
-  has CArray[Cursor]  $.cursors;         #= - array of cursors
+  has CArray[X11Cursor]  $.cursors;         #= - array of cursors
 }
 
 class XcursorAnimate is repr<CStruct> is export {
-	has XcursorCursors $!cursors ;
+	has XcursorX11Cursors $!cursors ;
 	has int            $!sequence;
 }
 
@@ -6300,7 +6298,7 @@ class XtGrabExt is repr<CStruct> is export {
 	has Mask   $.pKeyButMask    is rw;
 	has Mask   $.pModifiersMask is rw;
 	has Window $.confineTo      is rw;
-	has Cursor $.cursor         is rw;
+	has X11Cursor $.cursor         is rw;
 }
 
 sub howmany ($x, $y) { ( ($x + $y - 1) / $y ).Int }
@@ -8196,7 +8194,7 @@ class Display {
   has Pointer                  $.idlist_alloc;                           #= fp:(Disply *, XID *, int --> Pointer);
 
   has XKeytrans                $.key_bindings;                           #=                                                       - for XLookupString
-  has FontRec                  $.cursor_font;                            #=                                                       - for XCreateFontCursor
+  has FontRec                  $.cursor_font;                            #=                                                       - for XCreateFontX11Cursor
   has XDisplayAtoms            $.atoms;                                  #=                                                       - for XInternAtom
   has uint                     $.mode_switch;                            #=                                                       - keyboard group modifiers
   has uint                     $.num_lock;                               #=                                                       - keyboard numlock modifiers

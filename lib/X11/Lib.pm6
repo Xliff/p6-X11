@@ -97,7 +97,7 @@ class X11::Lib::Master {
     XCellsOfScreen($var0);
   }
 
-  method ChangeActivePointerGrab (Display $var0, gint $var1, Cursor $var2, Time $var3) {
+  method ChangeActivePointerGrab (Display $var0, gint $var1, X11Cursor $var2, Time $var3) {
     XChangeActivePointerGrab($var0, $var1, $var2, $var3);
   }
 
@@ -225,8 +225,8 @@ class X11::Lib::Master {
     XCreateColormap($var0, $var1, $var2, $var3);
   }
 
-  method CreateFontCursor (Display $var0, gint $var1) {
-    XCreateFontCursor($var0, $var1);
+  method CreateFontX11Cursor (Display $var0, gint $var1) {
+    XCreateFontX11Cursor($var0, $var1);
   }
 
   method CreateFontSet (Display $var0, Str $var1, Str $var2, gint $var3 is rw, Str $var4) {
@@ -237,8 +237,8 @@ class X11::Lib::Master {
     XCreateGC($var0, $var1, $var2, $var3);
   }
 
-  method CreateGlyphCursor (Display $var0, Font $var1, Font $var2, gint $var3, gint $var4, XColor $var5, XColor $var6) {
-    XCreateGlyphCursor($var0, $var1, $var2, $var3, $var4, $var5, $var6);
+  method CreateGlyphX11Cursor (Display $var0, Font $var1, Font $var2, gint $var3, gint $var4, XColor $var5, XColor $var6) {
+    XCreateGlyphX11Cursor($var0, $var1, $var2, $var3, $var4, $var5, $var6);
   }
 
   method CreateIC (XIM $var0,  $var1, ...) {
@@ -257,8 +257,8 @@ class X11::Lib::Master {
     XCreatePixmap($var0, $var1, $var2, $var3, $var4);
   }
 
-  method CreatePixmapCursor (Display $var0, Pixmap $var1, Pixmap $var2, XColor $var3, XColor $var4, gint $var5, gint $var6) {
-    XCreatePixmapCursor($var0, $var1, $var2, $var3, $var4, $var5, $var6);
+  method CreatePixmapX11Cursor (Display $var0, Pixmap $var1, Pixmap $var2, XColor $var3, XColor $var4, gint $var5, gint $var6) {
+    XCreatePixmapX11Cursor($var0, $var1, $var2, $var3, $var4, $var5, $var6);
   }
 
   method CreatePixmapFromBitmapData (Display $var0, Drawable $var1, Str $var2, gint $var3, gint $var4, long $var5, long $var6, gint $var7) {
@@ -317,8 +317,8 @@ class X11::Lib::Master {
     XDefaultVisualOfScreen($var0);
   }
 
-  method DefineCursor (Display $var0, Window $var1, Cursor $var2) {
-    XDefineCursor($var0, $var1, $var2);
+  method DefineX11Cursor (Display $var0, Window $var1, Cursor $var2) {
+    XDefineX11Cursor($var0, $var1, $var2);
   }
 
   method DeleteModifiermapEntry (XModifierKeymap $var0, gint $var1, KeyCode $var2, gint $var3) {
@@ -565,8 +565,8 @@ class X11::Lib::Master {
     XFreeColors($var0, $var1, $var2, $var3, $var4);
   }
 
-  method FreeCursor (Display $var0, Cursor $var1) {
-    XFreeCursor($var0, $var1);
+  method FreeX11Cursor (Display $var0, Cursor $var1) {
+    XFreeX11Cursor($var0, $var1);
   }
 
   method FreeEventData (Display $var0, XGenericEventCookie $var1) {
@@ -749,7 +749,7 @@ class X11::Lib::Master {
     XGetWindowProperty($var0, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8 is rw, $var9, $var10, $var11);
   }
 
-  method GrabButton (Display $var0, gint $var1, gint $var2, Window $var3, Bool $var4, gint $var5, gint $var6, gint $var7, Window $var8, Cursor $var9) {
+  method GrabButton (Display $var0, gint $var1, gint $var2, Window $var3, Bool $var4, gint $var5, gint $var6, gint $var7, Window $var8, X11Cursor $var9) {
     XGrabButton($var0, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8, $var9);
   }
 
@@ -761,7 +761,7 @@ class X11::Lib::Master {
     XGrabKeyboard($var0, $var1, $var2, $var3, $var4, $var5);
   }
 
-  method GrabPointer (Display $var0, Window $var1, Bool $var2, gint $var3, gint $var4, gint $var5, Window $var6, Cursor $var7, Time $var8) {
+  method GrabPointer (Display $var0, Window $var1, Bool $var2, gint $var3, gint $var4, gint $var5, Window $var6, X11Cursor $var7, Time $var8) {
     XGrabPointer($var0, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8);
   }
 
@@ -1030,8 +1030,8 @@ class X11::Lib::Master {
     XQLength($var0);
   }
 
-  method QueryBestCursor (Display $var0, Drawable $var1, gint $var2, gint $var3, gint $var4 is rw, gint $var5 is rw) {
-    XQueryBestCursor($var0, $var1, $var2, $var3, $var4 is rw, $var5 is rw);
+  method QueryBestX11Cursor (Display $var0, Drawable $var1, gint $var2, gint $var3, gint $var4 is rw, gint $var5 is rw) {
+    XQueryBestX11Cursor($var0, $var1, $var2, $var3, $var4 is rw, $var5 is rw);
   }
 
   method QueryBestSize (Display $var0, gint $var1, Drawable $var2, gint $var3, gint $var4, gint $var5 is rw, gint $var6 is rw) {
@@ -1098,8 +1098,8 @@ class X11::Lib::Master {
     XRebindKeysym($var0, $var1, $var2, $var3, $var4, $var5);
   }
 
-  method RecolorCursor (Display $var0, Cursor $var1, XColor $var2, XColor $var3) {
-    XRecolorCursor($var0, $var1, $var2, $var3);
+  method RecolorX11Cursor (Display $var0, Cursor $var1, XColor $var2, XColor $var3) {
+    XRecolorX11Cursor($var0, $var1, $var2, $var3);
   }
 
   method ReconfigureWMWindow (Display $var0, Window $var1, gint $var2, gint $var3, XWindowChanges $var4) {
@@ -1450,8 +1450,8 @@ class X11::Lib::Master {
     XTranslateCoordinates($var0, $var1, $var2, $var3, $var4, $var5 is rw, $var6 is rw, $var7);
   }
 
-  method UndefineCursor (Display $var0, Window $var1) {
-    XUndefineCursor($var0, $var1);
+  method UndefineX11Cursor (Display $var0, Window $var1) {
+    XUndefineX11Cursor($var0, $var1);
   }
 
   method UngrabButton (Display $var0, gint $var1, gint $var2, Window $var3) {
