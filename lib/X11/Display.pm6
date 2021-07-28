@@ -404,7 +404,7 @@ class X11::Display {
   method CreateFontCursor (Int() $var1) {
     my realInt $v1 = $var1;
 
-    XCreateFontX11Cursor($!d, $v1);
+    XCreateFontCursor($!d, $v1);
   }
 
   proto method CreateFontSet (|)
@@ -456,7 +456,7 @@ class X11::Display {
   ) {
     my realInt ($v3, $v4) = ($var3, $var4);
 
-    XCreateGlyphX11Cursor($!d, $var1, $var2, $v3, $v4, $var5, $var6);
+    XCreateGlyphCursor($!d, $var1, $var2, $v3, $v4, $var5, $var6);
   }
 
   method CreateImage (
@@ -501,7 +501,7 @@ class X11::Display {
     my Pixmap ($v1, $v2) = ($var2, $var2);
     my realInt   ($v5, $v6) = ($var5, $var6);
 
-    XCreatePixmapX11Cursor($!d, $v1, $v2, $var3, $var4, $v5, $v6);
+    XCreatePixmap($!d, $v1, $v2, $var3, $var4, $v5, $v6);
   }
 
   method CreatePixmapFromBitmapData (
@@ -628,7 +628,7 @@ class X11::Display {
     my Window $v1 = $var1;
     my X11Cursor $v2 = $var2;
 
-    XDefineX11Cursor($!d, $v1, $v2);
+    XDefineCursor($!d, $v1, $v2);
   }
 
   method DeleteProperty (Int() $var1, Int() $var2) {
@@ -1025,13 +1025,13 @@ class X11::Display {
   }
 
   method FreeColormap (Int() $var1) {
-    XFreeColormap($!d, $var1);
+    XFreeColormap( $!d.&p, $var1 );
   }
 
   method FreeColors (Int() $var1, Int() $var2, Int() $var3, Int() $var4) {
     my Colormap $v1        = $var1;
     my long     ($v2, $v4) = ($var2, $var4);
-    my realInt     $v3        = $var3;
+    my realInt  $v3        = $var3;
 
     XFreeColors($!d, $v1, $v2, $v3, $v4);
   }
@@ -1039,7 +1039,7 @@ class X11::Display {
   method FreeCursor (Int() $var1) {
     my X11Cursor $v1 = $var1;
 
-    XFreeX11Cursor($!d, $v1);
+    XFreeCursor($!d, $v1);
   }
 
   method FreeEventData (XGenericEventCookie() $var1) {
@@ -2078,7 +2078,7 @@ class X11::Display {
 
     my realInt ($v3, $v4, $v5) = ($var3, 0, 0);
 
-    my $s = XQueryBestX11Cursor($!d, $var1, $v2, $v3, $v4, $v5);
+    my $s = XQueryBestCursor($!d, $var1, $v2, $v3, $v4, $v5);
     ($var4, $var5) = ($v4, $v5);
     return $s unless $all;
     ($s, $var4, $var5)
@@ -2339,7 +2339,7 @@ class X11::Display {
   method RecolorCursor (Cursor $var1, XColor() $var2, XColor() $var3) {
     my X11Cursor $v1 = $var1;
 
-    XRecolorX11Cursor($!d, $v1, $var2, $var3);
+    XRecolorCursor($!d, $v1, $var2, $var3);
   }
 
   method ReconfigureWMWindow (
@@ -2898,7 +2898,7 @@ class X11::Display {
   method UndefineCursor (Int() $var1) {
     my Window $v1 = $var1;
 
-    XUndefineX11Cursor($!d, $v1);
+    XUndefineCursor($!d, $v1);
   }
 
   method UngrabButton (Int() $var1, Int() $var2, Int() $var3) {
