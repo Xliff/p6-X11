@@ -73,8 +73,8 @@ class X11::Display {
     Int()      $var5,
     Int()      $var6
   ) {
-    my Boolean $v2     = $var2.so.Int;
-    my long ($v3, $v5) = ($var3, $var5);
+    my Boolean $v2        = $var2.so.Int;
+    my long    ($v3, $v5) = ($var3, $var5);
     my realInt ($v4, $v6) = ($var4, $var6);
 
     XAllocColorCells($!d, $var1, $v2, $v3, $v4, $v5, $v6);
@@ -93,7 +93,7 @@ class X11::Display {
     Int()      $var10
   ) {
     my Boolean $v2 = $var2.so.Int;
-    my long ($v3, $v8, $v9, $v10) = ($var3, $var8, $var9, $var10);
+    my long    ($v3, $v8, $v9, $v10) = ($var3, $var8, $var9, $var10);
     my realInt ($v4, $v5, $v6, $v7)  = ($var4, $var5, $var6, $var7);
 
     XAllocColorPlanes($!d, $var1, $v2, $v3, $v4, $v5, $v6, $v7, $v8, $v9, $v10);
@@ -148,9 +148,9 @@ class X11::Display {
   }
 
   method ChangeActivePointerGrab (Int() $var1, Int() $var2, Int() $var3) {
-    my realInt   $v1 = $var1;
-    my Cursor $v2 = $var2;
-    my Time   $v3 = $var3;
+    my realInt $v1 = $var1;
+    my Cursor  $v2 = $var2;
+    my Time    $v3 = $var3;
 
     XChangeActivePointerGrab($!d, $v1, $v2, $v3);
   }
@@ -174,7 +174,8 @@ class X11::Display {
     Int() $var4
   ) {
     my realInt ($v1, $v2, $v4) = ($var1, $var2, $var4);
-    my KeySym $v3           = $var3;
+
+    my KeySym $v3 = $var3;
 
     XChangeKeyboardMapping($!d, $v1, $v2, $v3, $v4);
   }
@@ -187,7 +188,7 @@ class X11::Display {
     Int() $var5
   ) {
     my Boolean ($v1, $v2)      = ($var1, $var2);
-    my realInt    ($v3, $v4, $v5) = ($var3, $var4, $var5);
+    my realInt ($v3, $v4, $v5) = ($var3, $var4, $var5);
 
     XChangePointerControl($!d, $v1, $v2, $v3, $v4, $v5);
   }
@@ -240,8 +241,8 @@ class X11::Display {
   }
 
   method CheckTypedWindowEvent (Int() $var1, Int() $var2, XEvent() $var3) {
-    my Window $v1 = $var1;
-    my realInt   $v2 = $var2;
+    my Window  $v1 = $var1;
+    my realInt $v2 = $var2;
 
     XCheckTypedWindowEvent($!d, $v1, $v2, $var3);
   }
@@ -254,8 +255,8 @@ class X11::Display {
   }
 
   method CirculateSubwindows (Int() $var1, Int() $var2) {
-    my Window $v1 = $var1;
-    my realInt   $v2 = $var2;
+    my Window  $v1 = $var1;
+    my realInt $v2 = $var2;
 
     XCirculateSubwindows($!d, $v1, $v2);
   }
@@ -852,10 +853,10 @@ class X11::Display {
 
   method DrawString (
     Int() $var1,
-    GC() $var2,
+    GC()  $var2,
     Int() $var3,
     Int() $var4,
-    Str $var5,
+    Str() $var5,
     Int() $var6
   ) {
     my Drawable $v1 = $var1;
@@ -2770,7 +2771,7 @@ class X11::Display {
 
   method SetWindowBorder (Int() $var1, Int() $var2) {
     my Window $v1 = $var1;
-    my long   $v2 = $var
+    my long   $v2 = $var2;
 
     XSetWindowBorder($!d, $v1, $v2);
   }
@@ -2796,7 +2797,17 @@ class X11::Display {
     XSetWindowColormap($!d, $v1, $v2);
   }
 
-  method StoreBuffer (Str() $var1, Int() $var2, Int() $var3) {
+  proto method StoreBuffer (|)
+  { * }
+
+  multi method StoreBuffer (@buffer, Int() $var3) {
+    samewith( ArrayToCArray(uint8, @buffer), $var3 );
+  }
+  multi method StoreBuffer (
+    CArray[uint8] $var1,
+    Int()         $var2,
+    Int()         $var3
+  ) {
     my realInt ($v2, $v3) = ($var2, $var3);
 
     XStoreBuffer($!d, $var1, $v2, $v3);
@@ -2938,15 +2949,26 @@ class X11::Display {
 
   # (14 - 1) / 16
 
-  method UnmapSubwindows (Window $var1) {
-    XUnmapSubwindows($!d, $var1);
+  method UnmapSubwindows (Int() $var1) {
+    my Window $v1 = $var1;
+
+    XUnmapSubwindows($!d, $v1);
   }
 
-  method UnmapWindow (Window $var1) {
+  method UnmapWindow (Int() $var1) {
+    my Window $v1 = $var1;
+
     XUnmapWindow($!d, $var1);
   }
 
-  method UnregisterIMInstantiateCallback (XrmHashBucket $var1, Str $var2, Str $var3, XIDProc $var4, XPointer $var5) {
+  method UnregisterIMInstantiateCallback (
+    XrmHashBucket() $var1,
+    Str()           $var2,
+    Str()           $var3,
+    Pointer         $var4,#= ot:XIDProc
+    XPointer        $var5
+  ) {
+
     XUnregisterIMInstantiateCallback($!d, $var1, $var2, $var3, $var4, $var5);
   }
 
@@ -2954,62 +2976,191 @@ class X11::Display {
     XVendorRelease($!d);
   }
 
-  method WarpPointer (Window $var1, Window $var2, realInt $var3, realInt $var4, realInt $var5, realInt $var6, realInt $var7, realInt $var8) {
-    XWarpPointer($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7, $var8);
+  method WarpPointer (
+    Int() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6,
+    Int() $var7,
+    Int() $var8
+  ) {
+    my Window ($v1, $v2) = ($var1, $var2);
+    my realInt ($v3, $v4, $v5, $v6, $v7, $v8)
+      = ($var3, $var4, $var5, $var6, $var7, $var8);
+
+    XWarpPointer($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7, $v8);
   }
 
-  method WhitePixel (realInt $var1) {
-    XWhitePixel($!d, $var1);
+  method WhitePixel (Int() $var1) {
+    my realInt $v1 = $var1;
+
+    XWhitePixel($!d, $v1);
   }
 
-  method WindowEvent (Window $var1, long $var2, XEvent $var3) {
-    XWindowEvent($!d, $var1, $var2, $var3);
+  method WindowEvent (Int() $var1, Int() $var2, XEvent() $var3) {
+    my Window $v1 = $var1;
+    my long   $v2 = $var2;
+
+    XWindowEvent($!d, $v1, $v2, $var3);
   }
 
-  method WithdrawWindow (Window $var1, realInt $var2) {
+  method WithdrawWindow (Int() $var1, Int() $var2) {
+    my Window  $v1 = $var1;
+    my realInt $v2 = $var2;
+
     XWithdrawWindow($!d, $var1, $var2);
   }
 
-  method WriteBitmapFile (Str $var1, Pixmap $var2, realInt $var3, realInt $var4, realInt $var5, realInt $var6) {
-    XWriteBitmapFile($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method WriteBitmapFile (
+    Str() $var1,
+    Int() $var2,
+    Int() $var3,
+    Int() $var4,
+    Int() $var5,
+    Int() $var6
+  ) {
+    my Pixmap $v2 = $var2;
+    my realInt ($v3, $v4, $v5, $v6) = ($var3, $var4, $var5, $var6);
+
+    XWriteBitmapFile($!d, $var1, $v2, $v3, $v4, $v5, $v6);
   }
 
-  method mbDrawImageString (Drawable $var1, XFontSet $var2, GC $var3, realInt $var4, realInt $var5, Str $var6, realInt $var7) {
-    XmbDrawImageString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
+  method mbDrawImageString (
+    Int()      $var1,
+    XFontSet() $var2,
+    GC()       $var3,
+    Int()      $var4,
+    Int()      $var5,
+    Str()      $var6,
+    Int()      $var7
+  ) {
+    my Drawable $v1 = $var1;
+    my realInt  ($v4, $v5, $v7) = ($var4, $var5, $var7);
+
+    XmbDrawImageString($!d, $v1, $var2, $var3, $v4, $v5, $var6, $v7);
   }
 
-  method mbDrawString (Drawable $var1, XFontSet $var2, GC $var3, realInt $var4, realInt $var5, Str $var6, realInt $var7) {
-    XmbDrawString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
+  method mbDrawString (
+    Int()      $var1,
+    XFontSet() $var2,
+    GC()       $var3,
+    Int()      $var4,
+    Int()      $var5,
+    Str()      $var6,
+    Int()      $var7
+  ) {
+    my Drawable $v1 = $var1;
+    my realInt  ($v4, $v5, $v7) = ($var4, $var5, $var7);
+
+    XmbDrawString($!d, $v1, $var2, $var3, $v4, $v5, $var6, $v7);
   }
 
-  method mbDrawText (Drawable $var1, GC $var2, realInt $var3, realInt $var4, XmbTextItem $var5, realInt $var6) {
+  method mbDrawText (
+    Int()         $var1,
+    GC()          $var2,
+    Int()         $var3,
+    Int()         $var4,
+    XmbTextItem() $var5,
+    Int()         $var6
+  ) {
+    my Drawable $v1 = $var1;
+    my realInt ($v3, $v4, $v6) = ($var3, $var4, $var6);
+
     XmbDrawText($!d, $var1, $var2, $var3, $var4, $var5, $var6);
   }
 
-  method utf8DrawImageString (Drawable $var1, XFontSet $var2, GC $var3, realInt $var4, realInt $var5, Str $var6, realInt $var7) {
-    Xutf8DrawImageString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
+  method utf8DrawImageString (
+    Int()      $var1,
+    XFontSet() $var2,
+    GC()       $var3,
+    Int()      $var4,
+    Int()      $var5,
+    Str()      $var6,
+    Int()      $var7
+  ) {
+    my Drawable $v1 = $var1;
+    my realInt ($v4, $v5, $v7) = ($var4, $var5, $var7);
+
+    Xutf8DrawImageString($!d, $v1, $var2, $var3, $v4, $v5, $var6, $v7);
   }
 
   # 7 / 8
 
-  method utf8DrawString (Drawable $var1, XFontSet $var2, GC $var3, realInt $var4, realInt $var5, Str $var6, realInt $var7) {
-    Xutf8DrawString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
+  method utf8DrawString (
+    Int()      $var1,
+    XFontSet() $var2,
+    GC()       $var3,
+    Int()      $var4,
+    Int()      $var5,
+    Str()      $var6,
+    Int()      $var7
+  ) {
+    my Drawable $v1 = $var1;
+    my realInt ($v4, $v5, $v7) = ($var4, $var5, $var7);
+
+    Xutf8DrawString($!d, $v1, $var2, $var3, $v4, $v5, $var6, $v7);
   }
 
-  method utf8DrawText (Drawable $var1, GC $var2, realInt $var3, realInt $var4, XmbTextItem $var5, realInt $var6) {
-    Xutf8DrawText($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method utf8DrawText (
+    Int()         $var1,
+    GC()          $var2,
+    Int()         $var3,
+    Int()         $var4,
+    XmbTextItem() $var5,
+    Int()         $var6
+  ) {
+    my Drawable $v1 = $var1;
+    my realInt ($v3, $v4, $v6) = ($var3, $var4, $var6);
+
+    Xutf8DrawText($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
 
-  method wcDrawImageString (Drawable $var1, XFontSet $var2, GC $var3, realInt $var4, realInt $var5, wchar_t $var6, realInt $var7) {
-    XwcDrawImageString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
+  method wcDrawImageString (
+    Int()      $var1,
+    XFontSet() $var2,
+    GC()       $var3,
+    Int()      $var4,
+    Int()      $var5,
+    Int()      $var6,
+    Int()      $var7
+  ) {
+    my Drawable $v1 = $var1;
+    my realInt ($v4, $v5, $v7) = ($var4, $var5, $var7);
+    my wchar_t  $v6 = $var6;
+
+    XwcDrawImageString($!d, $v1, $var2, $var3, $v4, $v5, $v6, $v7);
   }
 
-  method wcDrawString (Drawable $var1, XFontSet $var2, GC $var3, realInt $var4, realInt $var5, wchar_t $var6, realInt $var7) {
-    XwcDrawString($!d, $var1, $var2, $var3, $var4, $var5, $var6, $var7);
+  method wcDrawString (
+    Int()      $var1,
+    XFontSet() $var2,
+    GC()       $var3,
+    Int()      $var4,
+    Int()      $var5,
+    Int()      $var6,
+    Int()      $var7
+  ) {
+    my Drawable $v1 = $var1;
+    my realInt ($v4, $v5, $v7) = ($var4, $var5, $var7);
+    my wchar_t  $v6 = $var6;
+
+    XwcDrawString($!d, $v1, $var2, $var3, $v4, $v5, $v6, $v7);
   }
 
-  method wcDrawText (Drawable $var1, GC $var2, realInt $var3, realInt $var4, XwcTextItem $var5, realInt $var6) {
-    XwcDrawText($!d, $var1, $var2, $var3, $var4, $var5, $var6);
+  method wcDrawText (
+    Int()         $var1,
+    GC()          $var2,
+    Int()         $var3,
+    Int()         $var4,
+    XwcTextItem() $var5,
+    Int()         $var6
+  ) {
+    my Drawable $v1 = $var1;
+    my realInt ($v3, $v4, $v6) = ($var3, $var4, $var6);
+
+    XwcDrawText($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
 
 }
