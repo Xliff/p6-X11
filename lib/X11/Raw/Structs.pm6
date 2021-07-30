@@ -295,6 +295,97 @@ class XKeymapEvent is repr<CStruct> is export {
   HAS char    @.key_vector[32] is CArray; #=
 }
 
+class XExposeEvent is repr<CStruct> is export {
+  has realInt $.type                    ; #=
+  has ulong   $.serial                  ; #=            - # of last request processed by server
+  has Boolean $.send_event              ; #=    ot:Bool - true if this came from a SendEvent request
+  has Display $.display                 ; #=            - Display the event was read from
+  has Window  $.window                  ; #=
+  has realInt $.x                       ;
+  has realInt $.y                       ;
+  has realInt $.width                   ;
+  has realInt $.height                  ;
+  has realInt $.count                   ; #-            - if non-zero, at least this many more */
+}
+
+class XNoExposeEvent is repr<CStruct> is export {
+  has realInt  $.type                    ; #=
+  has ulong    $.serial                  ; #=            - # of last request processed by server
+  has Boolean  $.send_event              ; #=    ot:Bool - true if this came from a SendEvent request
+  has Display  $.display                 ; #=            - Display the event was read from
+  has Drawable $.drawable                ;
+  has realInt  $.major_code              ; #=            - core is CopyArea or CopyPlane
+  has realInt  $.minor_code              ; #=            - not defined in the core
+}
+
+class XGraphicsExposeEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #=    ot:Bool - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Drawable $.drawable               ; #=
+  has realInt  $.x                      ; #=
+  has realInt  $.y                      ; #=
+  has realInt  $.width                  ;
+  has realInt  $.height                 ;
+  has realInt  $.count                  ; #=              - if non-zero, at least this many more
+  has realInt  $.major_code             ; #=              - core is CopyArea or CopyPlane
+  has realInt  $.minor_code             ; #=              - not defined in the core
+}
+
+class XVisibilityEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #=    ot:Bool - true if this came from a SendEvent request
+  has Display  $.display                ; #=
+  has Window   $.window                 ;
+  has realInt  $.state                  ; #=            - Visibility state
+}
+
+class XCreateWindowEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=
+  has Window   $.parent                 ; #=            - parent of the window
+  has Window   $.window                 ; #=            - window id of window created
+  has int      $.x                      ;
+  has int      $.y                      ; #=            - window location
+  has int      $.width                  ;
+  has int      $.height                 ; #=            - size of window
+  has int      $.border_width           ; #=            - border width
+  has Boolean  $.override_redirect      ; #= ot:Bool    - creation should be overridden
+}
+
+class XDestroyWindowEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.event                  ;
+  has Window   $.window                 ;
+}
+
+class XUnmapEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.event                  ;
+  has Window   $.window                 ; #=
+  has Boolean  $.from_configure         ; #= ot:Bool
+}
+
+class XMapEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.event;
+  has Window   $.window;
+  has Boolean  $.override_redirect      ;#= ot:Bool     - boolean, is override set... */
+}
+
 # cw: Add missing CStrucgs as they are created.
 class XEvent is repr<CUnion> is export {
   has realInt                 $.type;
@@ -304,14 +395,14 @@ class XEvent is repr<CUnion> is export {
   HAS XMotionEvent            $.xmotion;
   HAS XCrossingEvent          $.xcrossing;
   HAS XFocusChangeEvent       $.xfocus;
-  # HAS XExposeEvent            $.xexpose;
-  # HAS XGraphicsExposeEvent    $.xgraphicsexpose;
-  # HAS XNoExposeEvent          $.xnoexpose;
-  # HAS XVisibilityEvent        $.xvisibility;
-  # HAS XCreateWindowEvent      $.xcreatewindow;
-  # HAS XDestroyWindowEvent     $.xdestroywindow;
-  # HAS XUnmapEvent             $.xunmap;
-  # HAS XMapEvent               $.xmap;
+  HAS XExposeEvent            $.xexpose;
+  HAS XGraphicsExposeEvent    $.xgraphicsexpose;
+  HAS XNoExposeEvent          $.xnoexpose;
+  HAS XVisibilityEvent        $.xvisibility;
+  HAS XCreateWindowEvent      $.xcreatewindow;
+  HAS XDestroyWindowEvent     $.xdestroywindow;
+  HAS XUnmapEvent             $.xunmap;
+  HAS XMapEvent               $.xmap;
   # HAS XMapRequestEvent        $.xmaprequest;
   # HAS XReparentEvent          $.xreparent;
   # HAS XConfigureEvent         $.xconfigure;
