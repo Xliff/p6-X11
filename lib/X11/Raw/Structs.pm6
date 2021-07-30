@@ -213,15 +213,97 @@ class XwcTextItem is repr<CStruct> is export {
   has XFontSet        $.font_set      ;
 }
 
+class XButtonEvent is repr<CStruct> is export {
+  has realInt  $.type;         #=          -  of event
+  has ulong    $.serial;       #=          -  # of last request processed by server
+  has Boolean  $.send_event;   #= ot:Bool  -  true if this came from a SendEvent request
+  has Display  $.display;      #=          -  Display the event was read from
+  has Window   $.window;       #=          -  "event" window it is reported relative to
+  has Window   $.root;         #=          -  root window that the event occurred on
+  has Window   $.subwindow;    #=          -  child window
+  has Time     $.time;         #=          -  milliseconds
+  has realInt  $.x;            #=          -
+  has realInt  $.y;            #=          -  pointer x, y coordinates in event window
+  has realInt  $.x_root;       #=          -
+  has realInt  $.y_root;       #=          -  coordinates relative to root
+  has realUInt $.state;        #=          -  key or button mask
+  has realUInt $.button;       #=          -  detail
+  has Boolean  $.same_screen;  #= ot:Bool  -  same screen flag
+}
+constant XButtonPressedEvent  is export := XButtonEvent;
+constant XButtonReleasedEvent is export := XButtonEvent;
+
+class XMotionEvent is repr<CStruct> is export {
+  has realInt $.type;         #=          - of event
+  has ulong   $.serial;       #=          - # of last request processed by server
+  has Boolean $.send_event;   #= ot:Bool  - true if this came from a SendEvent request
+  has Display $.display;      #=          - Display the event was read from
+  has Window  $.window;       #=          - "event" window reported relative to
+  has Window  $.root;         #=          - root window that the event occurred on
+  has Window  $.subwindow;    #=          - child window
+  has Time    $.time;         #=          - milliseconds
+  has realInt $.x;
+  has realInt $.y;            #=          - pointer x, y coordinates in event window */
+  has realInt $.x_root;       #=
+  has realInt $.y_root;       #=          - coordinates relative to root
+  has uint    $.state;        #=          - key or button mask
+  has char    $.is_hint;      #=          - detail
+  has Boolean $.same_screen;  #=  ot:Bool - same screen flag
+}
+constant XPointerMovedEvent is export := XMotionEvent;
+
+class XCrossingEvent is repr<CStruct> is export {
+  has int      $.type;         #=            - of event
+  has ulong    $.serial;       #=            - # of last request processed by server
+  has Boolean  $.send_event;   #=  ot:Bool   - true if this came from a SendEvent request
+  has Display  $.display;      #=            - Display the event was read from
+  has Window   $.window;       #=            - "event" window reported relative to
+  has Window   $.root;         #=            - root window that the event occurred on
+  has Window   $.subwindow;    #=            - child window
+  has Time     $.time;         #=            - milliseconds
+  has realInt  $.x;
+  has realInt  $.y;            #=            - pointer x, y coordinates in event window
+  has realInt  $.x_root;
+  has realInt  $.y_root;       #=            - coordinates relative to root
+  has realInt  $.mode;         #=  vv:<NotifyNormal NotifyGrab NotifyUngrab>
+  has realInt  $.detail;       #=  vv:<NotifyAncestor NotifyVirtual NotifyInferior NotifyNonlinear NotifyNonlinearVirtual>
+  has Boolean  $.same_screen;  #=  ot:Bool   - same screen flag
+  has Boolean  $.focus;        #=  ot:Bool   - boolean focus
+  has realUInt $.state;        #=            - key or button mask
+}
+constant XEnterWindowEvent is export := XCrossingEvent;
+constant XLeaveWindowEvent is export := XCrossingEvent;
+
+class XFocusChangeEvent is repr<CStruct> is export {
+  has realInt $.type;          #= vv:<FocusIn FocusOut>
+  has ulong   $.serial;        #=                         - # of last request processed by server
+  has Boolean $.send_event;    #=                         - true if this came from a SendEvent request
+  has Display $.display;       #=                         - Display the event was read from
+  has Window  $.window;        #=                         - window of event
+  has realInt $.mode;          #= vv:<NotifyNormal NotifyWhileGrabbed NotifyGrab NotifyUngrab>
+  has realInt $.detail;        #= vv:<NotifyAncestor NotifyVirtual NotifyInferior NotifyNonlinear NotifyNonlinearVirtual NotifyPointer NotifyPointerRoot NotifyDetailNone>
+}
+constant XFocusInEvent  is export := XFocusChangeEvent;
+constant XFocusOutEvent is export := XFocusChangeEvent;
+
+class XKeymapEvent is repr<CStruct> is export {
+  has realInt $.type                    ; #=
+  has ulong   $.serial                  ; #=            - # of last request processed by server
+  has Boolean $.send_event              ; #=    ot:Bool - true if this came from a SendEvent request
+  has Display $.display                 ; #=            - Display the event was read from
+  has Window  $.window                  ; #=
+  HAS char    @.key_vector[32] is CArray; #=
+}
+
 # cw: Add missing CStrucgs as they are created.
 class XEvent is repr<CUnion> is export {
   has realInt                 $.type;
   HAS XAnyEvent               $.any;
   HAS XKeyEvent               $.xkey;
-  # HAS XButtonEvent            $.xbutton;
-  # HAS XMotionEvent            $.xmotion;
-  # HAS XCrossingEvent          $.xcrossing;
-  # HAS XFocusChangeEvent       $.xfocus;
+  HAS XButtonEvent            $.xbutton;
+  HAS XMotionEvent            $.xmotion;
+  HAS XCrossingEvent          $.xcrossing;
+  HAS XFocusChangeEvent       $.xfocus;
   # HAS XExposeEvent            $.xexpose;
   # HAS XGraphicsExposeEvent    $.xgraphicsexpose;
   # HAS XNoExposeEvent          $.xnoexpose;
@@ -246,7 +328,7 @@ class XEvent is repr<CUnion> is export {
   # HAS XClientMessageEvent     $.xclient;
   HAS XMappingEvent           $.xmapping;
   # HAS XErrorEvent             $.xerror;
-  # HAS XKeymapEvent            $.xkeymap;
+  HAS XKeymapEvent            $.xkeymap;
   HAS XGenericEvent           $.xgeneric;
   # HAS XGenericEventCookie     $.xcookie;
   HAS XEventPadding           $!padding;
