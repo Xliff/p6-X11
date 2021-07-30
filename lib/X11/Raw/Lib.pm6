@@ -45,20 +45,8 @@ sub XAddHosts (Display $var0, XHostAddress $var1, realInt $var2)
   is export
 { * }
 
-sub XAddToExtensionList (XExtData $var0, XExtData $var1)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
 sub XAddToSaveSet (Display $var0, Window $var1)
   returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XAllPlanes (Pointer $var0)
-  returns long
   is native(x11)
   is export
 { * }
@@ -70,13 +58,13 @@ sub XAllocColor (Display $var0, Colormap $var1, XColor $var2)
 { * }
 
 sub XAllocColorCells (
-  Display $var0,
+  Display  $var0,
   Colormap $var1,
-  Bool $var2,
-  long $var3,
-  realInt $var4,
-  long $var5,
-  realInt $var6
+  Bool     $var2,
+  long     $var3,
+  realInt  $var4,
+  long     $var5,
+  realInt  $var6
 )
   returns Status
   is native(x11)
@@ -88,10 +76,10 @@ sub XAllocColorPlanes (
   Colormap $var1,
   Bool     $var2,
   long     $var3,
-  realInt     $var4,
-  realInt     $var5,
-  realInt     $var6,
-  realInt     $var7,
+  realInt  $var4,
+  realInt  $var5,
+  realInt  $var6,
+  realInt  $var7,
   long     $var8,
   long     $var9,
   long     $var10
@@ -131,12 +119,6 @@ sub XAutoRepeatOn (Display $var0)
   is export
 { * }
 
-sub XBaseFontNameListOfFontSet (XFontSet $var0)
-  returns Str
-  is native(x11)
-  is export
-{ * }
-
 sub XBell (Display $var0, realInt $var1)
   returns realInt
   is native(x11)
@@ -167,23 +149,11 @@ sub XBlackPixel (Display $var0, realInt $var1)
   is export
 { * }
 
-sub XBlackPixelOfScreen (Screen $var0)
-  returns long
-  is native(x11)
-  is export
-{ * }
-
-sub XCellsOfScreen (Screen $var0)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
 sub XChangeActivePointerGrab (
-  Display $var0,
-  realInt    $var1,
-  X11Cursor  $var2,
-  Time    $var3
+  Display   $var0,
+  realInt   $var1,
+  X11Cursor $var2,
+  Time      $var3
 )
   returns realInt
   is native(x11)
@@ -204,10 +174,10 @@ sub XChangeKeyboardControl (Display $var0, long $var1, XKeyboardControl $var2)
 
 sub XChangeKeyboardMapping (
   Display $var0,
-  realInt    $var1,
-  realInt    $var2,
+  realInt $var1,
+  realInt $var2,
   KeySym  $var3,
-  realInt    $var4
+  realInt $var4
 )
   returns realInt
   is native(x11)
@@ -218,9 +188,9 @@ sub XChangePointerControl (
   Display $var0,
   Bool    $var1,
   Bool    $var2,
-  realInt    $var3,
-  realInt    $var4,
-  realInt    $var5
+  realInt $var3,
+  realInt $var4,
+  realInt $var5
 )
   returns realInt
   is native(x11)
@@ -232,10 +202,10 @@ sub XChangeProperty (
   Window  $var1,
   Atom    $var2,
   Atom    $var3,
-  realInt    $var4,
-  realInt    $var5,
+  realInt $var4,
+  realInt $var5,
   Str     $var6,
-  realInt    $var7
+  realInt $var7
 )
   returns realInt
   is native(x11)
@@ -280,7 +250,7 @@ sub XCheckTypedEvent (Display $var0, realInt $var1, XEvent $var2)
 sub XCheckTypedWindowEvent (
   Display $var0,
   Window  $var1,
-  realInt    $var2,
+  realInt $var2,
   XEvent  $var3
 )
   returns Bool
@@ -338,18 +308,6 @@ sub XCloseDisplay (Display $var0)
   is export
 { * }
 
-sub XCloseIM (XIM $var0)
-  returns Status
-  is native(x11)
-  is export
-{ * }
-
-sub XCloseOM (XOM $var0)
-  returns Status
-  is native(x11)
-  is export
-{ * }
-
 sub XConfigureWindow (
   Display        $var0,
   Window         $var1,
@@ -363,18 +321,6 @@ sub XConfigureWindow (
 
 sub XConnectionNumber (Display $var0)
   returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XContextDependentDrawing (XFontSet $var0)
-  returns Bool
-  is native(x11)
-  is export
-{ * }
-
-sub XContextualDrawing (XFontSet $var0)
-  returns Bool
   is native(x11)
   is export
 { * }
@@ -397,12 +343,12 @@ sub XCopyArea (
   Drawable $var1,
   Drawable $var2,
   GC       $var3,
-  realInt     $var4,
-  realInt     $var5,
-  realInt     $var6,
-  realInt     $var7,
-  realInt     $var8,
-  realInt     $var9
+  realInt  $var4,
+  realInt  $var5,
+  realInt  $var6,
+  realInt  $var7,
+  realInt  $var8,
+  realInt  $var9
 )
   returns realInt
   is native(x11)
@@ -426,12 +372,12 @@ sub XCopyPlane (
   Drawable $var1,
   Drawable $var2,
   GC       $var3,
-  realInt     $var4,
-  realInt     $var5,
-  realInt     $var6,
-  realInt     $var7,
-  realInt     $var8,
-  realInt     $var9,
+  realInt  $var4,
+  realInt  $var5,
+  realInt  $var6,
+  realInt  $var7,
+  realInt  $var8,
+  realInt  $var9,
   long     $var10
 )
   returns realInt
@@ -467,7 +413,7 @@ sub XCreateFontSet (
   Display             $var0,
   Str                 $var1,
   CArray[CArray[Str]] $var2,
-  realInt                 $var3 is rw,
+  realInt             $var3 is rw,
   CArray[Str]         $var4
 )
   returns XFontSet
@@ -495,49 +441,94 @@ sub XCreateGlyphCursor (
   is export
 { * }
 
-# sub XCreateIC (XIM $var0,  $var1, ...)
-#   returns XIC
-#   is native(x11)
-#   is export
-# { * }
-
-sub XCreateImage (Display $var0, Visual $var1, realInt $var2, realInt $var3, realInt $var4, Str $var5, realInt $var6, realInt $var7, realInt $var8, realInt $var9)
+sub XCreateImage (
+  Display $var0,
+  Visual  $var1,
+  realInt $var2,
+  realInt $var3,
+  realInt $var4,
+  Str     $var5,
+  realInt $var6,
+  realInt $var7,
+  realInt $var8,
+  realInt $var9
+)
   returns XImage
   is native(x11)
   is export
 { * }
 
-# sub XCreateOC (XOM $var0,  $var1, ...)
-#   returns XOC
-#   is native(x11)
-#   is export
-# { * }
-
-sub XCreatePixmap (Display $var0, Drawable $var1, realInt $var2, realInt $var3, realInt $var4)
+sub XCreatePixmap (
+  Display  $var0,
+  Drawable $var1,
+  realInt  $var2,
+  realInt  $var3,
+  realInt  $var4
+)
   returns Pixmap
   is native(x11)
   is export
 { * }
 
-sub XCreatePixmapCursor (Display $var0, Pixmap $var1, Pixmap $var2, XColor $var3, XColor $var4, realInt $var5, realInt $var6)
+sub XCreatePixmapCursor (
+  Display $var0,
+  Pixmap  $var1,
+  Pixmap  $var2,
+  XColor  $var3,
+  XColor  $var4,
+  realInt $var5,
+  realInt $var6
+)
   returns X11Cursor
   is native(x11)
   is export
 { * }
 
-sub XCreatePixmapFromBitmapData (Display $var0, Drawable $var1, Str $var2, realInt $var3, realInt $var4, long $var5, long $var6, realInt $var7)
+sub XCreatePixmapFromBitmapData (
+  Display  $var0,
+  Drawable $var1,
+  Str      $var2,
+  realInt  $var3,
+  realInt  $var4,
+  long     $var5,
+  long     $var6,
+  realInt  $var7
+)
   returns Pixmap
   is native(x11)
   is export
 { * }
 
-sub XCreateSimpleWindow (Display $var0, Window $var1, realInt $var2, realInt $var3, realInt $var4, realInt $var5, realInt $var6, long $var7, long $var8)
+sub XCreateSimpleWindow (
+  Display $var0,
+  Window  $var1,
+  realInt $var2,
+  realInt $var3,
+  realInt $var4,
+  realInt $var5,
+  realInt $var6,
+  long    $var7,
+  long    $var8
+)
   returns Window
   is native(x11)
   is export
 { * }
 
-sub XCreateWindow (Display $var0, Window $var1, realInt $var2, realInt $var3, realInt $var4, realInt $var5, realInt $var6, realInt $var7, realInt $var8, Visual $var9, long $var10, XSetWindowAttributes $var11)
+sub XCreateWindow (
+  Display              $var0,
+  Window               $var1,
+  realInt              $var2,
+  realInt              $var3,
+  realInt              $var4,
+  realInt              $var5,
+  realInt              $var6,
+  realInt              $var7,
+  realInt              $var8,
+  Visual               $var9,
+  long                 $var10,
+  XSetWindowAttributes $var11
+  )
   returns Window
   is native(x11)
   is export
@@ -549,8 +540,8 @@ sub XDefaultColormap (Display $var0, realInt $var1)
   is export
 { * }
 
-sub XDefaultColormapOfScreen (Screen $var0)
-  returns Colormap
+sub XAddToExtensionList (XExtData $var0, XExtData $var1)
+  returns realInt
   is native(x11)
   is export
 { * }
@@ -568,12 +559,6 @@ sub XDefaultDepthOfScreen (Screen $var0)
 { * }
 
 sub XDefaultGC (Display $var0, realInt $var1)
-  returns GC
-  is native(x11)
-  is export
-{ * }
-
-sub XDefaultGCOfScreen (Screen $var0)
   returns GC
   is native(x11)
   is export
@@ -615,28 +600,6 @@ sub XDefineCursor (Display $var0, Window $var1, X11Cursor $var2)
   is export
 { * }
 
-sub XDeleteModifiermapEntry (XModifierKeymap $var0, realInt $var1, KeyCode $var2, realInt $var3)
-  returns XModifierKeymap
-  is native(x11)
-  is export
-{ * }
-
-sub XDeleteProperty (Display $var0, Window $var1, Atom $var2)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDestroyIC (XIC $var0)
-  is native(x11)
-  is export
-{ * }
-
-sub XDestroyOC (XOC $var0)
-  is native(x11)
-  is export
-{ * }
-
 sub XDestroySubwindows (Display $var0, Window $var1)
   returns realInt
   is native(x11)
@@ -645,12 +608,6 @@ sub XDestroySubwindows (Display $var0, Window $var1)
 
 sub XDestroyWindow (Display $var0, Window $var1)
   returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDirectionalDependentDrawing (XFontSet $var0)
-  returns Bool
   is native(x11)
   is export
 { * }
@@ -697,24 +654,6 @@ sub XDisplayName (Str $var0)
   is export
 { * }
 
-sub XDisplayOfIM (XIM $var0)
-  returns Display
-  is native(x11)
-  is export
-{ * }
-
-sub XDisplayOfOM (XOM $var0)
-  returns Display
-  is native(x11)
-  is export
-{ * }
-
-sub XDisplayOfScreen (Screen $var0)
-  returns Display
-  is native(x11)
-  is export
-{ * }
-
 sub XDisplayPlanes (Display $var0, realInt $var1)
   returns realInt
   is native(x11)
@@ -739,6 +678,344 @@ sub XDisplayWidthMM (Display $var0, realInt $var1)
   is export
 { * }
 
+sub XDrawArc (
+  Display  $var0,
+  Drawable $var1,
+  GC       $var2,
+  realInt  $var3,
+  realInt  $var4,
+  realInt  $var5,
+  realInt  $var6,
+  realInt  $var7,
+  realInt  $var8
+)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawArcs (
+  Display  $var0,
+  Drawable $var1,
+  GC       $var2,
+  XArc     $var3,
+  realInt  $var4
+)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawImageString (
+  Display  $var0,
+  Drawable $var1,
+  GC       $var2,
+  realInt  $var3,
+  realInt  $var4,
+  Str      $var5,
+  realInt  $var6
+)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawImageString16 (
+  Display  $var0,
+  Drawable $var1,
+  GC       $var2,
+  realInt  $var3,
+  realInt  $var4,
+  XChar2b  $var5,
+  realInt  $var6
+)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawLine (
+  Display  $var0,
+  Drawable $var1,
+  GC       $var2,
+  realInt  $var3,
+  realInt  $var4,
+  realInt  $var5,
+  realInt  $var6
+)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawLines (
+  Display  $var0,
+  Drawable $var1,
+  GC       $var2,
+  XPoint   $var3,
+  realInt  $var4,
+  realInt  $var5
+)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawPoint (
+  Display  $var0,
+  Drawable $var1,
+  GC       $var2,
+  realInt  $var3,
+  realInt  $var4
+)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawPoints (
+  Display  $var0,
+  Drawable $var1,
+  GC       $var2,
+  XPoint   $var3,
+  realInt  $var4,
+  realInt  $var5
+  )
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawRectangle (
+  Display  $var0,
+  Drawable $var1,
+  GC       $var2,
+  realInt  $var3,
+  realInt  $var4,
+  realInt  $var5,
+  realInt  $var6
+  )
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawRectangles (
+  Display    $var0,
+  Drawable   $var1,
+  GC         $var2,
+  XRectangle $var3,
+  realInt    $var4
+  )
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawSegments (
+  Display  $var0,
+  Drawable $var1,
+  GC       $var2,
+  Pointer  $var3, #= tb:XSegment
+  realInt  $var4
+)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawString (
+  Display  $var0,
+  Drawable $var1,
+  GC       $var2,
+  realInt  $var3,
+  realInt  $var4,
+  Pointer  $var5,
+  realInt  $var6
+)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawString16 (
+  Display  $var0,
+  Drawable $var1,
+  GC       $var2,
+  realInt  $var3,
+  realInt  $var4,
+  Pointer  $var5, #= ot:XChar2b
+  realInt  $var6
+)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawText (
+  Display   $var0,
+  Drawable  $var1,
+  GC        $var2,
+  realInt   $var3,
+  realInt   $var4,
+  Pointer   $var5, #= ot:XTextItem*
+  realInt   $var6
+)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDrawText16 (
+  Display     $var0,
+  Drawable    $var1,
+  GC          $var2,
+  realInt     $var3,
+  realInt     $var4,
+  Pointer     $var5, #= ot:XTextItem16*
+  realInt     $var6
+)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XDeleteProperty (Display $var0, Window $var1, Atom $var2)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XEnableAccessControl (Display $var0)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XEventsQueued (Display $var0, realInt $var1)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XExtendedMaxRequestSize (Display $var0)
+  returns long
+  is native(x11)
+  is export
+{ * }
+
+# sub XCreateIC (XIM $var0,  $var1, ...)
+#   returns XIC
+#   is native(x11)
+#   is export
+# { * }
+
+# sub XCreateOC (XOM $var0,  $var1, ...)
+#   returns XOC
+#   is native(x11)
+#   is export
+# { * }
+
+sub XAllPlanes (Pointer $var0)
+  returns long
+  is native(x11)
+  is export
+{ * }
+
+sub XBaseFontNameListOfFontSet (XFontSet $var0)
+  returns Str
+  is native(x11)
+  is export
+{ * }
+
+sub XBlackPixelOfScreen (Screen $var0)
+  returns long
+  is native(x11)
+  is export
+{ * }
+
+sub XCellsOfScreen (Screen $var0)
+  returns realInt
+  is native(x11)
+  is export
+{ * }
+
+sub XCloseIM (XIM $var0)
+  returns Status
+  is native(x11)
+  is export
+{ * }
+
+sub XCloseOM (XOM $var0)
+  returns Status
+  is native(x11)
+  is export
+{ * }
+
+sub XContextDependentDrawing (XFontSet $var0)
+  returns Bool
+  is native(x11)
+  is export
+{ * }
+
+sub XContextualDrawing (XFontSet $var0)
+  returns Bool
+  is native(x11)
+  is export
+{ * }
+
+sub XDefaultColormapOfScreen (Screen $var0)
+  returns Colormap
+  is native(x11)
+  is export
+{ * }
+
+sub XDefaultGCOfScreen (Screen $var0)
+  returns GC
+  is native(x11)
+  is export
+{ * }
+
+sub XDeleteModifiermapEntry (XModifierKeymap $var0, realInt $var1, KeyCode $var2, realInt $var3)
+  returns XModifierKeymap
+  is native(x11)
+  is export
+{ * }
+
+sub XDestroyIC (XIC $var0)
+  is native(x11)
+  is export
+{ * }
+
+sub XDestroyOC (XOC $var0)
+  is native(x11)
+  is export
+{ * }
+
+sub XDirectionalDependentDrawing (XFontSet $var0)
+  returns Bool
+  is native(x11)
+  is export
+{ * }
+
+sub XDisplayOfIM (XIM $var0)
+  returns Display
+  is native(x11)
+  is export
+{ * }
+
+sub XDisplayOfOM (XOM $var0)
+  returns Display
+  is native(x11)
+  is export
+{ * }
+
+sub XDisplayOfScreen (Screen $var0)
+  returns Display
+  is native(x11)
+  is export
+{ * }
+
 sub XDoesBackingStore (Screen $var0)
   returns realInt
   is native(x11)
@@ -751,121 +1028,13 @@ sub XDoesSaveUnders (Screen $var0)
   is export
 { * }
 
-sub XDrawArc (Display $var0, Drawable $var1, GC $var2, realInt $var3, realInt $var4, realInt $var5, realInt $var6, realInt $var7, realInt $var8)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawArcs (Display $var0, Drawable $var1, GC $var2, XArc $var3, realInt $var4)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawImageString (Display $var0, Drawable $var1, GC $var2, realInt $var3, realInt $var4, Str $var5, realInt $var6)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawImageString16 (Display $var0, Drawable $var1, GC $var2, realInt $var3, realInt $var4, XChar2b $var5, realInt $var6)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawLine (Display $var0, Drawable $var1, GC $var2, realInt $var3, realInt $var4, realInt $var5, realInt $var6)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawLines (Display $var0, Drawable $var1, GC $var2, XPoint $var3, realInt $var4, realInt $var5)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawPoint (Display $var0, Drawable $var1, GC $var2, realInt $var3, realInt $var4)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawPoints (Display $var0, Drawable $var1, GC $var2, XPoint $var3, realInt $var4, realInt $var5)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawRectangle (Display $var0, Drawable $var1, GC $var2, realInt $var3, realInt $var4, realInt $var5, realInt $var6)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawRectangles (Display $var0, Drawable $var1, GC $var2, XRectangle $var3, realInt $var4)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawSegments (Display $var0, Drawable $var1, GC $var2, XSegment $var3, realInt $var4)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawString (Display $var0, Drawable $var1, GC $var2, realInt $var3, realInt $var4, Str $var5, realInt $var6)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawString16 (Display $var0, Drawable $var1, GC $var2, realInt $var3, realInt $var4, XChar2b $var5, realInt $var6)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawText (Display $var0, Drawable $var1, GC $var2, realInt $var3, realInt $var4, XTextItem $var5, realInt $var6)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XDrawText16 (Display $var0, Drawable $var1, GC $var2, realInt $var3, realInt $var4, XTextItem16 $var5, realInt $var6)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
 sub XEHeadOfExtensionList (XEDataObject $var0)
   returns CArray[CArray[XExtData]]
   is native(x11)
   is export
 { * }
 
-sub XEnableAccessControl (Display $var0)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
 sub XEventMaskOfScreen (Screen $var0)
-  returns long
-  is native(x11)
-  is export
-{ * }
-
-sub XEventsQueued (Display $var0, realInt $var1)
-  returns realInt
-  is native(x11)
-  is export
-{ * }
-
-sub XExtendedMaxRequestSize (Display $var0)
   returns long
   is native(x11)
   is export
