@@ -1,6 +1,8 @@
 use v6.c;
 
 use NativeCall;
+
+use NativeHelpers::Blob;
 use Method::Also;
 
 use X11::Compat::Definitions;
@@ -395,8 +397,8 @@ class X11::Display {
   }
 
   method CreateColormap (Int() $var1, Visual() $var2, Int() $var3) {
-    my Window $v1 = $var1;
-    my realInt   $v3 = $var3;
+    my Window  $v1 = $var1;
+    my realInt $v3 = $var3;
 
     XCreateColormap($!d, $v1, $var2, $v3);
   }
@@ -413,6 +415,7 @@ class X11::Display {
   multi method CreateFontSet (Str() $var1) {
     (my $var2 = CArray[CArray[Str]].new)[0] = CArray[Str];
     (my $var4 = CArray[Str].new) = Str;
+
     samewith($var1, $var2, $, $var4, :all)
   }
   multi method CreateFontSet (
@@ -839,41 +842,115 @@ class X11::Display {
     XDrawRectangles($!d, $v1, $var2, $var3, $v4);
   }
 
-  method DrawSegments (
+
+  proto method DrawSegments (|)
+  { * }
+
+  multi method DrawSegments (Int() $var1, GC() $var2, @segments) {
+    samewith(
+      $var1,
+      X11::Roles::TypedBuffer[XSegment].new(@segments).p,
+      @segments.elems
+    );
+  }
+  multi method DrawSegments (
     Int()    $var1,
     GC()     $var2,
-    XSegment $var3,
+    Pointer  $var3,
     Int()    $var4
   ) {
     my Drawable $v1 = $var1;
-    my realInt     $v4   = $var4;
+    my realInt  $v4 = $var4;
 
     XDrawSegments($!d, $v1, $var2, $var3, $var4);
   }
 
-  method DrawString (
-    Int() $var1,
-    GC()  $var2,
-    Int() $var3,
-    Int() $var4,
-    Str() $var5,
-    Int() $var6
+  proto method DrawString (|)
+  { * }
+
+  multi method DrawString (
+    Int()         $var1,
+    GC()          $var2,
+    Int()         $var3,
+    Int()         $var4,
+    Str()         $var5,
+                  :$encoding = 'utf8'
   ) {
-    my Drawable $v1 = $var1;
+    my $buf = $var5.encode($encoding);
 
-    XDrawString($!d, $v1, $var2, $var3, $var4, $var5, $var6);
+    my $et = $buf.of;
+    die "Unknown or illegal Buf encoding type '{
+         $et.^name }'. Must be single-byte compatible!"
+    unless $et === uint8;
+
+    samewith($var1, $var2, $var3, $var4, pointer-to($buf), $buf.bytes);
   }
-
-  method DrawString16 (
+  multi method DrawString (
+    Int()         $var1,
+    GC()          $var2,
+    Int()         $var3,
+    Int()         $var4,
+    CArray[uint8] $var5,
+    Int()         $var6
+  ) {
+    samewith($var1, $var2, $var3, $var4, pointer-to($var5), $var6);
+  }
+  multi method DrawString (
     Int()   $var1,
     GC()    $var2,
     Int()   $var3,
     Int()   $var4,
-    XChar2b $var5,
+    Pointer $var5,
     Int()   $var6
   ) {
     my Drawable $v1 = $var1;
-    my realInt     ($v3, $v4, $v6) = ($var3, $var4, $var6);
+    my realInt  $v6 = $var6;
+
+    XDrawString($!d, $v1, $var2, $var3, $var4, $var5, $v6);
+  }
+
+  proto method DrawString16 (|)
+  { * }
+
+  multi method DrawString16 (
+    Int()           $var1,
+    GC()            $var2,
+    Int()           $var3,
+    Int()           $var4,
+    Str()           $string,
+                    :$encoding = 'utf-16'
+  ) {
+    # Should we check that encoding is double-byte?
+    my $buf = $string.encode($encoding);
+
+    my $et = $buf.of;
+    die "Unknown or illegal Buf encoding type '{
+         $et.^name }'. Must be double-byte compatible!"
+    unless $et === uint16;
+
+    samewith($var1, $var2, $var3, $var4, $buf, $buf.bytes);
+  }
+  multi method DrawString16 (
+    Int()           $var1,
+    GC()            $var2,
+    Int()           $var3,
+    Int()           $var4,
+    CArray[wchar_t] $var5,
+    Int()           $var6
+  ) {
+    samewith($var1, $var2, $var3, $var4, pointer-to($var5), $var6);
+  }
+  multi method DrawString16 (
+    Int()   $var1,
+    GC()    $var2,
+    Int()   $var3,
+    Int()   $var4,
+    Pointer $var5,
+    Int()   $var6
+  ) {
+    my Drawable $v1 = $var1;
+
+    my realInt   ($v3, $v4, $v6) = ($var3, $var4, $var6);
 
     XDrawString16($!d, $v1, $var2, $v3, $v4, $var5, $v6);
   }
@@ -883,7 +960,7 @@ class X11::Display {
     GC()      $var2,
     Int()     $var3,
     Int()     $var4,
-    XTextItem $var5,
+    Pointer   $var5, #= ot:XTextItem*
     Int()     $var6
   ) {
     my Drawable $v1             = $var1;
@@ -893,12 +970,12 @@ class X11::Display {
   }
 
   method DrawText16 (
-    Int()       $var1,
-    GC()        $var2,
-    Int()       $var3,
-    Int()       $var4,
-    XTextItem16 $var5,
-    Int()       $var6
+    Int()    $var1,
+    GC()     $var2,
+    Int()    $var3,
+    Int()    $var4,
+    Pointer  $var5, #= ot:XTextItem16*
+    Int()    $var6
   ) {
     my Drawable $v1             = $var1;
     my realInt  ($v3, $v4, $v6) = ($var3, $var4, $var6);
