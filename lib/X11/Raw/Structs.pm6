@@ -383,7 +383,93 @@ class XMapEvent is repr<CStruct> is export {
   has Display  $.display                ; #=            - Display the event was read from
   has Window   $.event;
   has Window   $.window;
-  has Boolean  $.override_redirect      ;#= ot:Bool     - boolean, is override set... */
+  has Boolean  $.override_redirect      ;#= ot:Bool     - boolean, is override set...
+}
+
+class XMapRequestEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.parent;
+  has Window   $.window;
+}
+
+class XReparentEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.event                  ;
+  has Window   $.window                 ;
+  has Window   $.parent                 ;
+  has realInt  $.x                      ;
+  has realInt  $.y                      ;
+  has Boolean  $.override_redirect      ; #= ot:Bool     - boolean, is override set... */
+}
+
+class XConfigureEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.event                  ;
+  has Window   $.window                 ;
+  has realInt  $.x                      ;
+  has realInt  $.y                      ;
+  has realInt  $.width                  ;
+  has realInt  $.height                 ;
+  has realInt  $.border_width           ;
+  has Window   $.above                  ;
+  has Boolean  $.override_redirect      ; #= ot:Bool     - boolean, is override set... */
+}
+
+class XGravityEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.event                  ;
+  has Window   $.window                 ;
+  has realInt  $.x                      ;
+  has realInt  $.y                      ;
+}
+
+class XResizeRequestEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.window                 ;
+  has realInt  $.width                  ;
+  has realInt  $.height                 ;
+}
+
+class XConfigureRequestEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.parent                 ;
+  has Window   $.window                 ;
+  has realInt  $.x                      ;
+  has realInt  $.y                      ;
+  has realInt  $.width                  ;
+  has realInt  $.height                 ;
+  has realInt  $.border_width           ;
+  has Window   $.above                  ;
+  has realInt  $.detail                 ; #=            - Above, Below, TopIf, BottomIf, Opposite
+  has ulong    $.value_mask             ;
+}
+
+class XCirculateEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.event                  ;
+  has Window   $.window                 ;
+  has realInt  $.place                  ; #=            - PlaceOnTop, PlaceOnBottom */
 }
 
 # cw: Add missing CStrucgs as they are created.
@@ -403,13 +489,13 @@ class XEvent is repr<CUnion> is export {
   HAS XDestroyWindowEvent     $.xdestroywindow;
   HAS XUnmapEvent             $.xunmap;
   HAS XMapEvent               $.xmap;
-  # HAS XMapRequestEvent        $.xmaprequest;
-  # HAS XReparentEvent          $.xreparent;
-  # HAS XConfigureEvent         $.xconfigure;
-  # HAS XGravityEvent           $.xgravity;
-  # HAS XResizeRequestEvent     $.xresizerequest;
-  # HAS XConfigureRequestEvent  $.xconfigurerequest;
-  # HAS XCirculateEvent         $.xcirculate;
+  HAS XMapRequestEvent        $.xmaprequest;
+  HAS XReparentEvent          $.xreparent;
+  HAS XConfigureEvent         $.xconfigure;
+  HAS XGravityEvent           $.xgravity;
+  HAS XResizeRequestEvent     $.xresizerequest;
+  HAS XConfigureRequestEvent  $.xconfigurerequest;
+  HAS XCirculateEvent         $.xcirculate;
   # HAS XCirculateRequestEvent  $.xcirculaterequest;
   # HAS XPropertyEvent          $.xproperty;
   # HAS XSelectionClearEvent    $.xselectionclear;
