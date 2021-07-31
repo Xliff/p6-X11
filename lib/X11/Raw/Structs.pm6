@@ -458,8 +458,8 @@ class XConfigureRequestEvent is repr<CStruct> is export {
   has realInt  $.height                 ;
   has realInt  $.border_width           ;
   has Window   $.above                  ;
-  has realInt  $.detail                 ; #=            - Above, Below, TopIf, BottomIf, Opposite
   has ulong    $.value_mask             ;
+  has realInt  $.detail                 ; #= vv:<Above Below TopIf BottomIf Opposite>
 }
 
 class XCirculateEvent is repr<CStruct> is export {
@@ -469,7 +469,63 @@ class XCirculateEvent is repr<CStruct> is export {
   has Display  $.display                ; #=            - Display the event was read from
   has Window   $.event                  ;
   has Window   $.window                 ;
-  has realInt  $.place                  ; #=            - PlaceOnTop, PlaceOnBottom */
+  has realInt  $.place                  ; #= vv:<PlaceOnTop PlaceOnBottom>
+}
+
+class XCirculateRequestEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.parent                 ;
+  has Window   $.window                 ;
+  has realInt  $.place                  ; #= vv:<PlaceOnTop PlaceOnBottom>
+}
+
+class XPropertyEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.window                 ;
+  has Atom     $.atom                   ;
+  has Time     $.time                   ;
+  has realInt  $.state                  ; #= vv:<NewValue Deleted>
+}
+
+class XSelectionClearEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.window                 ;
+  has Atom     $.selection              ;
+  has Time     $.time                   ;
+}
+
+class XSelectionRequestEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.owner                  ;
+  has Window   $.requestor              ;
+  has Atom     $.selection              ;
+  has Atom     $.target                 ;
+  has Atom     $.property               ;
+  has Time     $.time                   ;
+}
+
+class XSelectionEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.requestor              ;
+  has Atom     $.selection              ;
+  has Atom     $.target                 ;
+  has Atom     $.property               ; #=            - ATOM or None
+  has Time     $.time                   ;
 }
 
 # cw: Add missing CStrucgs as they are created.
@@ -496,11 +552,11 @@ class XEvent is repr<CUnion> is export {
   HAS XResizeRequestEvent     $.xresizerequest;
   HAS XConfigureRequestEvent  $.xconfigurerequest;
   HAS XCirculateEvent         $.xcirculate;
-  # HAS XCirculateRequestEvent  $.xcirculaterequest;
-  # HAS XPropertyEvent          $.xproperty;
-  # HAS XSelectionClearEvent    $.xselectionclear;
-  # HAS XSelectionRequestEvent  $.xselectionrequest;
-  # HAS XSelectionEvent         $.xselection;
+  HAS XCirculateRequestEvent  $.xcirculaterequest;
+  HAS XPropertyEvent          $.xproperty;
+  HAS XSelectionClearEvent    $.xselectionclear;
+  HAS XSelectionRequestEvent  $.xselectionrequest;
+  HAS XSelectionEvent         $.xselection;
   # HAS XColormapEvent          $.xcolormap;
   # HAS XClientMessageEvent     $.xclient;
   HAS XMappingEvent           $.xmapping;
@@ -3275,19 +3331,6 @@ class SelectRec is repr<CStruct> is export {
   has uint       $.was_disowned   is rw; #= b:1;
 }
 constant Select is export := SelectRec;
-
-class XSelectionRequestEvent is repr<CStruct> is export {
-  has int      $.type       is rw;
-  has ulong    $.serial     is rw; #=         - # of last request processed by server
-  has Boolean  $.send_event is rw; #= ot:Bool - true if this came from a SendEvent request
-  has Display  $.display    is rw; #=         - Display the event was read from
-  has Window   $.owner;
-  has Window   $.requestor;
-  has Atom     $.selection  is rw;
-  has Atom     $.target     is rw;
-  has Atom     $.property   is rw;
-  has Time     $.time       is rw;
-}
 
 class RequestRec {
 	has Select                 $!ctx       ;
