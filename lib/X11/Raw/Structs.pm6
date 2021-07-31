@@ -11,7 +11,6 @@ use X11::Raw::Enums;
 
 unit package X11::Raw::Structs;
 
-
 class TranslationData       is repr<CStruct> is export { ... } # L2306
 class ATranslationData      is repr<CStruct> is export { ... } # L13
 class TMComplexBindProcsRec is repr<CStruct> is export { ... } # L2039
@@ -528,6 +527,55 @@ class XSelectionEvent is repr<CStruct> is export {
   has Time     $.time                   ;
 }
 
+class XColormapEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.window                 ;
+  has Colormap $.colormap               ; #=            - COLORMAP or None
+  has Boolean  $.new                    ; #= ot:Bool
+  has realInt  $.state                  ; #= vv:<ColormapInstalled ColormapUninstalled>
+}
+
+class bslData is repr<CUnion> {
+  HAS char  @.b[20] is CArray;
+  HAS short @.s[10] is CArray;
+  HAS long  @.l[ 5] is CArray;
+}
+
+class XClientMessageEvent is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has Window   $.window                 ;
+  has Atom     $.message_type           ;
+  has realInt  $.format                 ;
+  has bslData  $.data                   ;
+}
+
+class XErrorEvent is repr<CStruct> is export {
+  has int     $.type        ;
+  has Display $.display     ; #=    - Display the event was read from
+  has XID     $.resourceid  ; #=    - resource id
+  has ulong   $.serial      ; #=    - serial number of failed request
+  has uchar   $.error_code  ; #=    - error code of failed request
+  has uchar   $.request_code; #=    - Major op-code of failed request
+  has uchar   $.minor_code  ; #=    - Minor op-code of failed request
+}
+
+class XGenericEventCookie is repr<CStruct> is export {
+  has realInt  $.type                   ; #=
+  has ulong    $.serial                 ; #=            - # of last request processed by server
+  has Boolean  $.send_event             ; #= ot:Bool    - true if this came from a SendEvent request
+  has Display  $.display                ; #=            - Display the event was read from
+  has realInt  $.extension              ; #=            - major opcode of extension that caused the event
+  has realInt  $.evtype                 ; #=            - actual event type.
+  has realUInt $.cookie                 ;
+  has Pointer  $.data                   ;
+}
+
 # cw: Add missing CStrucgs as they are created.
 class XEvent is repr<CUnion> is export {
   has realInt                 $.type;
@@ -557,13 +605,13 @@ class XEvent is repr<CUnion> is export {
   HAS XSelectionClearEvent    $.xselectionclear;
   HAS XSelectionRequestEvent  $.xselectionrequest;
   HAS XSelectionEvent         $.xselection;
-  # HAS XColormapEvent          $.xcolormap;
-  # HAS XClientMessageEvent     $.xclient;
+  HAS XColormapEvent          $.xcolormap;
+  HAS XClientMessageEvent     $.xclient;
   HAS XMappingEvent           $.xmapping;
-  # HAS XErrorEvent             $.xerror;
+  HAS XErrorEvent             $.xerror;
   HAS XKeymapEvent            $.xkeymap;
   HAS XGenericEvent           $.xgeneric;
-  # HAS XGenericEventCookie     $.xcookie;
+  HAS XGenericEventCookie     $.xcookie;
   HAS XEventPadding           $!padding;
 }
 
@@ -2847,17 +2895,6 @@ constant XRectangle is export := xRectangle;
 class XFontSetExtents is repr<CStruct> is export {
   HAS XRectangle  $.max_ink_extent;
   HAS XRectangle  $.max_logical_extent;
-}
-
-class XGenericEventCookie is repr<CStruct> is export {
-  has realInt    $.type;         #=         - of event. Always GenericEvent
-  has ulong      $.serial;       #=         - # of last requ/*est processed
-  has Boolean    $.send_event;   #= ot:Bool - true if from SendEvent request
-  has Display    $.display;      #=         - Display the event was read from
-  has realInt    $.extension;    #=         - major opcode of extension that caused the event
-  has realInt    $.evtype;       #=         - actual event type.
-  has realUInt   $.cookie;
-  has Pointer    $.data;
 }
 
 class XTimeCoord is repr<CStruct> is export {
