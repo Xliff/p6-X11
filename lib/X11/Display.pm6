@@ -9,7 +9,9 @@ use X11::Compat::Definitions;
 use X11::Raw::Definitions;
 use X11::Raw::Structs;
 use X11::Raw::Subs;
-use X11::Raw::Lib;
+use X11::Raw::Display;
+
+use X11::Roles::TypedBuffer;
 
 class X11::Display {
   has Display $!d;
@@ -21,7 +23,7 @@ class X11::Display {
   multi method new (Display $display) {
     $display ?? self.bless( :$display ) !! Nil;
   }
-  multi method new (Str() $name) {
+  multi method new (Str() $name = %*ENV<DISPLAY>) {
     self.OpenDisplay($name);
   }
 
@@ -438,15 +440,29 @@ class X11::Display {
     );
   }
 
-  method CreateGC (
+  proto method CreateGC (|)
+  { * }
+
+  multi method CreateGC (
     Int()       $var1,
     Int()       $var2,
-    XGCValues() $var3
+  ) {
+    samewith($var1, $var2, $, :all);
+  }
+  multi method CreateGC (
+    Int()       $var1,
+    Int()       $var2,
+                $var3  is rw,
+                :$all  =  False
   ) {
     my Drawable $v1 = $var1;
     my long     $v2 = $var2;
+    my          $v3 = XGCValues.new;
 
-    XCreateGC($!d, $v1, $v2, $var3);
+    my $gc = XCreateGC($!d, $v1, $v2, $v3);
+    $var3 = $v3;
+    return $gc unless $all;
+    ($gc, $var3);
   }
 
   method CreateGlyphCursor (
@@ -501,8 +517,8 @@ class X11::Display {
     Int()    $var5,
     Int()    $var6
   ) {
-    my Pixmap ($v1, $v2) = ($var2, $var2);
-    my realInt   ($v5, $v6) = ($var5, $var6);
+    my Pixmap  ($v1, $v2) = ($var2, $var2);
+    my realInt ($v5, $v6) = ($var5, $var6);
 
     XCreatePixmap($!d, $v1, $v2, $var3, $var4, $v5, $v6);
   }
@@ -605,20 +621,19 @@ class X11::Display {
     XDefaultRootWindow($!d);
   }
 
-  proto method DefaultScreen (:$raw = False, *%extras) {
-    my $s = *;
+  proto method DefaultScreen (|)
+  { * }
+
+  multi method DefaultScreen {
+    XDefaultScreen($!d);
+  }
+  multi method DefaultScreen (:$display is required, :$raw = False) {
+    my $s = XDefaultScreenOfDisplay($!d);
 
     return Nil unless $s;
     return $s  if     $raw;
 
     ::('X11::Screen').new($s);
-  }
-
-  multi method DefaultScreen (:$raw = False) {
-    XDefaultScreen($!d);
-  }
-  multi method DefaultScreen(:$display is required, :$raw = False) {
-    XDefaultScreenOfDisplay($!d);
   }
 
   method DefaultVisual (Int() $var1) {
@@ -778,12 +793,30 @@ class X11::Display {
     XDrawLine($!d, $v1, $var2, $v3, $v4, $v5, $v6);
   }
 
-  method DrawLines (
-    Int()  $var1,
-    GC()   $var2,
-    XPoint $var3,
-    Int()  $var4,
-    Int()  $var5
+  proto method DrawLines (|)
+  { * }
+
+  multi method DrawLines (
+    Int()   $var1,
+    GC()    $var2,
+            @points is copy,
+    Int()   $var5
+  ) {
+    @points = checkForXPoints(@points);
+    samewith(
+      $var1,
+      $var2,
+      X11::Roles::TypedBuffer[XPoint].new(@points).p,
+      @points.elems,
+      $var5
+    )
+  }
+  multi method DrawLines (
+    Int()   $var1,
+    GC()    $var2,
+    Pointer $var3, #= tb:XPoint
+    Int()   $var4,
+    Int()   $var5
   ) {
     my Drawable $v1 = $var1;
     my realInt     ($v4, $v5) = ($var4, $var5);
@@ -803,7 +836,33 @@ class X11::Display {
     XDrawPoint($!d, $v1, $var2, $v3, $v4);
   }
 
-  method DrawPoints (
+  sub checkForXPoints (@p) {
+    die 'Array not points-compatible!'
+      unless @p.map( |* ).all ~~ Int && @p.map( *.elems ).all == 2;
+
+    @p.map({ XPoint.new( |$_ ) });
+  }
+
+  proto method DrawPoints (|)
+  { * }
+
+  multi method DrawPoints (
+    Int()  $var1,
+    GC()   $var2,
+           @points is copy,
+    Int()  $var5
+  ) {
+    @points = checkForXPoints(@points);
+
+    samewith(
+      $var1,
+      $var2,
+      X11::Roles::TypedBuffer[XPoint].new(@points).p,
+      @points.elems,
+      $var5
+    );
+  }
+  multi method DrawPoints (
     Int()  $var1,
     GC()   $var2,
     XPoint $var3,
@@ -1051,7 +1110,7 @@ class X11::Display {
   }
 
   method FillPolygon (
-    Drawable() $var1,
+    Int() $var1,
     GC()       $var2,
     XPoint()   $var3,
     Int()      $var4,
@@ -1064,7 +1123,7 @@ class X11::Display {
   }
 
   method FillRectangle (
-    Drawable() $var1,
+    Int() $var1,
     GC()       $var2,
     Int()      $var3,
     Int()      $var4,
@@ -1076,10 +1135,25 @@ class X11::Display {
     XFillRectangle($!d, $var1, $var2, $v3, $v4, $v5, $v6);
   }
 
-  method FillRectangles (
-    Drawable()   $var1,
+  proto method FillRectangles (|)
+  { * }
+
+  multi method FillRectangles (
+    Int()   $var1,
+    GC()    $var2,
+            @rectangles
+  ) {
+    samewith(
+      $var1,
+      $var2,
+      X11::Roles::TypedBuffer[XRectangle].new(@rectangles).p,
+      @rectangles.elems
+    );
+  }
+  multi method FillRectangles (
+    Int()        $var1,
     GC()         $var2,
-    XRectangle() $var3,
+    XRectangle() $var3, #= tb:XRectangle
     Int()        $var4
   ) {
     my Drawable $v1 = $var1;
@@ -1098,6 +1172,7 @@ class X11::Display {
 
   method ForceScreenSaver (Int() $var1) {
     my realInt $v1 = $var1;
+
     XForceScreenSaver($!d, $var1);
   }
 
@@ -2874,6 +2949,10 @@ class X11::Display {
     XSetWindowColormap($!d, $v1, $v2);
   }
 
+  method size (Int() $var1) {
+    ( self.DisplayWidth($var1), self.DisplayHeight($var1) );
+  }
+
   proto method StoreBuffer (|)
   { * }
 
@@ -2935,13 +3014,13 @@ class X11::Display {
 
   # 6 / 8
 
-  method Sync (Bool $var1) {
+  method Sync (Int() $var1 = 0) {
     my Boolean $v1 = $var1.so.Int;
 
     XSync($!d, $v1);
   }
 
-  method Synchronize (Int() $var1) {
+  method Synchronize (Int() $var1 = 0) {
     my Boolean $v1 = $var1.so.Int;
 
     XSynchronize($!d, $v1);
