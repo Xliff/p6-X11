@@ -3970,8 +3970,12 @@ class StripChartClassRec is repr<CStruct> is export {
 }
 
 class XPoint is repr<CStruct> is export {
-  has short $.x is rw;
-  has short $.y is rw;
+  has short $.x is rw is built;
+  has short $.y is rw is built;
+
+  method new ($x, $y) {
+    self.bless(:$x, :$y);
+  }
 }
 
 class xPoint is repr<CStruct> is export {
@@ -8477,27 +8481,27 @@ class XLockPtrs is repr<CStruct> is export {
 class Display {
   has XExtData                 $.ext_data;                               #=                                                       - hook for extension to hang data
   has XFreeFuncs               $.free_funcs;                             #=                                                       - internal free functions
-  has int                      $.fd;                                     #=                                                       - Network socket.
-  has int                      $.conn_checker;                           #=                                                       - ugly thing used by _XEventsQueued
-  has int                      $.proto_major_version;                    #=                                                       - maj. version of server's X protocol
-  has int                      $.proto_minor_version;                    #=                                                       - minor version of server's X protocol
+  has realInt                  $.fd;                                     #=                                                       - Network socket.
+  has realInt                  $.conn_checker;                           #=                                                       - ugly thing used by _XEventsQueued
+  has realInt                  $.proto_major_version;                    #=                                                       - maj. version of server's X protocol
+  has realInt                  $.proto_minor_version;                    #=                                                       - minor version of server's X protocol
   has Str                      $.vendor;                                 #=                                                       - vendor of the server hardware
   has XID                      $.resource_base;                          #=                                                       - resource ID base
   has XID                      $.resource_mask;                          #=                                                       - resource ID mask bits
   has XID                      $.resource_id;                            #=                                                       - allocator current ID
-  has int                      $.resource_shift;                         #=                                                       - allocator shift to correct bits
+  has realInt                  $.resource_shift;                         #=                                                       - allocator shift to correct bits
   has Pointer                  $.resource_alloc;                         #= fp:(XDisplay* --> XID)
-  has int                      $.bitmap_unit;                            #=                                                       - padding and data requirements
-  has int                      $.byte_order;                             #=                                                       - screen byte order, LSBFirst, MSBFirst
-  has int                      $.bitmap_pad;                             #=                                                       - padding requirements on bitmaps
-  has int                      $.bitmap_bit_order;                       #=                                                       - LeastSignificant or MostSignificant
-  has int                      $.nformats;                               #=                                                       - number of pixmap formats in list
+  has realInt                  $.bitmap_unit;                            #=                                                       - padding and data requirements
+  has realInt                  $.byte_order;                             #=                                                       - screen byte order, LSBFirst, MSBFirst
+  has realInt                  $.bitmap_pad;                             #=                                                       - padding requirements on bitmaps
+  has realInt                  $.bitmap_bit_order;                       #=                                                       - LeastSignificant or MostSignificant
+  has realInt                  $.nformats;                               #=                                                       - number of pixmap formats in list
   has ScreenFormat             $.pixmap_format;                          #=                                                       - pixmap format list
-  has int                      $.vnumber;                                #=                                                       - Xlib's X protocol version number.
-  has int                      $.release;                                #=                                                       - release of the server
+  has realInt                  $.vnumber;                                #=                                                       - Xlib's X protocol version number.
+  has realInt                  $.release;                                #=                                                       - release of the server
   has XSQEvent                 $.head;                                   #=                                                       -
   has XSQEvent                 $.tail;                                   #=                                                       - Input event queue.
-  has int                      $.qlen;                                   #=                                                       - Length of input event queue
+  has realInt                  $.qlen;                                   #=                                                       - Length of input event queue
   has ulong                    $.last_request_read;                      #=                                                       - seq number of last event read
   has ulong                    $.request;                                #=                                                       - sequence number of last request.
   has Pointer                  $.last_req;                               #= ot:(char*)                                            - beginning of last request, or dummy
@@ -8508,20 +8512,20 @@ class Display {
   has XrmHashBucket            $.db;                                     #= ot:XrmHashBucket                                      -
   has Pointer                  $.synchandler;                            #= fp:(XDisplay * --> in);                               -
   has Str                      $.display_name;                           #=                                                       - "host:display" string used on this connec
-  has int                      $.default_screen;                         #=                                                       - default screen for operations
-  has int                      $.nscreens;                               #=                                                       - number of screens on this serve
+  has realInt                  $.default_screen;                         #=                                                       - default screen for operations
+  has realInt                  $.nscreens;                               #=                                                       - number of screens on this serve
   has Pointer                  $.screens;                                #= tb:screens,$!nscreens                                 - pointer to list of screens
   has ulong                    $.motion_buffer;                          #=                                                       - size of motion buffer
   has ulong                    $.flags;                                  #=                                                       - internal connection flags
-  has int                      $.min_keycode;                            #=                                                       - minimum defined keycode
-  has int                      $.max_keycode;                            #=                                                       - maximum defined keycode
+  has realInt                  $.min_keycode;                            #=                                                       - minimum defined keycode
+  has realInt                  $.max_keycode;                            #=                                                       - maximum defined keycode
   has KeySym                   $.keysyms;                                #=                                                       - This server's keysyms
   has XModifierKeymap          $.modifiermap;                            #=                                                       - This server's modifier keymap
   has int                      $.keysyms_per_keycode;                    #=                                                       - number of rows
   has CArray[uint8]            $.xdefaults;                              #=                                                       - contents of defaults from server
   has CArray[uint8]            $.scratch_buffer;                         #=                                                       - place to hang scratch buffer
   has ulong                    $.scratch_length;                         #=                                                       - length of scratch buffer
-  has int                      $.ext_number;                             #=                                                       - extension number on this display
+  has realInt                  $.ext_number;                             #=                                                       - extension number on this display
   has Pointer                  $.ext_procs;                              #= tb:XExten,$!ext_number                                - extensions initialized on this display
   has Pointer                  @.event_vec[128]              is CArray;  #= fp:(Display *, XEvent *, xEvent * --> Boolean)        -
   has Pointer                  @.wire_vec[128]               is CArray;  #= fp:(Display *, XEvent *, xEvent * --> Status)         -
@@ -8535,8 +8539,8 @@ class Display {
   has XKeytrans                $.key_bindings;                           #=                                                       - for XLookupString
   has FontRec                  $.cursor_font;                            #=                                                       - for XCreateFontX11Cursor
   has XDisplayAtoms            $.atoms;                                  #=                                                       - for XInternAtom
-  has uint                     $.mode_switch;                            #=                                                       - keyboard group modifiers
-  has uint                     $.num_lock;                               #=                                                       - keyboard numlock modifiers
+  has realUInt                 $.mode_switch;                            #=                                                       - keyboard group modifiers
+  has realUInt                 $.num_lock;                               #=                                                       - keyboard numlock modifiers
   has XContextDB               $.context_db;                             #=                                                       - context database
   has Pointer[Pointer]         $.error_vec;                              #= fp:(Display *, XErrorEvent *, xError * --> Boolean);
 
@@ -8547,13 +8551,13 @@ class Display {
   has ulong                    $.next_event_serial_num;                  #=                                                       - inserted into next queue elt
   has XExten                   $.flushes;                                #=                                                       - Flush hooks
   has Pointer                  $.im_fd_info;                             #= tb:XConnectionInfo,$!im_fd_length                     - _XRegisterInternalConnection
-  has int                      $.im_fd_length;                           #=                                                       - number of im_fd_info
+  has realInt                  $.im_fd_length;                           #=                                                       - number of im_fd_info
   has Pointer                  $.conn_watchers;                          #= tb:XConnWatchInfo,$!watcher_count                     - XAddConnectionWa
-  has int                      $.watcher_count;                          #=                                                       - number of conn_watchers
+  has realInt                  $.watcher_count;                          #=                                                       - number of conn_watchers
   has XPointer                 $.filedes;                                #=                                                       - struct pollfd cache for _XWaitForReadable
   has Pointer                  $.savedsynchandle;                        #= fp:(Display * --> int);
   has XID                      $.resource_max;                           #=                                                       - allocator max ID
-  has int                      $.xcmisc_opcode;                          #=                                                       - major opcode for XC-MISC
+  has realInt                  $.xcmisc_opcode;                          #=                                                       - major opcode for XC-MISC
   has XkbInfoRec               $.xkb_info;                               #=                                                       - XKB info
   has XtransConnInfo           $.trans_conn;                             #=                                                       - transport connection object
   has X11XCBPrivate            $.xcb;                                    #=                                                       - XCB glue private data
