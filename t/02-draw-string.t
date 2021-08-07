@@ -18,7 +18,7 @@ sub MAIN (:$reverse = False) {
     0,   0,
     512, 512,
     2,
-    $reverse.not ?? $white !! $black,
+    (my $fg = $reverse.not ?? $white !! $black),
     $reverse.not ?? $black !! $white
   );
 
@@ -33,13 +33,13 @@ sub MAIN (:$reverse = False) {
   loop {
     given (my $event = $display.NextEvent).type {
       when Expose {
-        $display.SetForeground($gc, $white);
+        $display.SetForeground($gc, $fg);
         $display.DrawString($win, $gc, 10, 10, $string);
       }
 
       when KeyPress {
         say "KeyPress { $event.xkey.keycode }";
-        
+
         exit if $event.xkey.keycode == $display.KeysymToKeycode(XK_Escape);
       }
     }
