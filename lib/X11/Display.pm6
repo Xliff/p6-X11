@@ -31,7 +31,7 @@ class X11::Display {
     is also<Display>
   { $!d }
 
-  method OpenDisplay (Str() $name) {
+  method OpenDisplay (Str() $name = Str) {
     my $display = XOpenDisplay($name);
 
     $display ?? self.bless( :$display ) !! Nil;
