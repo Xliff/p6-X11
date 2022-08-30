@@ -185,12 +185,12 @@ sub XChangeKeyboardMapping (
 { * }
 
 sub XChangePointerControl (
-  Display $var0,
-  realInt    $var1,
-  realInt    $var2,
-  realInt $var3,
-  realInt $var4,
-  realInt $var5
+  Display  $var0,
+  realUInt $var1,
+  realUInt $var2,
+  realInt  $var3,
+  realInt  $var4,
+  realInt  $var5
 )
   returns realInt
   is native(x11)
@@ -1013,7 +1013,7 @@ sub XGetWindowProperty (
   Atom          $var2,
   long          $var3,
   long          $var4,
-  realInt          $var5,
+  realUInt      $var5,
   Atom          $var6,
   Atom          $var7  is rw,
   realInt       $var8  is rw,
@@ -1027,16 +1027,16 @@ sub XGetWindowProperty (
 { * }
 
 sub XGrabButton (
-  Display   $var0,
-  realInt   $var1,
-  realInt   $var2,
-  Window    $var3,
-  realInt      $var4,
-  realInt   $var5,
-  realInt   $var6,
-  realInt   $var7,
-  Window    $var8,
-  X11Cursor $var9
+  Display    $var0,
+  realInt    $var1,
+  realInt    $var2,
+  Window     $var3,
+  realUInt   $var4,
+  realInt    $var5,
+  realInt    $var6,
+  realInt    $var7,
+  Window     $var8,
+  X11Cursor  $var9
 )
   returns realInt
   is native(x11)
@@ -1044,13 +1044,13 @@ sub XGrabButton (
 { * }
 
 sub XGrabKey (
-  Display $var0,
-  realInt $var1,
-  realInt $var2,
-  Window  $var3,
-  realInt    $var4,
-  realInt $var5,
-  realInt $var6
+  Display  $var0,
+  realInt  $var1,
+  realInt  $var2,
+  Window   $var3,
+  realUInt $var4,
+  realInt  $var5,
+  realInt  $var6
 )
   returns realInt
   is native(x11)
@@ -1058,12 +1058,12 @@ sub XGrabKey (
 { * }
 
 sub XGrabKeyboard (
-  Display $var0,
-  Window  $var1,
-  realInt    $var2,
-  realInt $var3,
-  realInt $var4,
-  Time    $var5
+  Display  $var0,
+  Window   $var1,
+  realUInt $var2,
+  realInt  $var3,
+  realInt  $var4,
+  Time     $var5
 )
   returns realInt
   is native(x11)
@@ -1073,7 +1073,7 @@ sub XGrabKeyboard (
 sub XGrabPointer (
   Display   $var0,
   Window    $var1,
-  realInt      $var2,
+  realUInt  $var2,
   realInt   $var3,
   realInt   $var4,
   realInt   $var5,
@@ -2397,10 +2397,10 @@ sub XSetPointerMapping (Display $var0, Str $var1, realInt $var2)
 
 sub XSetScreenSaver (
   Display $var0,
-  realInt $var1,
-  realInt $var2,
-  realInt $var3,
-  realInt $var4
+  realUInt $var1,
+  realUInt $var2,
+  realUInt $var3,
+  realUInt $var4
 )
   returns realInt
   is native(x11)
@@ -2556,14 +2556,14 @@ sub XStoreNamedColor (
   is export
 { * }
 
-sub XSync (Display $var0, realInt $var1)
-  returns realInt
+sub XSync (Display $var0, realUInt $var1)
+  returns realUInt
   is native(x11)
   is export
 { * }
 
-sub XSynchronize (Display $var0, realInt $var1)
-  returns realInt
+sub XSynchronize (Display $var0, realUInt $var1)
+  returns realUInt
   is native(x11)
   is export
 { * }

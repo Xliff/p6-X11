@@ -1724,24 +1724,24 @@ class X11::Display {
     @returns;
   }
   multi method GetWindowProperty (
-    Int() $var1,
-    Int() $var2,
-    Int() $var3,
-    Int() $var4,
-    Int() $var5,
-    Int() $var6,
-          $var7   is rw,
-          $var8   is rw,
-          $var9   is rw,
-          $var10  is rw,
-          $var11  is rw,
-          :$all   =  False
+    Int()  $var1,
+    Int()  $var2,
+    Int()  $var3,
+    Int()  $var4,
+    Int()  $var5,
+    Int()  $var6,
+           $var7   is rw,
+           $var8   is rw,
+           $var9   is rw,
+           $var10  is rw,
+           $var11  is rw,
+          :$all           =  False
   ) {
-    my Window  $v1                   = $var1;
+    my Window  $v1                   =  $var1;
     my Atom    ($v2, $v6, $v7)       = ($var2, $var6, 0);
-    my Boolean $v5                   = $var5.so.Int;
+    my Boolean $v5                   =  $var5.so.Int;
     my long    ($v3, $v4, $v9, $v10) = ($var3, $var4, 0, 0);
-    my realInt $v8                   = 0;
+    my realInt $v8                   =  0;
 
     (my CArray[uint8] $v11 = .new;)[0] = uint8;
 
@@ -1776,8 +1776,8 @@ class X11::Display {
     Int() $var9
   ) {
     my realInt   ($v1, $v2, $v5, $v6, $v7) = ($var1, $var2, $var5, $var6, $var7);
-    my Window ($v3, $v8)                = ($var3, $var8);
-    my Boolean $v4                      = $var4.so.Int;
+    my Window    ($v3, $v8)                = ($var3, $var8);
+    my Boolean    $v4                      = $var4.so.Int;
     my X11Cursor  $v9                      = $var9;
 
     XGrabButton($!d, $v1, $v2, $v3, $v4, $v5, $v6, $v7, $v8, $v9);
